@@ -3,7 +3,7 @@ require 'digest/sha1'
 module Glysellin
   class Product < ActiveRecord::Base    
     has_many :product_images
-    
+    has_and_belongs_to_many :taxonomies
     validates_presence_of :name, :integer_df_price, :integer_vat_rate, :slug
     validates :sku, :presence => true, :if => Proc.new { Glysellin.autoset_sku }
     validates_numericality_of :integer_df_price, :integer_vat_rate
