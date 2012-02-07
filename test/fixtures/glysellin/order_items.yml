@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  sku: MyString
+  name: MyString
+  df_price: 1
+  vat_rate: 1
+
+two:
+  sku: MyString
+  name: MyString
+  df_price: 1
+  vat_rate: 1

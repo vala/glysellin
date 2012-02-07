@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  ref: MyString
+  status: MyString
+  paid_on: 2012-02-06 12:50:04
+  customer_id: 1
+
+two:
+  ref: MyString
+  status: MyString
+  paid_on: 2012-02-06 12:50:04
+  customer_id: 1

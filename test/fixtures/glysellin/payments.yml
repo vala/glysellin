@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  status: MyString
+  payment_type_id: 1
+  last_payment_action_on: 2012-02-06 14:09:21
+
+two:
+  status: MyString
+  payment_type_id: 1
+  last_payment_action_on: 2012-02-06 14:09:21
