@@ -17,5 +17,10 @@ module Glysellin
       last_product = self.class.order('id DESC').limit(1)
       "Product-#{last_product.length > 0 ? (last_product.first.id + 1).to_s : '1'}"
     end
+    
+    def self.with_taxonomy taxonomy_slug
+      taxonomy = Taxonomy.includes(:products).where(:slug => taxonomy_slug)
+      taxonomy.length > 0 ? taxonomy.first.products : []
+    end
   end
 end

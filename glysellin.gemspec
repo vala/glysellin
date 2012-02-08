@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "Lightweight e-commerce"
   s.description = "When your customer doesn't want e-commerce but actually you need products, orders and a payment gateway"
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
 
   s.add_dependency "rails", "~> 3.2.0"
   s.add_dependency "paperclip"
