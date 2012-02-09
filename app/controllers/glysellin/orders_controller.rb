@@ -16,9 +16,14 @@ module Glysellin
       end
     end
     
+    def process
+      
+    end
+
+    
     def cart
     end
-    
+        
     def validate_cart  
     end
     

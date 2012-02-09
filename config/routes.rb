@@ -1,5 +1,5 @@
 Glysellin::Engine.routes.draw do
-  resources :orders do
+  resources :orders, :only => [:new, :create, :edit, :update] do
     collection do
       match 'cart', :action => 'cart', :as => 'cart'
       post 'validate-cart', :action => 'validate_cart', :as => 'validate_cart'
@@ -7,7 +7,7 @@ Glysellin::Engine.routes.draw do
       post 'validate-addresses', :action => 'validate_addresses', :as => 'validate_addresses'
       get 'checkout', :action => 'checkout', :as => 'checkout'
       post 'offline-payment', :action => 'offline_payment', :as => 'offline_payment'
-      
+      post 'process', :action => 'process', :as => 'process'
     end
     member do
       post 'gw-resp', :action => 'gateway_response', :as => 'gateway_response'

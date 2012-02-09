@@ -1,0 +1,5 @@
+fr:
+  glysellin:
+    controllers:
+      errors:
+        order_doesnt_exist: "The requested order reference doesn't exist"

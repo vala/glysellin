@@ -9,13 +9,19 @@ module Glysellin
     accepts_nested_attributes_for :billing_address
     accepts_nested_attributes_for :shipping_address
     
+    # Ensure there is always an order reference for billing purposes
     after_save do
       self.ref = self.generate_ref unless self.ref
     end
     
+    # Automatic ref generation for our 
     def generate_ref
       unless ref
-        "#{Time.now.strftime('%Y%m%d%H%M')}-#{id}"
+        if Glysellin.order_reference_generator
+          Glysellin.order_reference_generator.call(self)
+        else
+          "#{Time.now.strftime('%Y%m%d%H%M')}-#{id}"
+        end
         save
       end
     end
