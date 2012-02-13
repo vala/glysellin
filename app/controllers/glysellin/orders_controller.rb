@@ -1,9 +1,10 @@
 module Glysellin
-  class OrdersController < ApplicationController
+  class OrdersController < MainController
     protect_from_forgery :except => :gateway_response
+    before_filter :get_customer!
     
     def index
-      @orders = @active_customer.orders
+      @orders = current_user.orders
     end
     
     def show
@@ -16,10 +17,17 @@ module Glysellin
       end
     end
     
-    def process
-      
+    def process_order
+      @order = Order.from_sub_forms(params[:order])
+      # render :text => params.inspect + '<br/><br/>' + @order.items.inspect.gsub(/[<>]/, {'<' => '&lt;', '>' => '&gt;'})
+      if @order.save
+        redirect_to :action => @order.next_step, :id => @order.ref
+      else
+        redirect_to :back
+      end
     end
-
+    
+    def
     
     def cart
     end
@@ -34,6 +42,11 @@ module Glysellin
     end
   
     def recap
+      
+    end
+    
+    def payment
+      @order = Order.find_by_ref(params[:id])
     end
     
     def offline_payment
@@ -43,6 +56,7 @@ module Glysellin
     end
   
     def payment_response
+      @order = Order.find_by_ref(params[:id])
     end
   end
 end

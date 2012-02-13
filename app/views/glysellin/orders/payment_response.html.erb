@@ -1,2 +1,5 @@
-<h1>Orders#payment_response</h1>
-<p>Find me in app/views/glysellin/orders/payment_response.html.erb</p>
+<% if @order.paid? %>
+	<%= render :partial => 'payment_successful', :locals => {:order => @order} %>
+<% else %>
+	<%= render :partial => 'payment_canceled', :locals => {:order => @order} %>
+<% end %>

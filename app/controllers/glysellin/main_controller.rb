@@ -1,5 +1,5 @@
 module Glysellin
-  class ApplicationController < ActionController::Base
+  class MainController < ::ApplicationController
     before_filter :init
     
     protected
@@ -10,7 +10,7 @@ module Glysellin
     
       # Get current customer
       def get_customer!
-        @active_customer = user_signed_in? ? current_user.customer : Customer.new(:id => 0)
+        @active_customer = user_signed_in? ? current_user.customer : Customer.new
       end
   end
 end

@@ -1,7 +1,11 @@
 require 'digest/sha1'
 
 module Glysellin
-  class Product < ActiveRecord::Base    
+  class Product < ActiveRecord::Base
+    include ModelInstanceHelperMethods
+    
+    self.table_name = 'glysellin_products'
+    
     has_many :product_images
     has_and_belongs_to_many :taxonomies, :join_table => 'glysellin_products_taxonomies'
     validates_presence_of :name, :df_price, :vat_rate, :slug

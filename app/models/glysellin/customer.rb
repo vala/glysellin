@@ -1,5 +1,6 @@
 module Glysellin
   class Customer < ActiveRecord::Base
+    self.table_name = 'glysellin_customers'
     has_many :orders
     belongs_to :user
     

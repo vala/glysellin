@@ -3,3 +3,25 @@ fr:
     controllers:
       errors:
         order_doesnt_exist: "The requested order reference doesn't exist"
+    labels:
+      misc:
+        back_to_homepage: "Back to home page"
+      order:
+        order_summary_title: "Order summary"
+        your_informations: "Your informations"
+        your_cart: "Your cart"
+        order_reference: "Order reference"
+        sku: "SKU"
+        name: "Product name"
+        df_price: "Duty Free Price"
+        price: "Price"
+        subtotal: "Sub-total"
+        shipping: "Shipping"
+        total: "Total"
+        pay: "Pay"
+        no_payment_method_choosen: "No payment method choosen"
+      payment_methods:
+        pay_with_paypal: Payer avec paypal
+      payment_responses:
+        successfully_paid: "Payment successful"
+        successfull_payment_text: "Your payment has been successfully processed, we'll take your order into account as fast as we can. An e-mail has been sent to you with all the relevant informations about your order."

@@ -1,2 +1,75 @@
-<h1>Orders#payment</h1>
-<p>Find me in app/views/glysellin/orders/payment.html.erb</p>
+<h2><%= t('glysellin.labels.order.order_summary_title') %></h2>
+<%= "#{t('glysellin.labels.order.order_reference')} : #{@order.ref}" %>
+
+<h3><%= t('glysellin.labels.order.your_informations') %></h3>
+
+<h4><%= t('glysellin.labels.order.billing_address')%></h4>
+<%= render :partial => 'show_address', :locals => { :address => @order.billing_address } %>
+
+<h4><%= t('glysellin.labels.order.shipping_address')%></h4>
+<%= render :partial => 'show_address', :locals => { :address => @order.shipping_address } %>
+
+<h3><%= t('glysellin.labels.order.your_cart') %></h3>
+<table id="order_recap_table">
+	<tr>
+		<th><%= t('glysellin.labels.order.sku') %></th>
+		<th><%= t('glysellin.labels.order.name') %></th>
+		<th><%= t('glysellin.labels.order.df_price') %></th>
+		<th><%= t('glysellin.labels.order.price') %></th>
+	</tr>
+	<% @order.items.each do |item| %>
+		<tr>
+			<td><%= item.sku %></td>
+			<td><%= item.name %></td>
+			<td><%= number_to_currency(item.df_price) %></td>
+			<td><%= number_to_currency(item.price) %></td>
+		</tr>
+	<% end %>
+	<% if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical %>
+		<tr>
+			<td colspan="2">
+				<%= t('glysellin.labels.order.subtotal') %>
+			</td>
+			<td>
+				<%= number_to_currency(@order.subtotal(true)) %>
+			</td>
+			<td>
+				<%= number_to_currency(@order.subtotal) %>
+			</td>
+		</tr>
+	<% end %>
+	<% if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
+		<tr>
+			<td colspan="2">
+				<%= t('glysellin.labels.order.shipping') %>
+			</td>
+			<td>
+				<%= number_to_currency(@order.shipping_price(true)) %>
+			</td>
+			<td>
+				<%= number_to_currency(@order.shipping_price) %>
+			</td>
+		</tr>
+	<% end %>
+	<tr>
+		<td colspan="2">
+			<%= t('glysellin.labels.order.total') %>
+		</td>
+		<td>
+			<%= number_to_currency(@order.total_price(true)) %>
+		</td>
+		<td>
+			<%= number_to_currency(@order.total_price) %>
+		</td>
+	</tr>
+</table>
+
+<h3><%= t('glysellin.labels.order.pay') %></h3>
+<% if @order.payment_method %>
+	<%= render :partial => "glysellin/payment_methods/#{@order.payment_method.slug}", :locals => { :order => @order } %>
+<% else %>
+	<%= render :partial => 'payment_methods', :locals => { :order => @order } %>
+<% end %>
+
+
+

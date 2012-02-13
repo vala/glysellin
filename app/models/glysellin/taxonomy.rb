@@ -1,5 +1,8 @@
 module Glysellin
   class Taxonomy < ActiveRecord::Base
+    include ModelInstanceHelperMethods
+    
+    self.table_name = 'glysellin_taxonomies'
     has_and_belongs_to_many :products, :join_table => 'glysellin_products_taxonomies'
     
     has_many :sub_taxonomies, :class_name => 'Taxonomy'#, :foreign_key => 'parent_taxonomy_id'
