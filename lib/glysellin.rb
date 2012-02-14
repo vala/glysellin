@@ -27,6 +27,9 @@ module Glysellin
   mattr_accessor :show_shipping_if_zero
   @@show_shipping_if_zero = false
   
+  mattr_accessor :contact_email
+  @@contact_email = 'contact@example.com'
+  
   # Payment statuses
   PAYMENT_STATUS_PENDING = 'pending'
   PAYMENT_STATUS_PAID = 'paid'
