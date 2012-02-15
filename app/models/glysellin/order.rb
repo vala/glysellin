@@ -107,5 +107,9 @@ module Glysellin
     def paid?
       !!payments.last.status == PAYMENT_STATUS_PAID
     end
+    
+    def email
+      billing_address.email
+    end
   end
 end

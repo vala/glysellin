@@ -27,3 +27,13 @@ fr:
         payment_canceled: "Paiement annulé"
         canceled_payment_text: "Une erreur s'est produite lors du traitement de votre paiement."
         try_to_pay_again: "Si vous voulez tenter à nouveau de payer, vous pouvez utiliser le bouton suivant"
+        
+    order_admin_mailer:
+      send_order_paid_email:
+        subject: "Une nouvelle commande a été validée sur le site"
+    order_customer_mailer:
+      send_order_created_email:
+        subject: "Votre commande a bien été validée"
+    order_customer_mailer:
+      send_order_paid_email:
+        subject: "Le paiement de votre commande a été accepté"

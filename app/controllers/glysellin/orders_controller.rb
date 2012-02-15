@@ -21,7 +21,11 @@ module Glysellin
       @order = Order.from_sub_forms(params[:order])
       # render :text => params.inspect + '<br/><br/>' + @order.items.inspect.gsub(/[<>]/, {'<' => '&lt;', '>' => '&gt;'})
       if @order.save
-        redirect_to :action => @order.next_step, :id => @order.ref
+        next_step = @order.next_step
+        if @order.next_step == Order::ORDER_STEP_PAYMENT
+          OrderCustomerMailer.send_order_created_email(@order).deliver
+        end
+        redirect_to :action => @order.next_step.to_s, :id => @order.ref
       else
         redirect_to :back
       end
@@ -42,7 +46,6 @@ module Glysellin
     end
   
     def recap
-      
     end
     
     def payment

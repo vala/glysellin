@@ -25,3 +25,13 @@ fr:
       payment_responses:
         successfully_paid: "Payment successful"
         successfull_payment_text: "Your payment has been successfully processed, we'll take your order into account as fast as we can. An e-mail has been sent to you with all the relevant informations about your order."
+        
+    order_admin_mailer:
+      send_order_paid_email:
+        subject: "A new order has validated"
+    order_customer_mailer:
+      send_order_created_email:
+        subject: "Your order has been placed"
+    order_customer_mailer:
+      send_order_paid_email:
+        subject: "Your payment has been accepted"

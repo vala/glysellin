@@ -6,7 +6,7 @@ Récapitulatif de votre commande :
 
 	Vos produits :
 	
-			<%= @order.items.each do |item| %>
+			<% @order.items.each do |item| %>
 			Sku / Référence : <%= item.sku %>
 			Nom : <%= item.name %>
 			Prix HT : <%= number_to_currency(item.df_price) %>
@@ -29,7 +29,7 @@ Récapitulatif de votre commande :
 	Paiement : 
 	
 		Mode de paiement : <%= @order.payment_method.name %>
-		Statut : <%= I18n.t(@order.status) %>
+		Statut : Non payé
 		
 --------------------------------------------------------
 

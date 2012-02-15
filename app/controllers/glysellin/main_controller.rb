@@ -10,7 +10,7 @@ module Glysellin
     
       # Get current customer
       def get_customer!
-        @active_customer = user_signed_in? ? current_user.customer : Customer.new
+        @active_customer = user_signed_in? ? current_user : User.new
       end
   end
 end
