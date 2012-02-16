@@ -62,8 +62,19 @@ module Glysellin
       end
       # Define products :
       if order_hash.key?(:products) && order_hash[:products].length > 0
-        order_hash[:products].each_value do |product_slug|
-          o.items << OrderItem.create_from_product_slug(product_slug)
+        order_hash[:products].each do |product_slug, value|
+          if product_slug && value != '0'
+            item = OrderItem.create_from_product_slug(product_slug)
+            o.items << item if item
+          end
+        end
+      end
+      if order_hash.key?(:product_choice) && order_hash[:product_choice].length > 0
+        order_hash[:product_choice].each_value do |product_slug|
+          if product_slug
+            item = OrderItem.create_from_product_slug(product_slug)
+            o.items << item if item
+          end
         end
       end
       o

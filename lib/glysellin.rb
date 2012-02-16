@@ -1,5 +1,6 @@
 require "glysellin/engine"
 require "glysellin/helpers"
+require "glysellin/gateway"
 
 module Glysellin
   mattr_accessor :app_root

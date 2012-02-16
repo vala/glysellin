@@ -7,7 +7,8 @@ module Glysellin
     PRODUCT_ATTRIBUTES_FOR_ITEM = ['sku', 'name', 'df_price', 'vat_rate', 'price']
     
     def self.create_from_product_slug slug
-      new Product.find_by_slug(slug).attributes.reject {|k,v| !PRODUCT_ATTRIBUTES_FOR_ITEM.include?(k)}
+      product = Product.find_by_slug(slug)
+      new product.attributes.reject {|k,v| !PRODUCT_ATTRIBUTES_FOR_ITEM.include?(k)} if product
     end
   end
 end
