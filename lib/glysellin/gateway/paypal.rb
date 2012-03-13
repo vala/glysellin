@@ -38,7 +38,7 @@ module Glysellin
       end
       
       def response
-        :nothing => true
+        {:nothing => true}
       end
     end
   end
