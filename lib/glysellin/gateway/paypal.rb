@@ -12,14 +12,19 @@ module Glysellin
       mattr_accessor :account
       @@account = ''
       
-      mattr_accessor :test
+      # Production mode by default
       @@test = false
       
       attr_accessor :errors
       
+      class << self
+        def test=(val)
+          ActiveMerchant::Billing::Base.mode = val ? :test : :production
+          @@test = val
+        end
+      end
+      
       def initialize order, post_data
-        ActiveMerchant::Billing::Base.mode = :test if @@test
-          
         @notification = Paypal::Notification.new(post_data)
         @order = order
       end
