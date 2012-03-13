@@ -7,6 +7,7 @@ ActionView::Base.send(:include, ActiveMerchant::Billing::Integrations::ActionVie
 module Glysellin
   module Gateway
     class PaypalIntegral < Glysellin::Gateway::Base
+      include ActiveMerchant::Billing::Integrations
       register 'paypal-integral', self
       
       mattr_accessor :account
