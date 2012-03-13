@@ -20,6 +20,7 @@ fr:
         total: "Total"
         pay: "Pay"
         no_payment_method_choosen: "No payment method choosen"
+        order_title: Order
       payment_methods:
         pay_with_paypal: Payer avec paypal
       payment_responses:

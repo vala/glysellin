@@ -57,10 +57,16 @@ module Glysellin
   
     def gateway_response
       g = PaymentMethod.gateway(params)
+      
       if g.process_payment!
         OrderCustomerMailer.send_order_paid_email(g.order)
         OrderAdminMailer.send_order_paid_email(g.order)
       end
+      
+      if g.errors.length > 1
+        g.errors.each {|msg| logger.error "[ Glysellin ] Gateway Error : #{msg}"}  
+      end
+      
       render g.response
     end
   

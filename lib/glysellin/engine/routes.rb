@@ -14,7 +14,7 @@ module ActionDispatch::Routing
           end
           member do
             get 'payment', :action => 'payment', :as => 'payment'
-            post 'gw-resp', :action => 'gateway_response', :as => 'gateway_response'
+            post 'gw-resp/:goid', :action => 'gateway_response', :as => 'gateway_response'
             match 'response', :action => 'payment_response', :as => 'payment_response'
           end
         end

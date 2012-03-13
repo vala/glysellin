@@ -6,7 +6,7 @@ else
   require File.expand_path('../gateway/paypal', __FILE__)
 end
 
-module Glysellin
+module Glysellin  
   module Gateway
   end
 end

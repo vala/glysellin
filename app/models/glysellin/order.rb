@@ -99,7 +99,7 @@ module Glysellin
     
     # Global order prices
     def subtotal df = false
-      @_subtotal ||= items.inject(0) {|l, r| l + (df ? r.df_price : r.price)}
+      @_subtotal ||= items.reduce(0) {|l, r| l + (df ? r.df_price : r.price)}
     end
     
     def shipping_price df = false
@@ -110,17 +110,34 @@ module Glysellin
       @_total_price ||= (subtotal(df) + shipping_price(df))
     end
     
-    # Last payment method
-    def payment_method
-      payments.last.type rescue nil
-    end
-    
-    def paid?
-      !!payments.last.status == PAYMENT_STATUS_PAID
-    end
-    
+    # Get email
     def email
       billing_address.email
     end
+    
+    ########################################
+    #
+    #               Payment 
+    #
+    ########################################
+    
+    def payment
+      payments.last
+    end
+    
+    # Last payment method
+    def payment_method
+      payment.type rescue nil
+    end
+    
+    def pay!
+      payment.status = PAYMENT_STATUS_PAID
+      payment.last_payment_action_on Time.now
+      payment.save
+    end
+    
+    def paid?
+      !!payment.status == PAYMENT_STATUS_PAID
+    end    
   end
 end

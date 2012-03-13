@@ -19,6 +19,7 @@ fr:
         shipping: "Frais de port"
         total: "Total"
         pay: "Payer"
+        order_title: Commande
       payment_methods:
         pay_with_paypal: "Payer avec Paypal"
       payment_responses:
@@ -34,6 +35,5 @@ fr:
     order_customer_mailer:
       send_order_created_email:
         subject: "Votre commande a bien été validée"
-    order_customer_mailer:
       send_order_paid_email:
         subject: "Le paiement de votre commande a été accepté"
