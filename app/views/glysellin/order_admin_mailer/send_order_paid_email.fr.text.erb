@@ -1,2 +1,35 @@
-Une commande a été validée.
+Une commande a été validée sur le site.
 
+Récapitulatif de la commande :
+
+--------------------------------------------------------
+
+	Produits :
+	
+			<% @order.items.each do |item| %>
+			Sku / Référence : <%= item.sku %>
+			Nom : <%= item.name %>
+			Prix HT : <%= number_to_currency(item.df_price) %>
+			Prix TTC : <%= number_to_currency(item.price) %>
+			------------------------
+			<% end %>
+
+
+			<% if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical %>
+			Sous Total HT / TTC : <%= number_to_currency(@order.subtotal(true)) %> / <%= number_to_currency(@order.subtotal) %>
+			<% end %>
+			<% if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
+			Frais de ports HT / TTC : <%= number_to_currency(@order.shipping_price(true)) %> / <%= number_to_currency(@order.shipping_price) %>
+			<% end %>
+			Total HT / TTC : <%= number_to_currency(@order.total_price(true)) %> / <%= number_to_currency(@order.total_price) %>
+
+
+--------------------------------------------------------
+
+	Paiement : 
+	
+		Mode de paiement : <%= @order.payment_method.name %>
+		Statut : Payé
+		Date : <%= @order.payments.last.last_payment_action_on %>
+		
+--------------------------------------------------------
