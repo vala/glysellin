@@ -23,7 +23,7 @@ fr:
       payment_methods:
         pay_with_paypal: "Payer avec Paypal"
       payment_responses:
-        successfully_paid: "Paiment effectué"
+        successfully_paid: "Paiement effectué"
         successfull_payment_text: "Votre paiement a bien été effectué, votre commande sera traité dans les meilleurs délais, un e-mail de confirmation vous a été envoyé."
         payment_canceled: "Paiement annulé"
         canceled_payment_text: "Une erreur s'est produite lors du traitement de votre paiement."
