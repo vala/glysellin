@@ -132,7 +132,7 @@ module Glysellin
     
     def pay!
       payment.status = PAYMENT_STATUS_PAID
-      payment.last_payment_action_on Time.now
+      payment.last_payment_action_on = Time.now
       payment.save
     end
     
