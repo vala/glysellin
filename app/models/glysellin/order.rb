@@ -16,6 +16,11 @@ module Glysellin
     ORDER_STEP_PAYMENT_METHOD = 'recap'
     ORDER_STEP_PAYMENT = 'payment'
     
+    ORDER_STATUS_PAYMENT_PENDING = 'payment'
+    ORDER_STATUS_PAID = 'paid'
+    ORDER_STATUS_SHIPPING_PENDING = 'shipping'
+    ORDER_STATUS_SHIPPED = 'shipped'
+    
     # Ensure there is always an order reference for billing purposes
     after_save do
       unless self.ref
@@ -59,6 +64,7 @@ module Glysellin
       if order_hash.key?(:payment_method) && order_hash[:payment_method].key?(:type)
         payment = o.payments.build :status => PAYMENT_STATUS_PENDING
         payment.type = PaymentMethod.find_by_slug(order_hash[:payment_method][:type])
+        o.status = ORDER_STATUS_PAYMENT_PENDING
       end
       # Define products :
       if order_hash.key?(:products) && order_hash[:products].length > 0
@@ -131,9 +137,10 @@ module Glysellin
     end
     
     def pay!
-      payment.status = PAYMENT_STATUS_PAID
-      payment.last_payment_action_on = Time.now
-      payment.save
+      self.payment.new_status PAYMENT_STATUS_PAID
+      self.status = ORDER_STATUS_PAID
+      self.paid_on = payment.last_payment_action_on
+      self.save
     end
     
     def paid?
