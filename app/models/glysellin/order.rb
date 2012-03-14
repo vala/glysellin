@@ -144,7 +144,7 @@ module Glysellin
     end
     
     def paid?
-      !!payment.status == PAYMENT_STATUS_PAID
+      payment.status == PAYMENT_STATUS_PAID
     end    
   end
 end
