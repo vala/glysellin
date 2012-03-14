@@ -4,9 +4,9 @@ module Glysellin
     self.table_name = 'glysellin_payment_methods'
     has_many :payments, :foreign_key => 'type_id'
     
-    def self.gateway params
-      order = Order.find(params[:goid])
-      Glysellin.gateways[order.payment_method.slug].new(order, params)
+    def self.gateway order_id, post_data
+      order = Order.find(order_id)
+      Glysellin.gateways[order.payment_method.slug].new(order, post_data)
     end
   end
 end

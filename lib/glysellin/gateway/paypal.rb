@@ -18,6 +18,7 @@ module Glysellin
       
       attr_accessor :errors
       
+      # Switch between test and prod modes for ActiveMerchant Paypal
       class << self
         def test=(val)
           ActiveMerchant::Billing::Base.mode = val ? :test : :production
@@ -25,11 +26,13 @@ module Glysellin
         end
       end
       
+      # The Order and the raw POST data are given to the constructor
       def initialize order, post_data
         @notification = Paypal::Notification.new(post_data)
         @order = order
       end
       
+      # Launch payment processing
       def process_payment!
         if @notification.acknowledge
           begin
@@ -48,6 +51,7 @@ module Glysellin
         end
       end
       
+      # The response returned within "render" method in the OrdersController#gateway_response method
       def response
         {:nothing => true}
       end
