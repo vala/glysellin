@@ -30,6 +30,7 @@ module Glysellin
       def initialize order, post_data
         @notification = Paypal::Notification.new(post_data)
         @order = order
+        @errors = []
       end
       
       # Launch payment processing
