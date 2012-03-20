@@ -43,7 +43,7 @@ module Glysellin
       end
       
       def render_request_button
-        exec_chain = shell_escape({
+        exec_chain = {
           :merchant_id => @@merchant_id,
           :merchant_country => @@merchant_country,
           :capture_mode => @@capture_mode,
@@ -51,10 +51,14 @@ module Glysellin
           :data => @order.id,
           :amount => @order.total_price * 100,
           :transaction_id => @order.payment.id + Time.now.to_i
-        }.to_a.map {|item| item[0].to_s + '=' + item[1].to_s}.join(' '))
+        }.to_a.map {|item| item[0].to_s + '=' + item[1].to_s}.join(' ')
 
         bin_path = "#{@@bin_path}/request"
-        results = `#{bin_path} #{exec_chain}`.split('!')
+        begin
+          results = `#{bin_path} #{exec_chain}`.split('!')
+        rescue Errno::ENOEXEC => msg
+          results = []
+        end
         
         # {
         #   :code => results[1].to_i,
