@@ -63,9 +63,9 @@ module Glysellin
         #   :executed_command => "#{bin_path} #{exec_chain}"
         # }
         
-        {:text => results[3]}
+        { :text => results.length > 0 ? "#{bin_path} #{exec_chain}" : results[1].to_i >= 0 ? results[3] : results[2] }
       end
-            
+
       # Launch payment processing
       def process_payment! post_data
         results = parse_mercanet_resp post_data
@@ -73,24 +73,24 @@ module Glysellin
         valid_response = results[1].to_i == 0
         # Renvoi de true si la réponse est positive ou de false si négative
         valid = valid_response && results[11] == 0
-        
+
         result = valid ? @order.pay! : false
-        
+
         @order.save
         result
       end
-      
+
       # The response returned within "render" method in the OrdersController#gateway_response method
       def response
         {:nothing => true}
       end
-      
+
       protected
-      
+
         def shell_escape(str)
           String(str).gsub(/(?=[^a-zA-Z0-9_.\/\-\x7F-\xFF\n])/n, '\\').gsub(/\n/, "'\n'").sub(/^$/, "''")
         end
-        
+
         def parse_mercanet_resp data
           # Prepare arguments
           exec_chain = shell_escape("message=#{data}") << " " << shell_escape("pathfile=#{@@pathfile_path}")
@@ -100,28 +100,4 @@ module Glysellin
         end
     end
   end
-end
-
-
-class BNPInterface
-
-  MERCHANT_ID = '005009461448710'
-  PATHFILE_PATH = "#{::Rails.root}/vendor/tpe/param/pathfile"
-  TPE_BINARIES_PATH = "#{::Rails.root}/vendor/tpe/bin/static"
-  
-  class << self
-    
-    def get_tpe_request bill
-      
-
-
-    end
-    
-    def get_tpe_response data, detailed = false
-      
-      
-    end
-
-  end
-
 end
