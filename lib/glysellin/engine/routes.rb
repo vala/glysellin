@@ -11,6 +11,8 @@ module ActionDispatch::Routing
             get 'checkout', :action => 'checkout', :as => 'checkout'
             post 'offline-payment', :action => 'offline_payment', :as => 'offline_payment'
             post 'process_order', :action => 'process_order', :as => 'process'
+            post 'gateway/:gateway', :action => 'gateway_response', :as => 'named_gateway_response'
+            match 'response', :action => 'payment_response', :as => 'payment_response'
           end
           member do
             get 'payment', :action => 'payment', :as => 'payment'

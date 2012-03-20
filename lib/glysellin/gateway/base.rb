@@ -5,6 +5,8 @@ module Glysellin
   end
   
   module Gateway
+    extend AbstractController::Rendering
+    
     # List of available gateways in the app
     mattr_accessor :gateways_list
     @@gateways_list = []
@@ -13,6 +15,10 @@ module Glysellin
       class << self
         def register name, gateway
           Gateway.gateways_list << {:name => name, :gateway => gateway}
+        end
+        
+        def config
+          yield self
         end
       end
     end

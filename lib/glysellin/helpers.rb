@@ -1,3 +1,5 @@
+require 'cgi'
+
 module Glysellin
   String.class_eval do
     def to_slug

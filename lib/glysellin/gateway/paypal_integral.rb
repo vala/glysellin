@@ -9,15 +9,15 @@ module Glysellin
     class PaypalIntegral < Glysellin::Gateway::Base
       include ActiveMerchant::Billing::Integrations
       register 'paypal-integral', self
-      
+
       mattr_accessor :account
       @@account = ''
-      
+
       # Production mode by default
       @@test = false
-      
+
       attr_accessor :errors, :order
-      
+
       # Switch between test and prod modes for ActiveMerchant Paypal
       class << self
         def test=(val)
@@ -25,19 +25,17 @@ module Glysellin
           @@test = val
         end
       end
-      
-      # The Order and the raw POST data are given to the constructor
-      def initialize order, post_data
-        @notification = Paypal::Notification.new(post_data)
-        @order = order
-        @errors = []
+
+      def render_request_button
+        {:partial => 'glysellin/payment_methods/paypal-integral', :locals => {:order => @order}}
       end
-      
+
       # Launch payment processing
-      def process_payment!
-        if @notification.acknowledge
+      def process_payment! post_data
+        notification = Paypal::Notification.new(post_data)
+        if notification.acknowledge
           begin
-            if @notification.complete?
+            if notification.complete?
               @order.pay!
             else
               @errors.push("Failed to verify Paypal's notification, please investigate")
@@ -51,7 +49,7 @@ module Glysellin
           false
         end
       end
-      
+
       # The response returned within "render" method in the OrdersController#gateway_response method
       def response
         {:nothing => true}
