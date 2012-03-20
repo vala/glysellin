@@ -4,7 +4,7 @@ module Glysellin
       register 'mercanet', self
       
       mattr_accessor :bin_path
-      @@bin_path
+      @@bin_path = ''
       
       mattr_accessor :merchant_id
       @@merchant_id = ''
@@ -24,14 +24,14 @@ module Glysellin
       mattr_accessor :capture_days
       @@capture_days = nil
       
-      # Production mode by default
-      @@test = false
+      mattr_accessor :debug
+      @@debug = false
       
       attr_accessor :errors, :order
       
       def initialize order
         @order = order
-        @errors = []        
+        @errors = []
       end
       
       # Switch between test and prod modes for ActiveMerchant Paypal
@@ -51,7 +51,7 @@ module Glysellin
           :data => @order.id,
           :amount => @order.total_price * 100,
           :transaction_id => @order.payment.id + Time.now.to_i
-        }.to_query)
+        }.to_a.map {|item| item[0].to_s + '=' + item[1].to_s}.join(' '))
 
         bin_path = "#{@@bin_path}/request"
         results = `#{bin_path} #{exec_chain}`.split('!')
@@ -63,7 +63,7 @@ module Glysellin
         #   :executed_command => "#{bin_path} #{exec_chain}"
         # }
         
-        { :text => results.length > 0 ? "#{bin_path} #{exec_chain}" : results[1].to_i >= 0 ? results[3] : results[2] }
+        { :text => results.length == 0 ? "#{bin_path} #{exec_chain}" : results[1].to_i >= 0 ? results[3] : results[2] }
       end
 
       # Launch payment processing
