@@ -17,6 +17,11 @@ module Glysellin
       @@test = false
 
       attr_accessor :errors, :order
+      
+      def initialize order
+        @order = order
+        @errors = []
+      end
 
       # Switch between test and prod modes for ActiveMerchant Paypal
       class << self
