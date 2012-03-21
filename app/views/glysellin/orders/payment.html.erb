@@ -66,8 +66,7 @@
 
 <h3><%= t('glysellin.labels.order.pay') %></h3>
 <% if @order.payment_method %>
-	<%= @order.payment_method.request_button @order %>
-	<%# render :partial => "glysellin/payment_methods/#{@order.payment_method.slug}", :locals => { :order => @order } %>
+	<%= (render @order.payment_method.request_button(@order)).html_safe %>
 <% else %>
 	<%= render :partial => 'payment_methods', :locals => { :order => @order } %>
 <% end %>

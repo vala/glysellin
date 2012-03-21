@@ -27,7 +27,7 @@ module Glysellin
       end
 
       def render_request_button
-        {:partial => 'glysellin/payment_methods/paypal-integral', :locals => {:order => @order}}
+         {:partial => 'glysellin/payment_methods/paypal-integral', :locals => {:order => @order}}
       end
 
       # Launch payment processing

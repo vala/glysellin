@@ -67,7 +67,7 @@ module Glysellin
         #   :executed_command => "#{bin_path} #{exec_chain}"
         # }
         
-        { :text => (results.length == 0 ? "#{bin_path} #{exec_chain}" : results[1].to_i >= 0 ? results[3] : results[2]).html_safe }
+        { :text => (results.length == 0 ? "<div style=\"color:red\">#{bin_path} #{exec_chain}</div>" : results[1].to_i >= 0 ? results[3] : results[2]).html_safe }
       end
 
       # Launch payment processing
