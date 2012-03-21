@@ -71,7 +71,12 @@ module Glysellin
     end
   
     def payment_response
-      @order = Order.find_by_ref(params[:id])
+      if params[:type]
+        @order = nil
+        @response_type = params[:type]
+      else
+        @order = Order.find_by_ref(params[:id])
+      end
     end
   end
 end

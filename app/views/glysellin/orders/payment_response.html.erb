@@ -1,4 +1,4 @@
-<% if @order.paid? %>
+<% if (@order && @order.paid?) || @response_type == 'paid' %>
 	<%= render :partial => 'payment_successful', :locals => {:order => @order} %>
 <% else %>
 	<%= render :partial => 'payment_canceled', :locals => {:order => @order} %>

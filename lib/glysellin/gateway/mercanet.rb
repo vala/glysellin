@@ -40,6 +40,14 @@ module Glysellin
         def parse_order_id data
           parse_mercanet_resp(data)[32]
         end
+        
+        def parse_mercanet_resp data
+          # Prepare arguments
+          exec_chain = shell_escape("message=#{data}") << " " << shell_escape("pathfile=#{@@pathfile_path}")
+          bin_path = "#{@@bin_path}/response"
+          # Call response program to get exclamation point separated payment response details
+          `#{bin_path} #{exec_chain}`.split('!')
+        end
       end
       
       def render_request_button
@@ -56,6 +64,7 @@ module Glysellin
         bin_path = "#{@@bin_path}/request"
         begin
           results = `#{bin_path} #{exec_chain}`.split('!')
+        # If OS didn't want to exec program
         rescue Errno::ENOEXEC => msg
           results = []
         end
@@ -72,7 +81,7 @@ module Glysellin
 
       # Launch payment processing
       def process_payment! post_data
-        results = parse_mercanet_resp post_data
+        results = self.class.parse_mercanet_resp(post_data)
         # Réponse acceptée
         valid_response = results[1].to_i == 0
         # Renvoi de true si la réponse est positive ou de false si négative
@@ -93,14 +102,6 @@ module Glysellin
 
         def shell_escape(str)
           String(str).gsub(/(?=[^a-zA-Z0-9_.\/\-\x7F-\xFF\n])/n, '\\').gsub(/\n/, "'\n'").sub(/^$/, "''")
-        end
-
-        def parse_mercanet_resp data
-          # Prepare arguments
-          exec_chain = shell_escape("message=#{data}") << " " << shell_escape("pathfile=#{@@pathfile_path}")
-          bin_path = "#{@@bin_path}/response"
-          # Call response program to get exclamation point separated payment response details
-          `#{bin_path} #{exec_chain}`.split('!')
         end
     end
   end
