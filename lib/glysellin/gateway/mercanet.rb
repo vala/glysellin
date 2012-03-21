@@ -88,9 +88,7 @@ module Glysellin
       def process_payment! post_data
         results = self.class.parse_mercanet_resp(post_data)
         # Réponse acceptée
-        valid_response = results[1].to_i == 0
-        # Renvoi de true si la réponse est positive ou de false si négative
-        valid = valid_response && results[11] == 0
+        valid = results[1].to_i == 0 && results[11].to_i == 0
         
         result = valid ? @order.pay! : false
         
