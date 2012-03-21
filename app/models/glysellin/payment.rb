@@ -9,5 +9,17 @@ module Glysellin
       self.last_payment_action_on = Time.now
       self.save
     end
+    
+    def new_transaction_id!
+      last_transaction_with_id = self.class.where('transaction_id > 0').order('updated_at DESC').limit(1).first
+      next_id = last_transaction_with_id ? last_transaction_with_id.transaction_id + 1 : 1
+      self.transaction_id = next_id
+      self.save
+    end
+    
+    def get_new_transaction_id
+      self.new_transaction_id!
+      self.transaction_id
+    end
   end
 end

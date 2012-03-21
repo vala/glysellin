@@ -50,7 +50,7 @@ module Glysellin
           :pathfile => @@pathfile_path,
           :data => @order.id,
           :amount => @order.total_price * 100,
-          :transaction_id => @order.payment.id + Time.now.to_i
+          :transaction_id => @order.payment.get_new_transaction_id
         }.to_a.map {|item| item[0].to_s + '=' + item[1].to_s}.join(' ')
 
         bin_path = "#{@@bin_path}/request"
