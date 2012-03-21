@@ -86,9 +86,11 @@ module Glysellin
       
       # Launch payment processing
       def process_payment! post_data
-        results = self.class.parse_mercanet_resp(post_data)
+        results = self.class.parse_mercanet_resp(Rack::Utils.parse_nested_query(post_data)['DATA'])
         # Réponse acceptée
         valid = results[1].to_i == 0 && results[11].to_i == 0
+        
+        Rails.logger.debug("Process payment : #{valid} DIRTY BITCH")
         
         result = valid ? @order.pay! : false
         
