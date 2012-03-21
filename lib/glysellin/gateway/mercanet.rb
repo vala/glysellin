@@ -43,7 +43,7 @@ module Glysellin
         
         def parse_mercanet_resp data
           # Prepare arguments
-          exec_chain = shell_escape("message=#{data}") << " " << shell_escape("pathfile=#{@@pathfile_path}")
+          exec_chain = shell_escape("message=#{data}") << " " << "pathfile=#{@@pathfile_path}"
           bin_path = "#{@@bin_path}/response"
           # Call response program to get exclamation point separated payment response details
           `#{bin_path} #{exec_chain}`.split('!')
