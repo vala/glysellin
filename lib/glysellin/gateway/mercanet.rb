@@ -49,7 +49,7 @@ module Glysellin
           :capture_mode => @@capture_mode,
           :pathfile => @@pathfile_path,
           :data => @order.id,
-          :amount => @order.total_price * 100,
+          :amount => (@order.total_price * 100).to_i,
           :transaction_id => @order.payment.get_new_transaction_id
         }.to_a.map {|item| item[0].to_s + '=' + item[1].to_s}.join(' ')
 
@@ -67,7 +67,7 @@ module Glysellin
         #   :executed_command => "#{bin_path} #{exec_chain}"
         # }
         
-        { :text => results.length == 0 ? "#{bin_path} #{exec_chain}" : results[1].to_i >= 0 ? results[3] : results[2] }
+        { :text => (results.length == 0 ? "#{bin_path} #{exec_chain}" : results[1].to_i >= 0 ? results[3] : results[2]).html_safe }
       end
 
       # Launch payment processing
