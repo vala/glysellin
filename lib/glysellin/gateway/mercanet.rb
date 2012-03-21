@@ -37,16 +37,21 @@ module Glysellin
       # Switch between test and prod modes for ActiveMerchant Paypal
       class << self
         # Extract order id from response data since it cannot be dynamically given via get URL
-        def parse_order_id data
-          parse_mercanet_resp(data)[32]
+        def parse_order_id data          
+          data_param = Rack::Utils.parse_nested_query(data)['DATA']
+          p "Parse id from RAW POST : #{data}"
+          p "Data param : #{data_param}"
+          parse_mercanet_resp(data_param)[32].to_i
         end
         
         def parse_mercanet_resp data
           # Prepare arguments
-          exec_chain = "message=#{data}" << " " << "pathfile=#{@@pathfile_path}"
+          exec_chain = "message=#{data} pathfile=#{@@pathfile_path}"
           bin_path = "#{@@bin_path}/response"
           # Call response program to get exclamation point separated payment response details
-          `#{bin_path} #{exec_chain}`.split('!')
+          resp = `#{bin_path} #{exec_chain}`.split('!')
+          p "Reponse de mercanet : #{resp} / Order id : #{resp[32]}"
+          resp
         end
       end
       
@@ -75,10 +80,10 @@ module Glysellin
         #   :html_form => results[3],
         #   :executed_command => "#{bin_path} #{exec_chain}"
         # }
-        
+
         { :text => (results.length == 0 ? "<div style=\"color:red\">#{bin_path} #{exec_chain}</div>" : results[1].to_i >= 0 ? results[3] : results[2]).html_safe }
       end
-
+      
       # Launch payment processing
       def process_payment! post_data
         results = self.class.parse_mercanet_resp(post_data)
@@ -86,9 +91,9 @@ module Glysellin
         valid_response = results[1].to_i == 0
         # Renvoi de true si la réponse est positive ou de false si négative
         valid = valid_response && results[11] == 0
-
+        
         result = valid ? @order.pay! : false
-
+        
         @order.save
         result
       end
