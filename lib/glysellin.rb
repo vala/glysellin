@@ -29,7 +29,10 @@ module Glysellin
   @@show_shipping_if_zero = false
   
   mattr_accessor :contact_email
-  @@contact_email = 'contact@example.com'
+  @@contact_email = 'orders@example.com'
+
+  mattr_accessor :shop_name
+  @@shop_name = 'Example Shop Name'
   
   # Payment statuses
   PAYMENT_STATUS_PENDING = 'pending'
