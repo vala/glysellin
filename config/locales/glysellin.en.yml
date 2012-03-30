@@ -7,6 +7,8 @@ fr:
       misc:
         back_to_homepage: "Back to home page"
       order:
+        billing_address: "Billing address"
+        shipping_address: "Shipping address"
         order_summary_title: "Order summary"
         your_informations: "Your informations"
         your_cart: "Your cart"

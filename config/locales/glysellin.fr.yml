@@ -7,6 +7,8 @@ fr:
       misc:
         back_to_homepage: "Retour à l'accueil"
       order:
+        billing_address: Adresse de facturation
+        shipping_address: Adresse de livraison
         order_summary_title: "Récapitulatif de la commande"
         your_informations: "Vos informations"
         your_cart: "Votre panier"
