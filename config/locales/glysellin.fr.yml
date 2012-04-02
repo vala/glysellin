@@ -24,6 +24,8 @@ fr:
         order_title: Commande
       payment_methods:
         pay_with_paypal: "Payer avec Paypal"
+        check:
+          send_your_check_text: "Votre commande a bien été prise en compte. Merci d'indiquer le numéro de commande suivant : %{order_ref} avec votre chèque, de mettre l'ordre à %{check_order} et de l'envoyer à l'adresse suivante : %{check_destination}"
       payment_responses:
         successfully_paid: "Paiement effectué"
         successfull_payment_text: "Votre paiement a bien été effectué, votre commande sera traité dans les meilleurs délais, un e-mail de confirmation vous a été envoyé."
@@ -31,6 +33,7 @@ fr:
         canceled_payment_text: "Une erreur s'est produite lors du traitement de votre paiement."
         try_to_pay_again: "Si vous voulez tenter à nouveau de payer, vous pouvez utiliser le bouton suivant"
         
+    # Order e-mails subjects
     order_admin_mailer:
       send_order_paid_email:
         subject: "Une nouvelle commande a été validée sur le site"

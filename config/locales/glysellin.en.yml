@@ -25,6 +25,8 @@ fr:
         order_title: Order
       payment_methods:
         pay_with_paypal: Payer avec paypal
+        check:
+          send_your_check_text: "Your order has been taken into account. Please put the following order reference : %{order_ref} with your check, the label at %{check_order} and send it to the following address : %{check_destination}"
       payment_responses:
         successfully_paid: "Payment successful"
         successfull_payment_text: "Your payment has been successfully processed, we'll take your order into account as fast as we can. An e-mail has been sent to you with all the relevant informations about your order."
