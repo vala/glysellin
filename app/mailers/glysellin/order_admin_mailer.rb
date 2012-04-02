@@ -3,6 +3,6 @@ class Glysellin::OrderAdminMailer < ActionMailer::Base
 
   def send_order_paid_email order
     @order = order
-    mail to: @order.email
+    mail to: Glysellin.admin_email
   end
 end

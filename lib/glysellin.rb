@@ -31,6 +31,9 @@ module Glysellin
   mattr_accessor :contact_email
   @@contact_email = 'orders@example.com'
 
+  mattr_accessor :admin_email
+  @@admin_email = 'admin@example.com'
+
   mattr_accessor :shop_name
   @@shop_name = 'Example Shop Name'
   
