@@ -1,6 +1,6 @@
-class CreateGlysellinProducts < ActiveRecord::Migration
+class CreateBundles < ActiveRecord::Migration
   def change
-    create_table :glysellin_products do |t|
+    create_table :glysellin_bundles do |t|
       t.string :sku
       t.string :name
       t.string :slug

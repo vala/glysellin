@@ -4,6 +4,7 @@ class CreateGlysellinOrderItems < ActiveRecord::Migration
     create_table :glysellin_order_items do |t|
       t.string :sku
       t.string :name
+      t.boolean :bundle, default: false
       t.integer :df_price
       t.integer :vat_rate
 

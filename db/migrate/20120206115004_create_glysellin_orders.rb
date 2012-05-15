@@ -4,7 +4,7 @@ class CreateGlysellinOrders < ActiveRecord::Migration
       t.string :ref
       t.string :status
       t.datetime :paid_on
-      t.integer :customer_id
+      t.integer :user_id
       t.integer :billing_address_id
       t.integer :shipping_address_id
       

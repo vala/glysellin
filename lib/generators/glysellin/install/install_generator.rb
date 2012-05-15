@@ -1,0 +1,32 @@
+require File.expand_path('../utils', __FILE__)
+
+module Glysellin
+  class InstallGenerator < Rails::Generators::Base
+    include Generators::Utils::InstanceMethods
+    # Copied files come from templates folder
+    source_root File.expand_path('../templates', __FILE__)
+    
+    # Generator desc
+    desc "Glysellin install generator"
+    
+    def welcome
+      do_say "Installing glysellin dependencies and files !"
+    end
+        
+    def copy_initializer_file
+      do_say "Installing default initializer template"
+      copy_file "initializer.rb", "config/initializers/glysellin.rb"
+    end
+    
+    def copy_migrations
+      do_say "Installing migrations, don't forget to `rake db:migrate`"
+      rake "glysellin_engine:install:migrations"
+    end
+    
+    def mount_engine
+      mount_path = ask("Where would you like to mount Glysellin shop engine ? [/shop]").presence || '/shop'
+      gsub_file "config/routes.rb", /glysellin_at \'\/?.*\'/, ''
+      route "glysellin_at '#{mount_path.match(/^\//) ? mount_path : "/#{mount_path}"}'"
+    end
+  end
+end

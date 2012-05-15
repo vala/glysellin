@@ -1,0 +1,8 @@
+Description:
+    Installs Glysellin's migrations and set up a default initializer template to help app scope configuration
+
+Example:
+    rails generate blogel:install
+
+    This will create the migrations and config/initializers/blogel.rb
+        

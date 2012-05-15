@@ -1,24 +1,40 @@
 module Glysellin
   class Order < ActiveRecord::Base
     self.table_name = 'glysellin_orders'
+    
+    # Relations
+    #
+    # Order items are used to map order to cloned and simplified products 
+    #   so the Order propererties can't be affected by product updates
     has_many :items, :class_name => 'Glysellin::OrderItem', :foreign_key => 'order_id'
+    # The actual buyer
     belongs_to :customer
+    # Addresses
     belongs_to :billing_address, :foreign_key => 'billing_address_id', :class_name => 'Glysellin::Address'
     belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address'
+    # Payment tries
     has_many :payments
     
+    # We want to be able to see fields_for addresses
     accepts_nested_attributes_for :billing_address
     accepts_nested_attributes_for :shipping_address
     
-    # Constants
+    # Status const to be used to define order step to cart shopping
     ORDER_STEP_CART = 'cart'
+    # Status const to be used to define order step to address
     ORDER_STEP_ADDRESS = 'fill_addresses'
+    # Status const to be used to define order step to defining payment method
     ORDER_STEP_PAYMENT_METHOD = 'recap'
+    # Status const to be used to define order step to payment
     ORDER_STEP_PAYMENT = 'payment'
     
+    # Status const to be used to define order status to payment
     ORDER_STATUS_PAYMENT_PENDING = 'payment'
+    # Status const to be used to define order status to paid
     ORDER_STATUS_PAID = 'paid'
+    # Status const to be used to define order status to shipping
     ORDER_STATUS_SHIPPING_PENDING = 'shipping'
+    # Status const to be used to define order status to shipped
     ORDER_STATUS_SHIPPED = 'shipped'
     
     # Ensure there is always an order reference for billing purposes
@@ -29,14 +45,23 @@ module Glysellin
       end
     end
     
-    # yield ref when to_param called on instance
+    # Define model to use it's ref when asked for parameterized
+    #   representation of itself
+    #
+    # @return [String] the order ref
     def to_param
       ref
     end
     
-    # Automatic ref generation for our 
+    # Automatic ref generation for an order that can be overriden
+    #   within the config initializer, and only executes if there's no
+    #   existing ref inside for this order
+    #
+    # @return [String] the generated or existing ref
     def generate_ref
-      unless ref
+      if ref
+        ref
+      else
         if Glysellin.order_reference_generator
           Glysellin.order_reference_generator.call(self)
         else
@@ -45,10 +70,27 @@ module Glysellin
       end
     end
     
-    def initialize_from_json json
+    # Used to parse an Order item serialized into JSON
+    #
+    # @param [String] json JSON string object representing the order attributes
+    #
+    # @return [Boolean] wether or not the object has been 
+    #   successfully initialized
+    def initialize_from_json! json
       self.attributes = ActiveSupport::JSON.decode(json)
     end
     
+    # Permits to create or update an order from nested forms (hashes)
+    #   and can create a whole order object ready to be paid but 
+    #   only modifies the order from the params passed in the order_hash param
+    #
+    # @param [Hash] order_hash Hash of hashes containing order data from nested forms
+    # @param [Customer] customer Customer object to map to the order
+    #
+    # @example Setting shipping address
+    #   Glysellin::Order.from_sub_forms { shipping_address: { first_name: 'Me' ... } }
+    #
+    # @return [] the created or updated Order item
     def self.from_sub_forms order_hash, customer = nil
       o = Order.new
       # Define shipping address
@@ -86,7 +128,9 @@ module Glysellin
       o
     end
     
-    # Defines next resource to ask user for, given the state of the current order
+    # Gives the next step to ask user to pass through
+    #   given the state of the current order deined by the informations
+    #   already filled in the model
     def next_step
       if items.length == 0
         ORDER_STEP_CART
@@ -99,26 +143,39 @@ module Glysellin
       end
     end
     
+    # Deprecated: sucks because we can Order.find_by_ref(ref)
     def self.from_ref ref
       where(:ref => ref).first
     end    
     
-    # Global order prices
+    # Gets order subtotal from items only
+    #
+    # @param [Boolean] df Defines if we want to get duty free price or not
+    #
+    # @return [BigDecimal] the calculated subtotal
     def subtotal df = false
       @_subtotal ||= items.reduce(0) {|l, r| l + (df ? r.df_price : r.price)}
     end
     
+    # Not implemented yet
     def shipping_price df = false
       0
     end
-    
+
+    # Gets order total price from subtotal and adjustments
+    #
+    # @param [Boolean] df Defines if we want to get duty free price or not
+    #
+    # @return [BigDecimal] the calculated total price
     def total_price df = false
       @_total_price ||= (subtotal(df) + shipping_price(df))
     end
     
-    # Get email
+    # Customer's e-mail directly accessible from the order
+    #
+    # @return [String] the wanted e-mail string
     def email
-      billing_address.email
+      customer.email
     end
     
     ########################################
@@ -127,15 +184,25 @@ module Glysellin
     #
     ########################################
     
+    # Gives the last payment found for that order
+    #
+    # @return [Payment, nil] the found Payment item or nil
     def payment
       payments.last
     end
     
-    # Last payment method
+    # Returns the last payment method used if there has already been
+    #   a payment try
+    #
+    # @return [PaymentType, nil] the PaymentMethod or nil
     def payment_method
       payment.type rescue nil
     end
     
+    # Tells the order it is paid and processes to the necessary
+    #   updates the model and related object need to retrieve payment infos
+    #
+    # @return [Boolean] if the doc was saved
     def pay!
       self.payment.new_status PAYMENT_STATUS_PAID
       self.status = ORDER_STATUS_PAID
@@ -143,6 +210,9 @@ module Glysellin
       self.save
     end
     
+    # Tells if the order is currently paid or not
+    #
+    # @return [Boolean] whether it is paid or not
     def paid?
       payment.status == PAYMENT_STATUS_PAID
     end    

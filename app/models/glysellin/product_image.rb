@@ -1,7 +1,9 @@
 module Glysellin
   class ProductImage < ActiveRecord::Base
     self.table_name = 'glysellin_product_images'
-    belongs_to :product
+    
+    belongs_to :imageable, polymorphic: true
+    
     has_attached_file :image,
       :styles => {
         :thumb => '100x100#',
