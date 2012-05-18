@@ -3,6 +3,9 @@ module Glysellin
     include ModelInstanceHelperMethods
     
     self.table_name = 'glysellin_taxonomies'
+    
+    attr_accessible :name
+    
     has_and_belongs_to_many :products, :join_table => 'glysellin_products_taxonomies'
     
     has_many :sub_taxonomies, :class_name => 'Taxonomy'

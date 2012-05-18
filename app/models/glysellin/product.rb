@@ -7,17 +7,21 @@ module Glysellin
     include ProductMethods
 
     self.table_name = 'glysellin_products'
-    
+
+    attr_accessible :description, :df_price, :name, :sku, :slug, :vat_rate, :brand, :taxonomies, :images
+
     # Relations
     #
     # The ProductImage model is used for products and bundles with the same
-    has_many :images, through: :imageable, class_name: 'ProductImage'
+    has_many :images, as: :imageable, class_name: 'Glysellin::ProductImage'
     # Can have multiple taxonomies
     has_and_belongs_to_many :taxonomies, join_table: 'glysellin_products_taxonomies'
     # N..N relation between bundles and products
-    has_many :bundle_products
-    has_many :bundles, through: :bundle_products
-    
+    has_many :bundle_products, class_name: 'Glysellin::BundleProduct'
+    has_many :bundles, through: :bundle_products, class_name: 'Glysellin::Bundle'
+    # Products can belong to a brand
+    belongs_to :brand
+
     # Validations 
     #
     validates_presence_of :name, :df_price, :vat_rate, :slug
@@ -25,7 +29,7 @@ module Glysellin
     validates :sku, presence: true, if: proc { Glysellin.autoset_sku }
     # Prices validation
     validates_numericality_of :df_price, :vat_rate
-        
+
     # Callbacks
     #
     # We always check we have a slug for our product
@@ -34,7 +38,7 @@ module Glysellin
       self.slug = self.name.to_slug
       self.sku = self.generate_sku unless (self.sku && self.sku.length > 0) || !Glysellin.autoset_sku
     end
-            
+
     class << self
       # Find products with taxonomy slugs or taxonomies
       #
