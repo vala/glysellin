@@ -11,7 +11,7 @@ module Glysellin
     # Associations
     #
     # The ProductImage model is used for products and bundles
-    has_many :images, as: :imageable, class_name: 'ProductImage'
+    has_many :images, as: :imageable, class_name: 'Glysellin::ProductImage'
     # Taxonomies can be bound to bundles like product taxonomies
     has_and_belongs_to_many :taxonomies, join_table: 'glysellin_bundles_taxonomies'
     # N..N relation between bundles and products

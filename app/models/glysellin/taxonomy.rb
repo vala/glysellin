@@ -4,11 +4,11 @@ module Glysellin
     
     self.table_name = 'glysellin_taxonomies'
     
-    attr_accessible :name
+    attr_accessible :name, :parent_taxonomy, :sub_taxonomies, :products
     
     has_and_belongs_to_many :products, :join_table => 'glysellin_products_taxonomies'
     
-    has_many :sub_taxonomies, :class_name => 'Taxonomy'
+    has_many :sub_taxonomies, :class_name => 'Taxonomy', :foreign_key => 'parent_taxonomy_id'
     belongs_to :parent_taxonomy, :foreign_key => 'parent_taxonomy_id', :class_name => 'Taxonomy'
     
     before_validation do

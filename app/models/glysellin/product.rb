@@ -52,5 +52,9 @@ module Glysellin
         Product.join(:glysellin_products_taxonomies).includes(:taxonomies).where('glysellin_taxonomies.slug IN (?)', taxonomies)
       end
     end
+    
+    def price
+      (((1 + (vat_rate / 100)) * df_price) * 100).round / 100.0
+    end
   end
 end
