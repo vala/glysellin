@@ -8,6 +8,8 @@ module Glysellin
     has_many :billed_orders, :class_name => 'Glysellin::Order', :foreign_key => 'billing_address_id'
     has_many :shipped_orders, :class_name => 'Glysellin::Order', :foreign_key => 'shipping_address_id'
     
+    attr_accessible :activated, :first_name, :last_name, :address, :zip, :city, :country, :tel, :fax, :billed_orders, :shipped_orders
+    
     # Validations
     #
     # Validates presence of the fields defined in the config file or the glysellin initializer
