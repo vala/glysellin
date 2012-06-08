@@ -56,5 +56,15 @@ module Glysellin
     def price
       (((1 + (vat_rate / 100)) * df_price) * 100).round / 100.0
     end
+    
+    def price=(val)
+      if self.vat_rate.blank?
+        self.vat_rate = 0
+        self.df_price = val
+      else
+        self.df_price = price / (1 + (vat_rate / 100))
+      end
+    end
+    
   end
 end
