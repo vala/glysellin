@@ -39,6 +39,6 @@ module Glysellin
     # @return [BigDecimal] the calculated price from Duty free price and VAT rate
     def price
       df_price * (1 + (vat_rate / 100))
-    end
+    end    
   end
 end

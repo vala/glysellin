@@ -8,7 +8,7 @@ module Glysellin
 
     self.table_name = 'glysellin_products'
 
-    attr_accessible :description, :df_price, :name, :sku, :slug, :vat_rate, :brand, :taxonomies, :images
+    attr_accessible :description, :df_price, :name, :sku, :slug, :vat_rate, :brand, :taxonomies, :images, :properties
 
     # Relations
     #
@@ -21,6 +21,8 @@ module Glysellin
     has_many :bundles, through: :bundle_products, class_name: 'Glysellin::Bundle'
     # Products can belong to a brand
     belongs_to :brand
+    
+    has_many :properties, class_name: 'Glysellin::ProductProperty'
 
     # Validations 
     #
