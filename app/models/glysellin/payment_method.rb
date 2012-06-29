@@ -4,6 +4,7 @@ module Glysellin
     self.table_name = 'glysellin_payment_methods'
     has_many :payments, :foreign_key => 'type_id'
     
+    attr_accessible :name, :slug
     # Get the gateway object corresponding to the current payment from
     #   the options hash passed as parameters
     #
