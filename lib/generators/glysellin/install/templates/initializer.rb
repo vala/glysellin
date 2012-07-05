@@ -37,6 +37,13 @@ Glysellin.config do |config|
   #   m.pathfile_path = Rails.root.join('vendor', 'mercanet', 'param', 'pathfile')
   #   m.bin_path = Rails.root.join('vendor', 'mercanet', 'bin', 'static')
   # end
+
+  # Config sogenactif account
+  # config.gateways['sogenactif'].config do |m|
+  #   s.merchant_id = '0123012302130120'
+  #   s.pathfile_path = Rails.root.join('vendor', 'mercanet', 'param', 'pathfile')
+  #   s.bin_path = Rails.root.join('vendor', 'mercanet', 'bin', 'static')
+  # end
   
   # config.gateways['check'].config do |c|
   #   c.checks_order = "Order me nasty !"
