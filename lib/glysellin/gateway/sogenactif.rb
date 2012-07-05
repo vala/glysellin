@@ -1,7 +1,7 @@
 module Glysellin
   module Gateway
-    class Mercanet < Glysellin::Gateway::Base
-      register 'mercanet', self
+    class Sogenactif < Glysellin::Gateway::Base
+      register 'sogenactif', self
       
       mattr_accessor :bin_path
       @@bin_path = ''
@@ -40,16 +40,16 @@ module Glysellin
           data_param = Rack::Utils.parse_nested_query(data)['DATA']
           p "Parse id from RAW POST : #{data}"
           p "Data param : #{data_param}"
-          parse_mercanet_resp(data_param)[32].to_i
+          parse_sogenactif_resp(data_param)[32].to_i
         end
         
-        def parse_mercanet_resp data
+        def parse_sogenactif_resp data
           # Prepare arguments
           exec_chain = "message=#{data} pathfile=#{@@pathfile_path}"
           bin_path = "#{@@bin_path}/response"
           # Call response program to get exclamation point separated payment response details
           resp = `#{bin_path} #{exec_chain}`.split('!')
-          p "Reponse de mercanet : #{resp} / Order id : #{resp[32]}"
+          p "Reponse de sogenactif : #{resp} / Order id : #{resp[32]}"
           resp
         end
       end
@@ -85,7 +85,7 @@ module Glysellin
       
       # Launch payment processing
       def process_payment! post_data
-        results = self.class.parse_mercanet_resp(Rack::Utils.parse_nested_query(post_data)['DATA'])
+        results = self.class.parse_sogenactif_resp(Rack::Utils.parse_nested_query(post_data)['DATA'])
         # Réponse acceptée
         valid = results[1].to_i == 0 && results[11].to_i == 0
         
