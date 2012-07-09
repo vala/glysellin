@@ -14,5 +14,13 @@ module Glysellin
     before_validation do
       self.slug = self.name.to_slug
     end
+    
+    def all_products
+      Product.includes(:taxonomies).where('glysellin_products_taxonomies.taxonomy_id IN (?)', taxonomy_tree_ids)
+    end
+    
+    def taxonomy_tree_ids
+      sub_taxonomies.length > 0 ? sub_taxonomies.includes(:sub_taxonomies).map(&:taxonomy_tree_ids).flatten : self.id
+    end
   end
 end
