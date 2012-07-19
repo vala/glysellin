@@ -6,7 +6,7 @@ module Glysellin
     
     self.table_name = 'glysellin_bundles'
     
-    attr_accessible :description, :df_price, :name, :sku, :slug, :vat_rate, :products, :images
+    attr_accessible :description, :df_price, :name, :sku, :slug, :vat_rate, :products, :images, :price
   
     # Associations
     #
@@ -35,10 +35,5 @@ module Glysellin
       self.slug = self.name.to_slug
       self.sku = self.generate_sku unless (self.sku && self.sku.length > 0) || !Glysellin.autoset_sku
     end
-    
-    # @return [BigDecimal] the calculated price from Duty free price and VAT rate
-    def price
-      df_price * (1 + (vat_rate / 100))
-    end    
   end
 end
