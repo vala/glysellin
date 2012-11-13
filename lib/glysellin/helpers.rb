@@ -11,7 +11,7 @@ module Glysellin
       self.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
     end
   end
-  
+
   # Module that adds instance methods used through multiple models
   module ModelInstanceHelperMethods
     # Used for Rails to handle the parameterization of an object so
@@ -22,4 +22,9 @@ module Glysellin
       slug
     end
   end
+
+  module Helpers
+  end
 end
+
+require 'glysellin/helpers/views'

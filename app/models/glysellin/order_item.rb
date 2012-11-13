@@ -1,7 +1,7 @@
 module Glysellin
   class OrderItem < ActiveRecord::Base
     self.table_name = 'glysellin_order_items'
-    belongs_to :order
+    belongs_to :order, inverse_of: :items
 
     attr_accessible :sku, :name, :eot_price, :vat_rate, :bundle, :price
 
@@ -16,7 +16,12 @@ module Glysellin
     # @return [OrderItem] The created order item
     def self.create_from_product_slug slug, bundle = false
       product = (bundle ? Bundle : Product).find_by_slug(slug)
-      new product.attributes.select {|k,v| @@product_attributes_for_item.include?(k)}.merge({ bundle: bundle, price: product.price }) if product
+
+      if product
+        new product.attributes.select do |k,v|
+          @@product_attributes_for_item.include?(k)
+        end.merge({ bundle: bundle, price: product.price })
+      end
     end
   end
 end

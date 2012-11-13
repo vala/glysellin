@@ -32,6 +32,17 @@ fr:
         payment_canceled: "Paiement annulé"
         canceled_payment_text: "Une erreur s'est produite lors du traitement de votre paiement."
         try_to_pay_again: "Si vous voulez tenter à nouveau de payer, vous pouvez utiliser le bouton suivant"
+      payments:
+        statuses:
+          pending: "En attente"
+          paid: "Payé"
+          canceled: "Annulé"
+      orders:
+        statuses:
+          payment: Paiement en attente
+          paid: Payé
+          shipping: Livraison en cours
+          shipped: Livré
 
     # Order e-mails subjects
     order_admin_mailer:

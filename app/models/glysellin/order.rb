@@ -8,20 +8,25 @@ module Glysellin
     #   so the Order propererties can't be affected by product updates
     has_many :items, :class_name => 'Glysellin::OrderItem', :foreign_key => 'order_id'
     # The actual buyer
-    belongs_to :customer
+    belongs_to :customer, :class_name => "::#{ Glysellin.user_class_name }", :inverse_of => :orders
     # Addresses
-    belongs_to :billing_address, :foreign_key => 'billing_address_id', :class_name => 'Glysellin::Address'
-    belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address'
+    belongs_to :billing_address, :foreign_key => 'billing_address_id', :class_name => 'Glysellin::Address', :inverse_of => :billed_orders
+    belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address', :inverse_of => :shipped_orders
     # Payment tries
-    has_many :payments
+    has_many :payments, :inverse_of => :order
 
     # We want to be able to see fields_for addresses
     accepts_nested_attributes_for :billing_address
     accepts_nested_attributes_for :shipping_address
+    accepts_nested_attributes_for :items
+    accepts_nested_attributes_for :customer
+    accepts_nested_attributes_for :payments
 
     attr_accessible :billing_address_attributes, :shipping_address_attributes,
       :billing_address, :shipping_address, :payments,
-      :items, :items_ids, :customer, :customer_id, :sku, :name, :slug
+      :items, :items_ids, :customer, :customer_id, :ref, :status, :paid_on,
+      :user, :items, :payments, :customer_attributes, :payments_attributes,
+      :items_attributes
 
     # Status const to be used to define order step to cart shopping
     ORDER_STEP_CART = 'cart'
@@ -46,6 +51,12 @@ module Glysellin
       unless self.ref
         self.ref = self.generate_ref
         self.save
+      end
+    end
+
+    def status_enum
+      [ORDER_STATUS_PAYMENT_PENDING, ORDER_STATUS_PAID, ORDER_STATUS_SHIPPING_PENDING, ORDER_STATUS_SHIPPED].map do |s|
+        [I18n.t("glysellin.labels.orders.statuses.#{ s }"), s]
       end
     end
 
@@ -94,7 +105,7 @@ module Glysellin
         ORDER_STEP_ADDRESS
       elsif !(payments.length > 0)
         ORDER_STEP_PAYMENT_METHOD
-      elsif payments.last.status == PAYMENT_STATUS_PENDING
+      elsif payments.last.status == Payment::PAYMENT_STATUS_PENDING
         ORDER_STEP_PAYMENT
       end
     end
@@ -160,7 +171,7 @@ module Glysellin
     #
     # @return [Boolean] if the doc was saved
     def pay!
-      self.payment.new_status PAYMENT_STATUS_PAID
+      self.payment.new_status Payment::PAYMENT_STATUS_PAID
       self.status = ORDER_STATUS_PAID
       self.paid_on = payment.last_payment_action_on
       self.save
@@ -170,7 +181,7 @@ module Glysellin
     #
     # @return [Boolean] whether it is paid or not
     def paid?
-      payment.status == PAYMENT_STATUS_PAID
+      payment.status == Payment::PAYMENT_STATUS_PAID
     end
   end
 
@@ -231,7 +242,7 @@ module Glysellin
   def fill_payment_method_from_hash order_hash
     return unless order_hash[:payment_method] && order_hash[:payment_method][:type]
 
-    payment = self.payments.build :status => PAYMENT_STATUS_PENDING
+    payment = self.payments.build :status => Payment::PAYMENT_STATUS_PENDING
     payment.type = PaymentMethod.find_by_slug(order_hash[:payment_method][:type])
     self.status = ORDER_STATUS_PAYMENT_PENDING
   end

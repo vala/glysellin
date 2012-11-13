@@ -7,6 +7,7 @@ namespace :glysellin do
     ['Société Général', 'sogenactif']].each do |payment_method|
       attributes = Hash[[:name, :slug].zip(payment_method)]
       Glysellin::PaymentMethod.create(attributes)
+      puts "Created payment method : #{ attributes[:name] }"
     end
   end
 end

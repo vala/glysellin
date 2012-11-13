@@ -64,13 +64,6 @@ module Glysellin
   mattr_accessor :default_vat_rate
   @@default_vat_rate = 19.6
 
-  # Public: Status const to be used if payment pending
-  PAYMENT_STATUS_PENDING = 'pending'
-  # Public: Status const to be used if payment paid
-  PAYMENT_STATUS_PAID = 'paid'
-  # Public: Status const to be used if payment canceled
-  PAYMENT_STATUS_CANCELED = 'canceled'
-
   # Public: Permits using config block in order to set
   #   Glysellin module attributes
   #

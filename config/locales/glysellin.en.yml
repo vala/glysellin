@@ -30,6 +30,17 @@ fr:
       payment_responses:
         successfully_paid: "Payment successful"
         successfull_payment_text: "Your payment has been successfully processed, we'll take your order into account as fast as we can. An e-mail has been sent to you with all the relevant informations about your order."
+      payments:
+        statuses:
+          pending: "Pending"
+          paid: "Paid"
+          canceled: "Canceled"
+      orders:
+        statuses:
+          payment: Payment pending
+          paid: Paid
+          shipping: Shipping
+          shipped: Shipped
 
     order_admin_mailer:
       send_order_paid_email:
