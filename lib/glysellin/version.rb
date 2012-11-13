@@ -1,3 +1,3 @@
 module Glysellin
-  VERSION = "0.2.rc"
+  VERSION = "0.3.alpha"
 end
