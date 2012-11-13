@@ -3,11 +3,11 @@ module Glysellin
   #   their own properties and price, just like simple products.
   class Bundle < ActiveRecord::Base
     include ProductMethods
-    
+
     self.table_name = 'glysellin_bundles'
-    
-    attr_accessible :description, :df_price, :name, :sku, :slug, :vat_rate, :products, :images, :price
-  
+
+    attr_accessible :description, :eot_price, :name, :sku, :slug, :vat_rate, :products, :images, :price
+
     # Associations
     #
     # The ProductImage model is used for products and bundles
@@ -17,16 +17,16 @@ module Glysellin
     # N..N relation between bundles and products
     has_many :bundle_products, class_name: 'Glysellin::BundleProduct'
     has_many :products, through: :bundle_products, class_name: 'Glysellin::Product'
-  
-  
+
+
     # Validations
-    # 
-    # 
-    validates_presence_of :name, :df_price, :vat_rate, :slug
+    #
+    #
+    validates_presence_of :name, :eot_price, :vat_rate, :slug
     # As for products, we can automatically set the SKU if asked in config file
     validates :sku, presence: true, if: Proc.new { Glysellin.autoset_sku }
-    validates_numericality_of :df_price, :vat_rate
-    
+    validates_numericality_of :eot_price, :vat_rate
+
     # Callbacks
     #
     # We always check we have a slug for our product

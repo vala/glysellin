@@ -1,10 +1,10 @@
 module Glysellin
   class Order < ActiveRecord::Base
     self.table_name = 'glysellin_orders'
-    
+
     # Relations
     #
-    # Order items are used to map order to cloned and simplified products 
+    # Order items are used to map order to cloned and simplified products
     #   so the Order propererties can't be affected by product updates
     has_many :items, :class_name => 'Glysellin::OrderItem', :foreign_key => 'order_id'
     # The actual buyer
@@ -14,11 +14,15 @@ module Glysellin
     belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address'
     # Payment tries
     has_many :payments
-    
+
     # We want to be able to see fields_for addresses
     accepts_nested_attributes_for :billing_address
     accepts_nested_attributes_for :shipping_address
-    
+
+    attr_accessible :billing_address_attributes, :shipping_address_attributes,
+      :billing_address, :shipping_address, :payments,
+      :items, :items_ids, :customer, :customer_id, :sku, :name, :slug
+
     # Status const to be used to define order step to cart shopping
     ORDER_STEP_CART = 'cart'
     # Status const to be used to define order step to address
@@ -27,7 +31,7 @@ module Glysellin
     ORDER_STEP_PAYMENT_METHOD = 'recap'
     # Status const to be used to define order step to payment
     ORDER_STEP_PAYMENT = 'payment'
-    
+
     # Status const to be used to define order status to payment
     ORDER_STATUS_PAYMENT_PENDING = 'payment'
     # Status const to be used to define order status to paid
@@ -36,15 +40,15 @@ module Glysellin
     ORDER_STATUS_SHIPPING_PENDING = 'shipping'
     # Status const to be used to define order status to shipped
     ORDER_STATUS_SHIPPED = 'shipped'
-    
+
     # Ensure there is always an order reference for billing purposes
     after_save do
       unless self.ref
-        self.ref = self.generate_ref 
+        self.ref = self.generate_ref
         self.save
       end
     end
-    
+
     # Define model to use it's ref when asked for parameterized
     #   representation of itself
     #
@@ -52,7 +56,7 @@ module Glysellin
     def to_param
       ref
     end
-    
+
     # Automatic ref generation for an order that can be overriden
     #   within the config initializer, and only executes if there's no
     #   existing ref inside for this order
@@ -69,65 +73,17 @@ module Glysellin
         end
       end
     end
-    
+
     # Used to parse an Order item serialized into JSON
     #
     # @param [String] json JSON string object representing the order attributes
     #
-    # @return [Boolean] wether or not the object has been 
+    # @return [Boolean] wether or not the object has been
     #   successfully initialized
     def initialize_from_json! json
       self.attributes = ActiveSupport::JSON.decode(json)
     end
-    
-    # Permits to create or update an order from nested forms (hashes)
-    #   and can create a whole order object ready to be paid but 
-    #   only modifies the order from the params passed in the order_hash param
-    #
-    # @param [Hash] order_hash Hash of hashes containing order data from nested forms
-    # @param [Customer] customer Customer object to map to the order
-    #
-    # @example Setting shipping address
-    #   Glysellin::Order.from_sub_forms { shipping_address: { first_name: 'Me' ... } }
-    #
-    # @return [] the created or updated Order item
-    def self.from_sub_forms order_hash, customer = nil
-      o = Order.new
-      # Define shipping address
-      o.shipping_address = Address.new order_hash[:shipping_address] if order_hash.key?(:shipping_address)
-      # Define billing address
-      if order_hash.key?(:billing_address)
-        same_address = order_hash[:billing_address].key?(:use_billing_address_for_shipping) ? !order_hash[:billing_address].delete(:use_billing_address_for_shipping).blank? : false
-        o.billing_address = Address.new order_hash[:billing_address]
-        # Define shipping address if we must use same address
-        o.shipping_address = Address.new order_hash[:billing_address] if same_address
-      end
-      # Define payment method
-      if order_hash.key?(:payment_method) && order_hash[:payment_method].key?(:type)
-        payment = o.payments.build :status => PAYMENT_STATUS_PENDING
-        payment.type = PaymentMethod.find_by_slug(order_hash[:payment_method][:type])
-        o.status = ORDER_STATUS_PAYMENT_PENDING
-      end
-      # Define products :
-      if order_hash.key?(:products) && order_hash[:products].length > 0
-        order_hash[:products].each do |product_slug, value|
-          if product_slug && value != '0'
-            item = OrderItem.create_from_product_slug(product_slug)
-            o.items << item if item
-          end
-        end
-      end
-      if order_hash.key?(:product_choice) && order_hash[:product_choice].length > 0
-        order_hash[:product_choice].each_value do |product_slug|
-          if product_slug
-            item = OrderItem.create_from_product_slug(product_slug)
-            o.items << item if item
-          end
-        end
-      end
-      o
-    end
-    
+
     # Gives the next step to ask user to pass through
     #   given the state of the current order deined by the informations
     #   already filled in the model
@@ -142,21 +98,21 @@ module Glysellin
         ORDER_STEP_PAYMENT
       end
     end
-    
+
     # Deprecated: sucks because we can Order.find_by_ref(ref)
     def self.from_ref ref
       where(:ref => ref).first
-    end    
-    
+    end
+
     # Gets order subtotal from items only
     #
     # @param [Boolean] df Defines if we want to get duty free price or not
     #
     # @return [BigDecimal] the calculated subtotal
     def subtotal df = false
-      @_subtotal ||= items.reduce(0) {|l, r| l + (df ? r.df_price : r.price)}
+      @_subtotal ||= items.reduce(0) {|l, r| l + (df ? r.eot_price : r.price)}
     end
-    
+
     # Not implemented yet
     def shipping_price df = false
       0
@@ -170,27 +126,27 @@ module Glysellin
     def total_price df = false
       @_total_price ||= (subtotal(df) + shipping_price(df))
     end
-    
+
     # Customer's e-mail directly accessible from the order
     #
     # @return [String] the wanted e-mail string
     def email
       customer.email
     end
-    
+
     ########################################
     #
-    #               Payment 
+    #               Payment
     #
     ########################################
-    
+
     # Gives the last payment found for that order
     #
     # @return [Payment, nil] the found Payment item or nil
     def payment
       payments.last
     end
-    
+
     # Returns the last payment method used if there has already been
     #   a payment try
     #
@@ -198,7 +154,7 @@ module Glysellin
     def payment_method
       payment.type rescue nil
     end
-    
+
     # Tells the order it is paid and processes to the necessary
     #   updates the model and related object need to retrieve payment infos
     #
@@ -209,12 +165,97 @@ module Glysellin
       self.paid_on = payment.last_payment_action_on
       self.save
     end
-    
+
     # Tells if the order is currently paid or not
     #
     # @return [Boolean] whether it is paid or not
     def paid?
       payment.status == PAYMENT_STATUS_PAID
-    end    
+    end
   end
+
+
+  class << self
+    # Permits to create or update an order from nested forms (hashes)
+    #   and can create a whole order object ready to be paid but
+    #   only modifies the order from the params passed in the order_hash param
+    #
+    # @param [Hash] order_hash Hash of hashes containing order data from nested forms
+    # @param [Customer] customer Customer object to map to the order
+    #
+    # @example Setting shipping address
+    #   Glysellin::Order.from_sub_forms { shipping_address: { first_name: 'Me' ... } }
+    #
+    # @return [] the created or updated Order item
+    def from_sub_forms order_hash, customer = nil
+      # Fetch order from order_hash id if given
+      if (id = order_hash[:order_id])
+        order = Order.find(id)
+      # Or create a new one
+      else
+        order = Order.new
+      end
+
+      # Try to fill as much as we can
+      order.fill_addresses_from_hash(order_hash)
+      order.fill_payment_method_from_hash(order_hash)
+      order.fill_products_from_hash(order_hash)
+      order.fill_product_choices_from_hash(order_hash)
+
+      #
+      order
+    end
+  end
+
+  def fill_addresses_from_hash order_hash
+    return unless order_hash[:billing_address]
+    # Store billing address
+    self.billing_address = Address.new order_hash[:billing_address]
+
+    # Check if we have to use the billing address for shipping
+    if order_hash[:billing_address][:use_billing_address_for_shipping]
+      same_address = order_hash[:billing_address][:use_billing_address_for_shipping].presence
+    else
+      same_address = false
+    end
+
+    # Define shipping address if we must use same address
+    if same_address
+      self.shipping_address = Address.new order_hash[:billing_address]
+    # Else, if we are given a specific shipping address
+    elsif order_hash[:shipping_address]
+      self.shipping_address = Address.new order_hash[:shipping_address]
+    end
+  end
+
+  def fill_payment_method_from_hash order_hash
+    return unless order_hash[:payment_method] && order_hash[:payment_method][:type]
+
+    payment = self.payments.build :status => PAYMENT_STATUS_PENDING
+    payment.type = PaymentMethod.find_by_slug(order_hash[:payment_method][:type])
+    self.status = ORDER_STATUS_PAYMENT_PENDING
+  end
+
+  def fill_products_from_hash order_hash
+    return unless order_hash[:products] && order_hash[:products].length > 0
+
+    order_hash[:products].each do |product_slug, value|
+      if product_slug && value != '0'
+        item = OrderItem.create_from_product_slug(product_slug)
+        self.items << item if item
+      end
+    end
+  end
+
+  def fill_product_choices_from_hash order_hash
+    return unless order_hash[:product_choice] && order_hash[:product_choice].length > 0
+
+    order_hash[:product_choice].each_value do |product_slug|
+      if product_slug
+        item = OrderItem.create_from_product_slug(product_slug)
+        self.items << item if item
+      end
+    end
+  end
+
 end

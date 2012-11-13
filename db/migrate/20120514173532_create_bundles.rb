@@ -5,7 +5,7 @@ class CreateBundles < ActiveRecord::Migration
       t.string :name
       t.string :slug
       t.text :description
-      t.decimal :df_price, :default => 0, :precision => 11, :scale => 2
+      t.decimal :eot_price, :default => 0, :precision => 11, :scale => 2
       t.decimal :vat_rate, :default => 0, :precision => 11, :scale => 2
       t.integer :in_stock
       t.timestamps

@@ -2,7 +2,7 @@ fr:
   glysellin:
     controllers:
       errors:
-        order_doesnt_exist: "Le numéro de commande demandé n'existe pas"        
+        order_doesnt_exist: "Le numéro de commande demandé n'existe pas"
     labels:
       misc:
         back_to_homepage: "Retour à l'accueil"
@@ -15,7 +15,7 @@ fr:
         order_reference: "Numéro de commande"
         sku: "SKU"
         name: "Nom"
-        df_price: "Prix HT"
+        eot_price: "Prix HT"
         price: "Prix TTC"
         subtotal: "Sous-total"
         shipping: "Frais de port"
@@ -32,7 +32,7 @@ fr:
         payment_canceled: "Paiement annulé"
         canceled_payment_text: "Une erreur s'est produite lors du traitement de votre paiement."
         try_to_pay_again: "Si vous voulez tenter à nouveau de payer, vous pouvez utiliser le bouton suivant"
-        
+
     # Order e-mails subjects
     order_admin_mailer:
       send_order_paid_email:

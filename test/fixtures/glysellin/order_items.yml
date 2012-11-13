@@ -3,11 +3,11 @@
 one:
   sku: MyString
   name: MyString
-  df_price: 1
+  eot_price: 1
   vat_rate: 1
 
 two:
   sku: MyString
   name: MyString
-  df_price: 1
+  eot_price: 1
   vat_rate: 1

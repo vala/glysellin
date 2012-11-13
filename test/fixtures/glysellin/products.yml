@@ -5,7 +5,7 @@ one:
   name: MyString
   slug: MyString
   description: MyText
-  df_price: 1
+  eot_price: 1
   vat_rate: 1
 
 two:
@@ -13,5 +13,5 @@ two:
   name: MyString
   slug: MyString
   description: MyText
-  df_price: 1
+  eot_price: 1
   vat_rate: 1

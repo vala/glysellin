@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(:version => 20120207112543) do
   create_table "glysellin_order_items", :force => true do |t|
     t.string   "sku"
     t.string   "name"
-    t.integer  "df_price"
+    t.integer  "eot_price"
     t.integer  "vat_rate"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
@@ -89,7 +89,7 @@ ActiveRecord::Schema.define(:version => 20120207112543) do
     t.string   "name"
     t.string   "slug"
     t.text     "description"
-    t.integer  "integer_df_price", :default => 0
+    t.integer  "integer_eot_price", :default => 0
     t.integer  "integer_vat_rate", :default => 0
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false

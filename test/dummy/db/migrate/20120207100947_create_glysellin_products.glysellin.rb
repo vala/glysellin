@@ -6,7 +6,7 @@ class CreateGlysellinProducts < ActiveRecord::Migration
       t.string :name
       t.string :slug
       t.text :description
-      t.integer :integer_df_price, :default => 0
+      t.integer :integer_eot_price, :default => 0
       t.integer :integer_vat_rate, :default => 0
 
       t.timestamps

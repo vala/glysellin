@@ -5,11 +5,11 @@ Récapitulatif de la commande :
 --------------------------------------------------------
 
 	Produits :
-	
+
 			<% @order.items.each do |item| %>
 			Sku / Référence : <%= item.sku %>
 			Nom : <%= item.name %>
-			Prix HT : <%= number_to_currency(item.df_price) %>
+			Prix HT : <%= number_to_currency(item.eot_price) %>
 			Prix TTC : <%= number_to_currency(item.price) %>
 			------------------------
 			<% end %>
@@ -26,10 +26,10 @@ Récapitulatif de la commande :
 
 --------------------------------------------------------
 
-	Paiement : 
-	
+	Paiement :
+
 		Mode de paiement : <%= @order.payment_method.name %>
 		Statut : Payé
 		Date : <%= @order.payments.last.last_payment_action_on %>
-		
+
 --------------------------------------------------------

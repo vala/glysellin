@@ -14,14 +14,14 @@
 	<tr>
 		<th><%= t('glysellin.labels.order.sku') %></th>
 		<th><%= t('glysellin.labels.order.name') %></th>
-		<th><%= t('glysellin.labels.order.df_price') %></th>
+		<th><%= t('glysellin.labels.order.eot_price') %></th>
 		<th><%= t('glysellin.labels.order.price') %></th>
 	</tr>
 	<% @order.items.each do |item| %>
 		<tr>
 			<td><%= item.sku %></td>
 			<td><%= item.name %></td>
-			<td><%= number_to_currency(item.df_price) %></td>
+			<td><%= number_to_currency(item.eot_price) %></td>
 			<td><%= number_to_currency(item.price) %></td>
 		</tr>
 	<% end %>

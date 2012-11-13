@@ -8,13 +8,13 @@ RailsAdmin.config do |config|
   # I18n.default_locale = :de
 
   config.current_user_method { current_user } # auto-generated
-  
+
   # If you want to track changes on your models:
   # config.audit_with :history, User
-  
+
   # Or with a PaperTrail: (you need to install it first)
   # config.audit_with :paper_trail, User
-  
+
   # Set the admin name here (optional second array element will appear in a beautiful RailsAdmin red ©)
   config.main_app_name = ['Dummy', 'Admin']
   # or for a dynamic name:
@@ -82,21 +82,21 @@ RailsAdmin.config do |config|
   # config.model Glysellin::Address do
   #   # Found associations:
   #     configure :orders, :has_many_association   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :activated, :boolean 
-  #     configure :company, :boolean 
-  #     configure :company_name, :string 
-  #     configure :vat_number, :string 
-  #     configure :first_name, :string 
-  #     configure :last_name, :string 
-  #     configure :address, :text 
-  #     configure :address_details, :text 
-  #     configure :zip, :string 
-  #     configure :city, :string 
-  #     configure :country, :string 
-  #     configure :tel, :string 
-  #     configure :fax, :string 
-  #     configure :created_at, :datetime 
+  #     configure :id, :integer
+  #     configure :activated, :boolean
+  #     configure :company, :boolean
+  #     configure :company_name, :string
+  #     configure :vat_number, :string
+  #     configure :first_name, :string
+  #     configure :last_name, :string
+  #     configure :address, :text
+  #     configure :address_details, :text
+  #     configure :zip, :string
+  #     configure :city, :string
+  #     configure :country, :string
+  #     configure :tel, :string
+  #     configure :fax, :string
+  #     configure :created_at, :datetime
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end
   #   export do; end
@@ -107,11 +107,11 @@ RailsAdmin.config do |config|
   # end
   # config.model Glysellin::Customer do
   #   # Found associations:
-  #     configure :user, :belongs_to_association 
+  #     configure :user, :belongs_to_association
   #     configure :orders, :has_many_association   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :user_id, :integer         # Hidden 
-  #     configure :created_at, :datetime 
+  #     configure :id, :integer
+  #     configure :user_id, :integer         # Hidden
+  #     configure :created_at, :datetime
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end
   #   export do; end
@@ -122,19 +122,19 @@ RailsAdmin.config do |config|
   # end
   # config.model Glysellin::Order do
   #   # Found associations:
-  #     configure :customer, :belongs_to_association 
-  #     configure :billing_address, :belongs_to_association 
-  #     configure :shipping_address, :belongs_to_association 
-  #     configure :items, :has_many_association 
+  #     configure :customer, :belongs_to_association
+  #     configure :billing_address, :belongs_to_association
+  #     configure :shipping_address, :belongs_to_association
+  #     configure :items, :has_many_association
   #     configure :payments, :has_many_association   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :ref, :string 
-  #     configure :status, :string 
-  #     configure :paid_on, :datetime 
-  #     configure :customer_id, :integer         # Hidden 
-  #     configure :billing_address_id, :integer         # Hidden 
-  #     configure :shipping_address_id, :integer         # Hidden 
-  #     configure :created_at, :datetime 
+  #     configure :id, :integer
+  #     configure :ref, :string
+  #     configure :status, :string
+  #     configure :paid_on, :datetime
+  #     configure :customer_id, :integer         # Hidden
+  #     configure :billing_address_id, :integer         # Hidden
+  #     configure :shipping_address_id, :integer         # Hidden
+  #     configure :created_at, :datetime
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end
   #   export do; end
@@ -146,12 +146,12 @@ RailsAdmin.config do |config|
   # config.model Glysellin::OrderItem do
   #   # Found associations:
   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :sku, :string 
-  #     configure :name, :string 
-  #     configure :df_price, :integer 
-  #     configure :vat_rate, :integer 
-  #     configure :created_at, :datetime 
+  #     configure :id, :integer
+  #     configure :sku, :string
+  #     configure :name, :string
+  #     configure :eot_price, :integer
+  #     configure :vat_rate, :integer
+  #     configure :created_at, :datetime
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end
   #   export do; end
@@ -162,14 +162,14 @@ RailsAdmin.config do |config|
   # end
   # config.model Glysellin::Payment do
   #   # Found associations:
-  #     configure :type, :belongs_to_association 
+  #     configure :type, :belongs_to_association
   #     configure :order, :belongs_to_association   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :status, :string 
-  #     configure :type_id, :integer         # Hidden 
-  #     configure :order_id, :integer         # Hidden 
-  #     configure :last_payment_action_on, :datetime 
-  #     configure :created_at, :datetime 
+  #     configure :id, :integer
+  #     configure :status, :string
+  #     configure :type_id, :integer         # Hidden
+  #     configure :order_id, :integer         # Hidden
+  #     configure :last_payment_action_on, :datetime
+  #     configure :created_at, :datetime
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end
   #   export do; end
@@ -181,10 +181,10 @@ RailsAdmin.config do |config|
   # config.model Glysellin::PaymentMethod do
   #   # Found associations:
   #     configure :payments, :has_many_association   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :name, :string 
-  #     configure :slug, :string 
-  #     configure :created_at, :datetime 
+  #     configure :id, :integer
+  #     configure :name, :string
+  #     configure :slug, :string
+  #     configure :created_at, :datetime
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end
   #   export do; end
@@ -196,14 +196,14 @@ RailsAdmin.config do |config|
   # config.model Glysellin::Product do
   #   # Found associations:
   #     configure :product_images, :has_many_association   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :sku, :string 
-  #     configure :name, :string 
-  #     configure :slug, :string 
-  #     configure :description, :text 
-  #     configure :integer_df_price, :integer 
-  #     configure :integer_vat_rate, :integer 
-  #     configure :created_at, :datetime 
+  #     configure :id, :integer
+  #     configure :sku, :string
+  #     configure :name, :string
+  #     configure :slug, :string
+  #     configure :description, :text
+  #     configure :integer_eot_price, :integer
+  #     configure :integer_vat_rate, :integer
+  #     configure :created_at, :datetime
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end
   #   export do; end
@@ -215,14 +215,14 @@ RailsAdmin.config do |config|
   # config.model Glysellin::ProductImage do
   #   # Found associations:
   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :name, :string 
-  #     configure :created_at, :datetime 
-  #     configure :updated_at, :datetime 
-  #     configure :image_file_name, :string         # Hidden 
-  #     configure :image_content_type, :string         # Hidden 
-  #     configure :image_file_size, :integer         # Hidden 
-  #     configure :image_updated_at, :datetime         # Hidden 
+  #     configure :id, :integer
+  #     configure :name, :string
+  #     configure :created_at, :datetime
+  #     configure :updated_at, :datetime
+  #     configure :image_file_name, :string         # Hidden
+  #     configure :image_content_type, :string         # Hidden
+  #     configure :image_file_size, :integer         # Hidden
+  #     configure :image_updated_at, :datetime         # Hidden
   #     configure :image, :paperclip   #   # Sections:
   #   list do; end
   #   export do; end
@@ -234,19 +234,19 @@ RailsAdmin.config do |config|
   # config.model User do
   #   # Found associations:
   #   # Found columns:
-  #     configure :id, :integer 
-  #     configure :email, :string 
-  #     configure :password, :password         # Hidden 
-  #     configure :password_confirmation, :password         # Hidden 
-  #     configure :reset_password_token, :string         # Hidden 
-  #     configure :reset_password_sent_at, :datetime 
-  #     configure :remember_created_at, :datetime 
-  #     configure :sign_in_count, :integer 
-  #     configure :current_sign_in_at, :datetime 
-  #     configure :last_sign_in_at, :datetime 
-  #     configure :current_sign_in_ip, :string 
-  #     configure :last_sign_in_ip, :string 
-  #     configure :created_at, :datetime 
+  #     configure :id, :integer
+  #     configure :email, :string
+  #     configure :password, :password         # Hidden
+  #     configure :password_confirmation, :password         # Hidden
+  #     configure :reset_password_token, :string         # Hidden
+  #     configure :reset_password_sent_at, :datetime
+  #     configure :remember_created_at, :datetime
+  #     configure :sign_in_count, :integer
+  #     configure :current_sign_in_at, :datetime
+  #     configure :last_sign_in_at, :datetime
+  #     configure :current_sign_in_ip, :string
+  #     configure :last_sign_in_ip, :string
+  #     configure :created_at, :datetime
   #     configure :updated_at, :datetime   #   # Sections:
   #   list do; end
   #   export do; end

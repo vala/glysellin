@@ -15,7 +15,7 @@ fr:
         order_reference: "Order reference"
         sku: "SKU"
         name: "Product name"
-        df_price: "Duty Free Price"
+        eot_price: "Duty Free Price"
         price: "Price"
         subtotal: "Sub-total"
         shipping: "Shipping"
@@ -30,7 +30,7 @@ fr:
       payment_responses:
         successfully_paid: "Payment successful"
         successfull_payment_text: "Your payment has been successfully processed, we'll take your order into account as fast as we can. An e-mail has been sent to you with all the relevant informations about your order."
-        
+
     order_admin_mailer:
       send_order_paid_email:
         subject: "A new order has validated"
