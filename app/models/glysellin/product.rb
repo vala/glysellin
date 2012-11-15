@@ -54,11 +54,15 @@ module Glysellin
         self.sku = self.generate_sku
       end
 
+      if !self.vat_rate
+        self.vat_rate = Glysellin.default_vat_rate
+      end
       # If we have to fill one of the prices when changed
-      if self.eot_price_changed? && !self.price_changed?
-        self.price = self.eot_price + (self.eot_price * self.vat_rate)
-      elsif self.price_changed?
-        self.eot_price = self.price - (self.price * self.vat_rate)
+      if (self.eot_price_changed? && !self.price_changed?) ||
+          (self.new_record? && self.eot_price && !self.price)
+        self.price = self.eot_price * self.vat_ratio
+      elsif self.price_changed? || (self.new_record? && self.price)
+        self.eot_price = self.price / self.vat_ratio
       end
     end
 
@@ -72,16 +76,15 @@ module Glysellin
       #   taxonomies passed
       def with_taxonomy *taxonomies
         # Ensure we only have slugs so we got a string vector
-        taxonomies.map! { |t| t.kind_of?(Taxonomy) ? t.slug : t }
+        taxonomies.map! { |t| t.kind_of?(Glysellin::Taxonomy) ? t.slug : t }
         # Get products with those taxonomies
         Product.includes(:taxonomies).
           where('glysellin_taxonomies.slug IN (?)', taxonomies)
       end
     end
 
-    # Get VAT rate from item or global defined
-    def vat_rate
-      (stored = super.presence) ? stored : Glysellin.default_vat_rate
+    def vat_ratio
+      1 + vat_rate / 100
     end
 
   end

@@ -186,36 +186,34 @@ module Glysellin
   end
 
 
-  class << self
-    # Permits to create or update an order from nested forms (hashes)
-    #   and can create a whole order object ready to be paid but
-    #   only modifies the order from the params passed in the order_hash param
-    #
-    # @param [Hash] order_hash Hash of hashes containing order data from nested forms
-    # @param [Customer] customer Customer object to map to the order
-    #
-    # @example Setting shipping address
-    #   Glysellin::Order.from_sub_forms { shipping_address: { first_name: 'Me' ... } }
-    #
-    # @return [] the created or updated Order item
-    def from_sub_forms order_hash, customer = nil
-      # Fetch order from order_hash id if given
-      if (id = order_hash[:order_id])
-        order = Order.find(id)
-      # Or create a new one
-      else
-        order = Order.new
-      end
-
-      # Try to fill as much as we can
-      order.fill_addresses_from_hash(order_hash)
-      order.fill_payment_method_from_hash(order_hash)
-      order.fill_products_from_hash(order_hash)
-      order.fill_product_choices_from_hash(order_hash)
-
-      #
-      order
+  # Permits to create or update an order from nested forms (hashes)
+  #   and can create a whole order object ready to be paid but
+  #   only modifies the order from the params passed in the order_hash param
+  #
+  # @param [Hash] order_hash Hash of hashes containing order data from nested forms
+  # @param [Customer] customer Customer object to map to the order
+  #
+  # @example Setting shipping address
+  #   Glysellin::Order.from_sub_forms { shipping_address: { first_name: 'Me' ... } }
+  #
+  # @return [] the created or updated Order item
+  def self.from_sub_forms order_hash, customer = nil
+    # Fetch order from order_hash id if given
+    if (id = order_hash[:order_id])
+      order = Order.find(id)
+    # Or create a new one
+    else
+      order = Order.new
     end
+
+    # Try to fill as much as we can
+    order.fill_addresses_from_hash(order_hash)
+    order.fill_payment_method_from_hash(order_hash)
+    order.fill_products_from_hash(order_hash)
+    order.fill_product_choices_from_hash(order_hash)
+
+    #
+    order
   end
 
   def fill_addresses_from_hash order_hash
@@ -250,9 +248,9 @@ module Glysellin
   def fill_products_from_hash order_hash
     return unless order_hash[:products] && order_hash[:products].length > 0
 
-    order_hash[:products].each do |product_slug, value|
-      if product_slug && value != '0'
-        item = OrderItem.create_from_product_slug(product_slug)
+    order_hash[:products].each do |product_id, value|
+      if product_id && value.to_i > 0
+        item = OrderItem.create_from_product_id(product_id)
         self.items << item if item
       end
     end
@@ -261,9 +259,9 @@ module Glysellin
   def fill_product_choices_from_hash order_hash
     return unless order_hash[:product_choice] && order_hash[:product_choice].length > 0
 
-    order_hash[:product_choice].each_value do |product_slug|
-      if product_slug
-        item = OrderItem.create_from_product_slug(product_slug)
+    order_hash[:product_choice].each_value do |product_id|
+      if product_id
+        item = OrderItem.create_from_product_slug(product_id)
         self.items << item if item
       end
     end
