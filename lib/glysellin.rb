@@ -8,6 +8,23 @@ module Glysellin
   #   so we can refer to it from inside the lib
   mattr_accessor :app_root
 
+
+  ################################################################
+  #
+  # Config vars, to be overriden from generated initializer file
+  #
+  ################################################################
+
+  # Status const to be used to define order step to cart shopping
+  ORDER_STEP_CART = 'cart'
+  # Status const to be used to define order step to address
+  ORDER_STEP_ADDRESS = 'fill_addresses'
+  # Status const to be used to define order step to defining payment method
+  ORDER_STEP_PAYMENT_METHOD = 'payment_method'
+  # Status const to be used to define order step to payment
+  ORDER_STEP_PAYMENT = 'payment'
+
+
   ################################################################
   #
   # Config vars, to be overriden from generated initializer file
@@ -63,6 +80,14 @@ module Glysellin
 
   mattr_accessor :default_vat_rate
   @@default_vat_rate = 19.6
+
+  mattr_accessor :order_steps_process
+  @@order_steps_process = [
+    ORDER_STEP_CART,
+    ORDER_STEP_ADDRESS,
+    ORDER_STEP_PAYMENT_METHOD,
+    ORDER_STEP_PAYMENT
+  ]
 
   # Public: Permits using config block in order to set
   #   Glysellin module attributes

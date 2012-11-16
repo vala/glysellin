@@ -1,4 +1,4 @@
-<h2>Fill in your address</h2>
+<h2><%= t('glysellin.labels.forms.fill_in_your_address') %></h2>
 
 <%= simple_form_for @order, url: process_order_path(id: @order.ref) do |f| %>
   <%= f.simple_fields_for :billing_address do |fsa| %>

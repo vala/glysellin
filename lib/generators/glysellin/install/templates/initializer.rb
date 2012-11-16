@@ -20,6 +20,14 @@ Glysellin.config do |config|
   # Set default VAT rate for products when it is not set in db
   config.default_vat_rate = 19.6
 
+  # Set steps order to be used while using automatic order process
+  # config.order_steps_process [
+  #   Glysellin::ORDER_STEP_CART,
+  #   Glysellin::ORDER_STEP_ADDRESS,
+  #   Glysellin::ORDER_STEP_PAYMENT_METHOD,
+  #   Glysellin::ORDER_STEP_PAYMENT
+  # ]
+
   # Change presence validation of Address fields
   #   default: *[:first_name, :last_name, :address, :zip, :city, :country]
   # config.address_presence_validation_keys = *[:first_name, :last_name, :address, :zip, :city, :country]

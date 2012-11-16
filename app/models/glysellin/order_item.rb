@@ -24,5 +24,13 @@ module Glysellin
         OrderItem.new attrs
       end
     end
+
+    def total_eot_price
+      quantity * eot_price
+    end
+
+    def total_price
+      quantity * price
+    end
   end
 end

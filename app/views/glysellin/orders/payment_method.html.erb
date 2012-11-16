@@ -1,0 +1,9 @@
+<h2><%= t('glysellin.labels.forms.choose_payment_method') %></h2>
+
+<%= simple_form_for @order, url: process_order_path(@order) do |f| %>
+  <%= f.simple_fields_for :payments do |fp| %>
+    <%= fp.association :type, as: :radio %>
+  <% end %>
+
+  <%= f.button :submit, t('glysellin.labels.forms.confirm_payment_method') %>
+<% end %>

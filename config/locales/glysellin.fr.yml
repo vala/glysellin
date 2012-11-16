@@ -7,7 +7,10 @@ fr:
       misc:
         back_to_homepage: "Retour à l'accueil"
       forms:
+        fill_in_your_address: "Merci de renseigner votre adresse"
         confirm_addresses: "Confirmer votre adresse"
+        choose_payment_method: "Merci de sélectionner un moyen de paiement"
+        confirm_payment_method: "Confirmer mon moyen de paiement"
       order:
         billing_address: Adresse de facturation
         shipping_address: Adresse de livraison
@@ -23,7 +26,9 @@ fr:
         shipping: "Frais de port"
         total: "Total"
         pay: "Payer"
-        order_title: Commande
+        order_title: "Commande"
+        quantity: "Quantité"
+        unit_price: "Prix unitaire"
       payment_methods:
         pay_with_paypal: "Payer avec Paypal"
         check:
@@ -39,6 +44,10 @@ fr:
           pending: "En attente"
           paid: "Payé"
           canceled: "Annulé"
+        methods:
+          paypal_integral: "Paypal"
+          mercanet: "Carte bancaire - Mercanet"
+          sogenactif: "Carte bancaire - Sogenactif"
       orders:
         statuses:
           payment: Paiement en attente

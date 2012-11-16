@@ -3,20 +3,20 @@
 
     service.customer :first_name => address.first_name,
         :last_name => address.last_name,
-        :phone => address.tel,
-        :email => address.email
+        :phone => address.tel
     service.billing_address :city => address.city,
         :address1 => address.address,
         :country => address.country,
         :zip => address.zip
-    service.item_name "#{t('glysellin.labels.order.order_title')} ##{order.ref}"
+    service.item_name "#{ t('glysellin.labels.order.order_title') } ##{ order.ref }"
     service.invoice order.ref
     service.tax '0.00'
 
     service.notify_url gateway_response_order_path(:goid => order.id, :only_path => false)
     service.return_url payment_response_order_path(:goid => order.id, :only_path => false)
-    service.cancel_return_url payment_response_order_path(:goid => order.id, :only_path => false) %>
+    service.cancel_return_url payment_response_order_path(:goid => order.id, :only_path => false)
+%>
 
-		<% link_options ||= {} %>
+    <% link_options ||= {} %>
     <%= submit_tag t('glysellin.labels.payment_methods.pay_with_paypal'), link_options %>
 <% end %>

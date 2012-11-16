@@ -18,6 +18,7 @@ module ActionDispatch::Routing
             put 'process_order', :action => 'process_order', :as => 'process'
             get 'addresses', :action => 'fill_addresses', :as => 'fill_addresses'
             post 'validate-addresses', :action => 'validate_addresses', :as => 'validate_addresses'
+            get 'payment-method', :action => 'payment_method', :as => 'payment_method'
             get 'payment', :action => 'payment', :as => 'payment'
             post 'gw-resp/:goid', :action => 'gateway_response', :as => 'gateway_response'
             match 'response', :action => 'payment_response', :as => 'payment_response'

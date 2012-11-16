@@ -1,7 +1,7 @@
 module Glysellin
   class OrdersController < MainController
     protect_from_forgery :except => :gateway_response
-    before_filter :get_customer!
+    before_filter :init_order!
 
     def index
       @orders = current_user.orders
@@ -24,8 +24,8 @@ module Glysellin
 
       if @order.save
         next_step = @order.next_step
-        if @order.next_step == Order::ORDER_STEP_PAYMENT
-          OrderCustomerMailer.send_order_created_email(@order).deliver
+        if @order.next_step == ORDER_STEP_PAYMENT
+          # OrderCustomerMailer.send_order_created_email(@order).deliver
         end
         redirect_to :action => @order.next_step.to_s, :id => @order.ref
       else
@@ -42,14 +42,14 @@ module Glysellin
     end
 
     def fill_addresses
-      @order = Order.find_by_ref(params[:id])
       @order.init_addresses!
     end
 
     def validate_addresses
     end
 
-    def recap
+    def payment_method
+      @order.init_payment!
     end
 
     def payment
@@ -81,6 +81,13 @@ module Glysellin
       else
         @order = Order.find_by_ref(params[:id])
       end
+    end
+
+    protected
+
+    def init_order!
+      get_customer!
+      @order = Order.find_by_ref(params[:id]) if params[:id]
     end
   end
 end

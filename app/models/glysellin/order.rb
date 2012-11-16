@@ -28,15 +28,6 @@ module Glysellin
       :user, :items, :payments, :customer_attributes, :payments_attributes,
       :items_attributes
 
-    # Status const to be used to define order step to cart shopping
-    ORDER_STEP_CART = 'cart'
-    # Status const to be used to define order step to address
-    ORDER_STEP_ADDRESS = 'fill_addresses'
-    # Status const to be used to define order step to defining payment method
-    ORDER_STEP_PAYMENT_METHOD = 'payment_method'
-    # Status const to be used to define order step to payment
-    ORDER_STEP_PAYMENT = 'payment'
-
     # Status const to be used to define order status to payment
     ORDER_STATUS_PAYMENT_PENDING = 'payment'
     # Status const to be used to define order status to paid
@@ -63,8 +54,12 @@ module Glysellin
     def use_billing_address_for_shipping; nil; end
 
     def init_addresses!
-      self.billing_address = Address.new unless billing_address
-      self.shipping_address = Address.new unless shipping_address
+      self.build_billing_address unless billing_address
+      self.build_shipping_address unless shipping_address
+    end
+
+    def init_payment!
+      self.payments.build unless payment
     end
 
     # Define model to use it's ref when asked for parameterized
@@ -106,17 +101,17 @@ module Glysellin
     #   given the state of the current order deined by the informations
     #   already filled in the model
     def next_step
-      completed_steps = []
+      completed_steps = {}
       completed_steps[ORDER_STEP_CART] = items.length > 0
       completed_steps[ORDER_STEP_ADDRESS] = billing_address
       completed_steps[ORDER_STEP_PAYMENT_METHOD] = payments.length > 0
-      completed_steps[ORDER_STEP_PAYMENT] = payment.status == Payment::PAYMENT_STATUS_PAID
+      completed_steps[ORDER_STEP_PAYMENT] = payment && payment.status == Payment::PAYMENT_STATUS_PAID
 
-      Glysellin.order_steps_process.each_with_index.reduce({ step: nil, continue: true }) do |acc, step, index|
+      Glysellin.order_steps_process.each_with_index.reduce({ step: nil, continue: true }) do |acc, val|
         # Process step and store it if we haven't reached current step yet
-        acc = { step: step, continue: completed_steps[step] } if acc[:continue]
+        acc = { step: val.first, continue: completed_steps[val.first] } if acc[:continue]
         # If we're on the last step, only return the desired step
-        index == (Glysellin.order_steps_process.length - 1) ? acc[:step] : acc
+        (val.last == (Glysellin.order_steps_process.length - 1)) ? acc[:step] : acc
       end
     end
 
@@ -125,12 +120,20 @@ module Glysellin
     # @param [Boolean] df Defines if we want to get duty free price or not
     #
     # @return [BigDecimal] the calculated subtotal
-    def subtotal df = false
-      @_subtotal ||= items.reduce(0) {|l, r| l + (df ? r.eot_price : r.price)}
+    def subtotal
+      @_subtotal ||= items.reduce(0) {|total, item| total + (item.price * item.quantity) }
+    end
+
+    def eot_subtotal
+      @_eot_subtotal ||= items.reduce(0) {|total, item| total + (item.eot_price * item.quantity) }
     end
 
     # Not implemented yet
-    def shipping_price df = false
+    def shipping_price
+      0
+    end
+
+    def eot_shipping_price
       0
     end
 
@@ -139,8 +142,12 @@ module Glysellin
     # @param [Boolean] df Defines if we want to get duty free price or not
     #
     # @return [BigDecimal] the calculated total price
-    def total_price df = false
-      @_total_price ||= (subtotal(df) + shipping_price(df))
+    def total_price
+      @_total_price ||= (subtotal + shipping_price)
+    end
+
+    def total_eot_price
+      @_total_eot_price ||= (eot_subtotal + eot_shipping_price)
     end
 
     # Customer's e-mail directly accessible from the order
@@ -232,10 +239,12 @@ module Glysellin
     end
 
     def fill_payment_method_from_hash order_hash
-      return unless order_hash[:payment_method] && order_hash[:payment_method][:type]
+      return unless order_hash[:payments_attributes] && order_hash[:payments_attributes].length > 0
 
       payment = self.payments.build :status => Payment::PAYMENT_STATUS_PENDING
-      payment.type = PaymentMethod.find_by_slug(order_hash[:payment_method][:type])
+
+      payment_hash = order_hash[:payments_attributes].first.last
+      payment.type = PaymentMethod.find(payment_hash[:type_id])
       self.status = ORDER_STATUS_PAYMENT_PENDING
     end
 

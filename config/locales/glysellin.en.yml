@@ -7,7 +7,10 @@ fr:
       misc:
         back_to_homepage: "Back to home page"
       forms:
+        fill_in_your_address: "Fill in your address"
         confirm_addresses: "Confirm your address"
+        choose_payment_method: "Choose your payment method"
+        confirm_payment_method: "Confirm payment method"
       order:
         billing_address: "Billing address"
         shipping_address: "Shipping address"
@@ -25,6 +28,8 @@ fr:
         pay: "Pay"
         no_payment_method_choosen: "No payment method choosen"
         order_title: Order
+        quantity: "Quantity"
+        unit_price: "Unit price"
       payment_methods:
         pay_with_paypal: Payer avec paypal
         check:

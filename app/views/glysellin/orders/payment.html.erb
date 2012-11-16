@@ -14,6 +14,8 @@
 	<tr>
 		<th><%= t('glysellin.labels.order.sku') %></th>
 		<th><%= t('glysellin.labels.order.name') %></th>
+		<th><%= t('glysellin.labels.order.unit_price') %></th>
+		<th><%= t('glysellin.labels.order.quantity') %></th>
 		<th><%= t('glysellin.labels.order.eot_price') %></th>
 		<th><%= t('glysellin.labels.order.price') %></th>
 	</tr>
@@ -21,14 +23,19 @@
 		<tr>
 			<td><%= item.sku %></td>
 			<td><%= item.name %></td>
-			<td><%= number_to_currency(item.eot_price) %></td>
 			<td><%= number_to_currency(item.price) %></td>
+			<td><%= item.quantity %></td>
+			<td><%= number_to_currency(item.total_eot_price) %></td>
+			<td><%= number_to_currency(item.total_price) %></td>
 		</tr>
 	<% end %>
 	<% if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical %>
 		<tr>
-			<td colspan="2">
+			<td colspan="4">
 				<%= t('glysellin.labels.order.subtotal') %>
+			</td>
+			<td>
+
 			</td>
 			<td>
 				<%= number_to_currency(@order.subtotal(true)) %>
@@ -40,7 +47,7 @@
 	<% end %>
 	<% if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
 		<tr>
-			<td colspan="2">
+			<td colspan="4">
 				<%= t('glysellin.labels.order.shipping') %>
 			</td>
 			<td>
@@ -52,11 +59,11 @@
 		</tr>
 	<% end %>
 	<tr>
-		<td colspan="2">
+		<td colspan="4">
 			<%= t('glysellin.labels.order.total') %>
 		</td>
 		<td>
-			<%= number_to_currency(@order.total_price(true)) %>
+			<%= number_to_currency(@order.total_eot_price) %>
 		</td>
 		<td>
 			<%= number_to_currency(@order.total_price) %>
