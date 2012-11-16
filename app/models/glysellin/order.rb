@@ -33,7 +33,7 @@ module Glysellin
     # Status const to be used to define order step to address
     ORDER_STEP_ADDRESS = 'fill_addresses'
     # Status const to be used to define order step to defining payment method
-    ORDER_STEP_PAYMENT_METHOD = 'recap'
+    ORDER_STEP_PAYMENT_METHOD = 'payment_method'
     # Status const to be used to define order step to payment
     ORDER_STEP_PAYMENT = 'payment'
 
@@ -58,6 +58,13 @@ module Glysellin
       [ORDER_STATUS_PAYMENT_PENDING, ORDER_STATUS_PAID, ORDER_STATUS_SHIPPING_PENDING, ORDER_STATUS_SHIPPED].map do |s|
         [I18n.t("glysellin.labels.orders.statuses.#{ s }"), s]
       end
+    end
+
+    def use_billing_address_for_shipping; nil; end
+
+    def init_addresses!
+      self.billing_address = Address.new unless billing_address
+      self.shipping_address = Address.new unless shipping_address
     end
 
     # Define model to use it's ref when asked for parameterized
@@ -99,20 +106,18 @@ module Glysellin
     #   given the state of the current order deined by the informations
     #   already filled in the model
     def next_step
-      if items.length == 0
-        ORDER_STEP_CART
-      elsif !billing_address
-        ORDER_STEP_ADDRESS
-      elsif !(payments.length > 0)
-        ORDER_STEP_PAYMENT_METHOD
-      elsif payments.last.status == Payment::PAYMENT_STATUS_PENDING
-        ORDER_STEP_PAYMENT
-      end
-    end
+      completed_steps = []
+      completed_steps[ORDER_STEP_CART] = items.length > 0
+      completed_steps[ORDER_STEP_ADDRESS] = billing_address
+      completed_steps[ORDER_STEP_PAYMENT_METHOD] = payments.length > 0
+      completed_steps[ORDER_STEP_PAYMENT] = payment.status == Payment::PAYMENT_STATUS_PAID
 
-    # Deprecated: sucks because we can Order.find_by_ref(ref)
-    def self.from_ref ref
-      where(:ref => ref).first
+      Glysellin.order_steps_process.each_with_index.reduce({ step: nil, continue: true }) do |acc, step, index|
+        # Process step and store it if we haven't reached current step yet
+        acc = { step: step, continue: completed_steps[step] } if acc[:continue]
+        # If we're on the last step, only return the desired step
+        index == (Glysellin.order_steps_process.length - 1) ? acc[:step] : acc
+      end
     end
 
     # Gets order subtotal from items only
@@ -183,86 +188,76 @@ module Glysellin
     def paid?
       payment.status == Payment::PAYMENT_STATUS_PAID
     end
-  end
 
-
-  # Permits to create or update an order from nested forms (hashes)
-  #   and can create a whole order object ready to be paid but
-  #   only modifies the order from the params passed in the order_hash param
-  #
-  # @param [Hash] order_hash Hash of hashes containing order data from nested forms
-  # @param [Customer] customer Customer object to map to the order
-  #
-  # @example Setting shipping address
-  #   Glysellin::Order.from_sub_forms { shipping_address: { first_name: 'Me' ... } }
-  #
-  # @return [] the created or updated Order item
-  def self.from_sub_forms order_hash, customer = nil
-    # Fetch order from order_hash id if given
-    if (id = order_hash[:order_id])
-      order = Order.find(id)
-    # Or create a new one
-    else
-      order = Order.new
-    end
-
-    # Try to fill as much as we can
-    order.fill_addresses_from_hash(order_hash)
-    order.fill_payment_method_from_hash(order_hash)
-    order.fill_products_from_hash(order_hash)
-    order.fill_product_choices_from_hash(order_hash)
-
+    # Permits to create or update an order from nested forms (hashes)
+    #   and can create a whole order object ready to be paid but
+    #   only modifies the order from the params passed in the order_hash param
     #
-    order
-  end
+    # @param [Hash] order_hash Hash of hashes containing order data from nested forms
+    # @param [Customer] customer Customer object to map to the order
+    #
+    # @example Setting shipping address
+    #   Glysellin::Order.from_sub_forms { shipping_address: { first_name: 'Me' ... } }
+    #
+    # @return [] the created or updated Order item
+    def self.from_sub_forms order_hash, ref = nil
+      # Fetch order from ref or create a new one
+      order = ref ? Order.find_by_ref(ref) : Order.new
 
-  def fill_addresses_from_hash order_hash
-    return unless order_hash[:billing_address]
-    # Store billing address
-    self.billing_address = Address.new order_hash[:billing_address]
+      # Try to fill as much as we can
+      order.fill_addresses_from_hash(order_hash)
+      order.fill_payment_method_from_hash(order_hash)
+      order.fill_products_from_hash(order_hash)
+      order.fill_product_choices_from_hash(order_hash)
 
-    # Check if we have to use the billing address for shipping
-    if order_hash[:billing_address][:use_billing_address_for_shipping]
-      same_address = order_hash[:billing_address][:use_billing_address_for_shipping].presence
-    else
-      same_address = false
+      #
+      order
     end
 
-    # Define shipping address if we must use same address
-    if same_address
-      self.shipping_address = Address.new order_hash[:billing_address]
-    # Else, if we are given a specific shipping address
-    elsif order_hash[:shipping_address]
-      self.shipping_address = Address.new order_hash[:shipping_address]
-    end
-  end
+    def fill_addresses_from_hash order_hash
+      return unless order_hash[:billing_address_attributes]
+      # Store billing address
+      self.build_billing_address(order_hash[:billing_address_attributes])
 
-  def fill_payment_method_from_hash order_hash
-    return unless order_hash[:payment_method] && order_hash[:payment_method][:type]
+      # Check if we have to use the billing address for shipping
+      same_address = order_hash[:use_billing_address_for_shipping].presence
 
-    payment = self.payments.build :status => Payment::PAYMENT_STATUS_PENDING
-    payment.type = PaymentMethod.find_by_slug(order_hash[:payment_method][:type])
-    self.status = ORDER_STATUS_PAYMENT_PENDING
-  end
-
-  def fill_products_from_hash order_hash
-    return unless order_hash[:products] && order_hash[:products].length > 0
-
-    order_hash[:products].each do |product_id, value|
-      if product_id && value.to_i > 0
-        item = OrderItem.create_from_product_id(product_id)
-        self.items << item if item
+      # Define shipping address if we must use same address
+      if same_address
+        self.build_shipping_address(order_hash[:billing_address_attributes])
+      # Else, if we are given a specific shipping address
+      elsif order_hash[:shipping_address_attributes]
+        self.build_shipping_address(order_hash[:shipping_address_attributes])
       end
     end
-  end
 
-  def fill_product_choices_from_hash order_hash
-    return unless order_hash[:product_choice] && order_hash[:product_choice].length > 0
+    def fill_payment_method_from_hash order_hash
+      return unless order_hash[:payment_method] && order_hash[:payment_method][:type]
 
-    order_hash[:product_choice].each_value do |product_id|
-      if product_id
-        item = OrderItem.create_from_product_slug(product_id)
-        self.items << item if item
+      payment = self.payments.build :status => Payment::PAYMENT_STATUS_PENDING
+      payment.type = PaymentMethod.find_by_slug(order_hash[:payment_method][:type])
+      self.status = ORDER_STATUS_PAYMENT_PENDING
+    end
+
+    def fill_products_from_hash order_hash
+      return unless order_hash[:products] && order_hash[:products].length > 0
+
+      order_hash[:products].each do |product_id, quantity|
+        if product_id && quantity.to_i > 0
+          item = OrderItem.create_from_product_id(product_id, quantity)
+          self.items << item if item
+        end
+      end
+    end
+
+    def fill_product_choices_from_hash order_hash
+      return unless order_hash[:product_choice] && order_hash[:product_choice].length > 0
+
+      order_hash[:product_choice].each_value do |product_id|
+        if product_id
+          item = OrderItem.create_from_product_slug(product_id, quantity)
+          self.items << item if item
+        end
       end
     end
   end

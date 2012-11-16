@@ -6,6 +6,8 @@ fr:
     labels:
       misc:
         back_to_homepage: "Retour à l'accueil"
+      forms:
+        confirm_addresses: "Confirmer votre adresse"
       order:
         billing_address: Adresse de facturation
         shipping_address: Adresse de livraison

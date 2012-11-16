@@ -18,8 +18,10 @@ module Glysellin
     end
 
     def process_order
-      @order = Glysellin::Order.from_sub_forms(params[:order])
+      @order = Order.from_sub_forms(params[:glysellin_order], params[:id])
+
       # render :text => params.inspect + '<br/><br/>' + @order.items.inspect.gsub(/[<>]/, {'<' => '&lt;', '>' => '&gt;'})
+
       if @order.save
         next_step = @order.next_step
         if @order.next_step == Order::ORDER_STEP_PAYMENT
@@ -40,6 +42,8 @@ module Glysellin
     end
 
     def fill_addresses
+      @order = Order.find_by_ref(params[:id])
+      @order.init_addresses!
     end
 
     def validate_addresses

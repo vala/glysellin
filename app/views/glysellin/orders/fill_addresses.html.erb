@@ -1,0 +1,27 @@
+<h2>Fill in your address</h2>
+
+<%= simple_form_for @order, url: process_order_path(id: @order.ref) do |f| %>
+  <%= f.simple_fields_for :billing_address do |fsa| %>
+    <%= fsa.input :last_name %>
+    <%= fsa.input :first_name %>
+    <%= fsa.input :address %>
+    <%= fsa.input :zip %>
+    <%= fsa.input :city %>
+    <%= fsa.input :country, as: :string %>
+    <%= fsa.input :tel %>
+  <% end %>
+
+  <%= f.input :use_billing_address_for_shipping, as: 'boolean' %>
+
+  <%= f.simple_fields_for :shipping_address do |fsa| %>
+    <%= fsa.input :last_name %>
+    <%= fsa.input :first_name %>
+    <%= fsa.input :address %>
+    <%= fsa.input :zip %>
+    <%= fsa.input :city %>
+    <%= fsa.input :country, as: :string %>
+    <%= fsa.input :tel %>
+  <% end %>
+
+  <%= f.button :submit, t('glysellin.labels.forms.confirm_addresses') %>
+<% end %>

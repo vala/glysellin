@@ -6,6 +6,8 @@ fr:
     labels:
       misc:
         back_to_homepage: "Back to home page"
+      forms:
+        confirm_addresses: "Confirm your address"
       order:
         billing_address: "Billing address"
         shipping_address: "Shipping address"

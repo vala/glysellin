@@ -6,8 +6,6 @@ module ActionDispatch::Routing
           collection do
             match 'cart', :action => 'cart', :as => 'cart'
             post 'validate-cart', :action => 'validate_cart', :as => 'validate_cart'
-            get 'addresses', :action => 'fill_address', :as => 'fill_address'
-            post 'validate-addresses', :action => 'validate_addresses', :as => 'validate_addresses'
             get 'checkout', :action => 'checkout', :as => 'checkout'
             post 'offline-payment', :action => 'offline_payment', :as => 'offline_payment'
             post 'process_order', :action => 'process_order', :as => 'process'
@@ -17,6 +15,9 @@ module ActionDispatch::Routing
             post 'gateway/response/:type', :action => 'payment_response', :as => 'typed_payment_response'
           end
           member do
+            put 'process_order', :action => 'process_order', :as => 'process'
+            get 'addresses', :action => 'fill_addresses', :as => 'fill_addresses'
+            post 'validate-addresses', :action => 'validate_addresses', :as => 'validate_addresses'
             get 'payment', :action => 'payment', :as => 'payment'
             post 'gw-resp/:goid', :action => 'gateway_response', :as => 'gateway_response'
             match 'response', :action => 'payment_response', :as => 'payment_response'

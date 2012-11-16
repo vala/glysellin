@@ -10,7 +10,4 @@ gem "jquery-rails"
 gem "devise"
 gem 'paperclip'
 
-gem 'sass-rails', '~> 3.1'
-gem 'bootstrap-sass', '~> 2.0.0'
-
 gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
