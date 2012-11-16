@@ -198,73 +198,84 @@ module Glysellin
 
     # Permits to create or update an order from nested forms (hashes)
     #   and can create a whole order object ready to be paid but
-    #   only modifies the order from the params passed in the order_hash param
+    #   only modifies the order from the params passed in the data param
     #
-    # @param [Hash] order_hash Hash of hashes containing order data from nested forms
+    # @param [Hash] data Hash of hashes containing order data from nested forms
     # @param [Customer] customer Customer object to map to the order
     #
     # @example Setting shipping address
     #   Glysellin::Order.from_sub_forms { shipping_address: { first_name: 'Me' ... } }
     #
     # @return [] the created or updated Order item
-    def self.from_sub_forms order_hash, ref = nil
+    def self.from_sub_forms data, ref = nil
       # Fetch order from ref or create a new one
       order = ref ? Order.find_by_ref(ref) : Order.new
 
       # Try to fill as much as we can
-      order.fill_addresses_from_hash(order_hash)
-      order.fill_payment_method_from_hash(order_hash)
-      order.fill_products_from_hash(order_hash)
-      order.fill_product_choices_from_hash(order_hash)
+      order.fill_addresses_from_hash(data)
+      order.fill_payment_method_from_hash(data)
+      order.fill_products_from_hash(data)
+      order.fill_product_choices_from_hash(data)
 
       #
       order
     end
 
-    def fill_addresses_from_hash order_hash
-      return unless order_hash[:billing_address_attributes]
+    def fill_addresses_from_hash data
+      return unless data[:billing_address_attributes]
       # Store billing address
-      self.build_billing_address(order_hash[:billing_address_attributes])
+      self.build_billing_address(data[:billing_address_attributes])
 
       # Check if we have to use the billing address for shipping
-      same_address = order_hash[:use_billing_address_for_shipping].presence
+      same_address = data[:use_billing_address_for_shipping].presence
 
       # Define shipping address if we must use same address
       if same_address
-        self.build_shipping_address(order_hash[:billing_address_attributes])
+        self.build_shipping_address(data[:billing_address_attributes])
       # Else, if we are given a specific shipping address
-      elsif order_hash[:shipping_address_attributes]
-        self.build_shipping_address(order_hash[:shipping_address_attributes])
+      elsif data[:shipping_address_attributes]
+        self.build_shipping_address(data[:shipping_address_attributes])
       end
     end
 
-    def fill_payment_method_from_hash order_hash
-      return unless order_hash[:payments_attributes] && order_hash[:payments_attributes].length > 0
+    def fill_payment_method_from_hash data
+      return unless data[:payments_attributes] && data[:payments_attributes].length > 0
 
       payment = self.payments.build :status => Payment::PAYMENT_STATUS_PENDING
 
-      payment_hash = order_hash[:payments_attributes].first.last
+      payment_hash = data[:payments_attributes].first.last
       payment.type = PaymentMethod.find(payment_hash[:type_id])
       self.status = ORDER_STATUS_PAYMENT_PENDING
     end
 
-    def fill_products_from_hash order_hash
-      return unless order_hash[:products] && order_hash[:products].length > 0
+    def fill_products_from_hash data
+      return unless data[:items_attributes] && data[:items_attributes].length > 0
 
-      order_hash[:products].each do |product_id, quantity|
-        if product_id && quantity.to_i > 0
+      # Process each desired item from cart
+      data[:items_attributes].each do |item_hash_data|
+        # Get data from [index, data] :items_attributes pair
+        item_data = item_hash_data.last
+
+        # Prepare needed product data
+        product_id = item_data[:id]
+        quantity = item_data[:quantity].to_i
+
+        # If quantity is 0 we won't add it
+        if product_id && quantity > 0
+          # Try create item from given product_id and quantity
           item = OrderItem.create_from_product_id(product_id, quantity)
+          # Add it to items if it has been created
           self.items << item if item
         end
       end
     end
 
-    def fill_product_choices_from_hash order_hash
-      return unless order_hash[:product_choice] && order_hash[:product_choice].length > 0
+    def fill_product_choices_from_hash data
+      return unless data[:product_choice] && data[:product_choice].length > 0
 
-      order_hash[:product_choice].each_value do |product_id|
+      data[:product_choice].each_value do |product_id|
         if product_id
-          item = OrderItem.create_from_product_slug(product_id, quantity)
+          item = OrderItem.create_from_product_slug(product_id, 1)
           self.items << item if item
         end
       end
