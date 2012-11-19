@@ -23,6 +23,12 @@ module Glysellin
       rake "glysellin_engine:install:migrations"
     end
 
+    def copy_views
+      if (ask "Do you want to copy glysellin views to your application views directory ?").presence =~ /^y/i
+        rake "glysellin:copy_views"
+      end
+    end
+
     def migrate_and_create_default_data
       migrate = ask("Do you want to migrate and install default shop data ? [Y/n]").presence || 'n'
       return unless migrate.match(/^y/i)

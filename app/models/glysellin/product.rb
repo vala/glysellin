@@ -40,8 +40,9 @@ module Glysellin
     # We check presence of sku if set in global config
     validates :sku, presence: true, if: proc { Glysellin.autoset_sku }
     # Prices validation
-    validates_numericality_of :eot_price, :vat_rate, :in_stock, :price,
+    validates_numericality_of :eot_price, :vat_rate, :price,
       :display_priority
+    validates_numericality_of :in_stock, if: proc { |p| p.in_stock.presence }
 
     # Callbacks
     #
