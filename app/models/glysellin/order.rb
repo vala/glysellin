@@ -273,9 +273,9 @@ module Glysellin
     def fill_product_choices_from_hash data
       return unless data[:product_choice] && data[:product_choice].length > 0
 
-      data[:product_choice].each_value do |product_id|
+      data[:product_choice].each do |product_id|
         if product_id
-          item = OrderItem.create_from_product_slug(product_id, 1)
+          item = OrderItem.create_from_product_id(product_id, 1)
           self.items << item if item
         end
       end
