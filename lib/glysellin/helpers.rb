@@ -1,5 +1,10 @@
 require 'cgi'
 
+require 'active_support/concern'
+
+require 'glysellin/helpers/views'
+require 'glysellin/helpers/countries'
+
 module Glysellin
   # Extend String class only inside Glysellin namespace scope
   String.class_eval do
@@ -24,7 +29,10 @@ module Glysellin
   end
 
   module Helpers
+    extend ActiveSupport::Concern
+
+    included do
+      self.send(:include, Countries)
+    end
   end
 end
-
-require 'glysellin/helpers/views'

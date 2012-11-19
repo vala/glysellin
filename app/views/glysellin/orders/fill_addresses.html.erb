@@ -7,7 +7,7 @@
     <%= fsa.input :address %>
     <%= fsa.input :zip %>
     <%= fsa.input :city %>
-    <%= fsa.input :country, as: :string %>
+    <%= fsa.input :country, collection: countries_option_list %>
     <%= fsa.input :tel %>
   <% end %>
 
@@ -19,7 +19,7 @@
     <%= fsa.input :address %>
     <%= fsa.input :zip %>
     <%= fsa.input :city %>
-    <%= fsa.input :country, as: :string %>
+    <%= fsa.input :country, collection: countries_option_list %>
     <%= fsa.input :tel %>
   <% end %>
 

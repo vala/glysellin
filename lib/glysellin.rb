@@ -103,4 +103,8 @@ module Glysellin
     yield self
   end
 
+
+  # Load helpers
+  ActionController::Base.send(:include, Helpers)
+
 end
