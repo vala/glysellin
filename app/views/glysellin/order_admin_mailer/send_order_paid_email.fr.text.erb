@@ -1,6 +1,24 @@
 Une commande a été validée sur le site.
 
-Récapitulatif de la commande :
+Récapitulatif de la commande Numéro : <%= @order.ref %>:
+
+--------------------------------------------------------
+
+  Client / Adresse de livraison et facturation :
+
+  <% address = @order.billing_address %>
+
+  Nom complet : <%= address.last_name %> <%= address.first_name %>
+
+  Adresse:
+      <%= address.address %>
+      <%= address.zip %> <%= address.city %>
+      <%= address.country %>
+
+  E-mail: <%= @order.customer.email %>
+  <%- if address.tel -%>
+  Tél: <%= address.tel %>
+  <%- end -%>
 
 --------------------------------------------------------
 
@@ -9,19 +27,20 @@ Récapitulatif de la commande :
 			<% @order.items.each do |item| %>
 			Sku / Référence : <%= item.sku %>
 			Nom : <%= item.name %>
+			Quantité : <%= item.quantity %>
 			Prix HT : <%= number_to_currency(item.eot_price) %>
 			Prix TTC : <%= number_to_currency(item.price) %>
 			------------------------
 			<% end %>
 
 
-			<% if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical %>
-			Sous Total HT / TTC : <%= number_to_currency(@order.subtotal(true)) %> / <%= number_to_currency(@order.subtotal) %>
-			<% end %>
-			<% if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
-			Frais de ports HT / TTC : <%= number_to_currency(@order.shipping_price(true)) %> / <%= number_to_currency(@order.shipping_price) %>
-			<% end %>
-			Total HT / TTC : <%= number_to_currency(@order.total_price(true)) %> / <%= number_to_currency(@order.total_price) %>
+			<%- if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical -%>
+			Sous Total HT / TTC : <%= number_to_currency(@order.eot_subtotal) %> / <%= number_to_currency(@order.subtotal) %>
+			<%- end -%>
+			<%- if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero -%>
+			Frais de ports HT / TTC : <%= number_to_currency(@order.eot_shipping_price) %> / <%= number_to_currency(@order.shipping_price) %>
+			<%- end -%>
+			Total HT / TTC : <%= number_to_currency(@order.total_eot_price) %> / <%= number_to_currency(@order.total_price) %>
 
 
 --------------------------------------------------------

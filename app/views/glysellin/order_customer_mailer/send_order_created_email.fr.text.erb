@@ -9,6 +9,7 @@ Récapitulatif de votre commande :
 			<% @order.items.each do |item| %>
 			Sku / Référence : <%= item.sku %>
 			Nom : <%= item.name %>
+			Quantité : <%= item.quantity %>
 			Prix HT : <%= number_to_currency(item.eot_price) %>
 			Prix TTC : <%= number_to_currency(item.price) %>
 			------------------------
@@ -16,12 +17,12 @@ Récapitulatif de votre commande :
 
 
 			<% if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical %>
-			Sous Total HT / TTC : <%= number_to_currency(@order.subtotal(true)) %> / <%= number_to_currency(@order.subtotal) %>
+			Sous Total HT / TTC : <%= number_to_currency(@order.eot_subtotal) %> / <%= number_to_currency(@order.subtotal) %>
 			<% end %>
 			<% if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
-			Frais de ports HT / TTC : <%= number_to_currency(@order.shipping_price(true)) %> / <%= number_to_currency(@order.shipping_price) %>
+			Frais de ports HT / TTC : <%= number_to_currency(@order.eot_shipping_price) %> / <%= number_to_currency(@order.shipping_price) %>
 			<% end %>
-			Total HT / TTC : <%= number_to_currency(@order.total_price(true)) %> / <%= number_to_currency(@order.total_price) %>
+			Total HT / TTC : <%= number_to_currency(@order.total_eot_price) %> / <%= number_to_currency(@order.total_price) %>
 
 
 --------------------------------------------------------
