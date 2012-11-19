@@ -8,7 +8,7 @@ module Glysellin
     #   so the Order propererties can't be affected by product updates
     has_many :items, :class_name => 'Glysellin::OrderItem', :foreign_key => 'order_id'
     # The actual buyer
-    belongs_to :customer, :class_name => "::#{ Glysellin.user_class_name }", :inverse_of => :orders
+    belongs_to :customer, :class_name => "::#{ Glysellin.user_class_name }", :inverse_of => :orders, :autosave => true
     # Addresses
     belongs_to :billing_address, :foreign_key => 'billing_address_id', :class_name => 'Glysellin::Address', :inverse_of => :billed_orders
     belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address', :inverse_of => :shipped_orders
@@ -213,6 +213,7 @@ module Glysellin
 
       # Try to fill as much as we can
       order.fill_addresses_from_hash(data)
+      order.fill_user_from_hash(data)
       order.fill_payment_method_from_hash(data)
       order.fill_products_from_hash(data)
       order.fill_product_choices_from_hash(data)
@@ -235,6 +236,19 @@ module Glysellin
       # Else, if we are given a specific shipping address
       elsif data[:shipping_address_attributes]
         self.build_shipping_address(data[:shipping_address_attributes])
+      end
+    end
+
+    def fill_user_from_hash data
+      return unless data[:customer_attributes] && data[:customer_attributes].length > 0
+
+      user = self.build_customer(data[:customer_attributes])
+
+      unless user.password && user.password_confirmation
+        password = (rand*(10**20)).to_i.to_s(36)
+        user.password = password
+        user.password_confirmation = password
+
       end
     end
 
