@@ -33,6 +33,7 @@ module Glysellin
 
     included do
       self.send(:include, Countries)
+      self.send(:include, Views)
     end
   end
 end

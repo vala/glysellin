@@ -1,7 +1,6 @@
 require 'digest/sha1'
 
 module Glysellin
-  # Public: Product model to
   class Product < ActiveRecord::Base
     include ModelInstanceHelperMethods
     include ProductMethods
@@ -11,17 +10,24 @@ module Glysellin
     # Relations
     #
     # The ProductImage model is used for products and bundles with the same
-    has_many :images, as: :imageable, :class_name => 'Glysellin::ProductImage',
-      :inverse_of => :imageable
+    has_many :images, as: :imageable, class_name: 'Glysellin::ProductImage',
+      inverse_of: :imageable
 
     # Can have multiple taxonomies
     has_and_belongs_to_many :taxonomies, :class_name => 'Glysellin::Taxonomy',
       join_table: 'glysellin_products_taxonomies', :foreign_key => 'product_id'
 
     # N..N relation between bundles and products
-    has_many :bundle_products, :class_name => 'Glysellin::BundleProduct'
-    has_many :bundles, through: :bundle_products,
-      :class_name => 'Glysellin::Bundle'
+    has_many :bundle_products, class_name: 'Glysellin::BundleProduct',
+      foreign_key: 'product_id'
+    has_many :bundles, class_name: 'Glysellin::Product',
+      through: :bundle_products
+
+    # Bundled products in current_product
+    has_many :product_bundles, class_name: 'Glysellin::BundleProduct',
+      foreign_key: 'bundle_id'
+    has_many :bundled_products, class_name: 'Glysellin::Product',
+      through: :product_bundles
 
     # Products can belong to a brand
     belongs_to :brand, :inverse_of => :products
@@ -29,19 +35,26 @@ module Glysellin
     has_many :properties, :class_name => 'Glysellin::ProductProperty'
 
     accepts_nested_attributes_for :images
+    accepts_nested_attributes_for :bundled_products
 
     attr_accessible :description, :eot_price, :name, :sku, :slug, :vat_rate,
       :brand, :taxonomies, :images, :properties, :in_stock, :price, :published,
-      :taxonomies, :display_priority, :images_attributes, :taxonomy_ids
+      :taxonomies, :display_priority, :images_attributes, :taxonomy_ids,
+      :bundled_products_attributes
 
     # Validations
     #
-    validates_presence_of :name, :eot_price, :vat_rate, :slug
+    validates_presence_of :name, :slug
+    # Validates price related attributes only unless we have bundled products
+    # so we can defer validations to them
+    validates :eot_price, :vat_rate, :price, presence: true,
+      numericality: true, unless: proc { |p| p.bundled_products.length > 0 }
+
     # We check presence of sku if set in global config
     validates :sku, presence: true, if: proc { Glysellin.autoset_sku }
     # Prices validation
-    validates_numericality_of :eot_price, :vat_rate, :price,
-      :display_priority
+    validates_numericality_of :eot_price, :vat_rate, :price
+    # validates_numericality_of :display_priority
     validates_numericality_of :in_stock, if: proc { |p| p.in_stock.presence }
 
     # Callbacks
@@ -88,5 +101,22 @@ module Glysellin
       1 + vat_rate / 100
     end
 
+    bundle_attribute :price do |product|
+      product.bundled_products.reduce(0) do |total, product|
+        total + product.price
+      end
+    end
+
+    bundle_attribute :eot_price do |product, att|
+      product.bundled_products.reduce(0) do |total, product|
+        total + product.eot_price
+      end
+    end
+
+    bundle_attribute :vat_rate do |product|
+      product.bundled_products.reduce(0) do |total, product|
+        total + (product.vat_rate * product.price)
+      end / product.price
+    end
   end
 end

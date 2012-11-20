@@ -242,13 +242,16 @@ module Glysellin
     def fill_user_from_hash data
       return unless data[:customer_attributes] && data[:customer_attributes].length > 0
 
-      user = self.build_customer(data[:customer_attributes])
+      email = data[:customer_attributes][:email]
 
-      unless user.password && user.password_confirmation
-        password = (rand*(10**20)).to_i.to_s(36)
-        user.password = password
-        user.password_confirmation = password
+      unless (user = Glysellin.user_class_name.constantize.find_by_email email)
+        user = self.build_customer(data[:customer_attributes])
 
+        unless user.password && user.password_confirmation
+          password = (rand*(10**20)).to_i.to_s(36)
+          user.password = password
+          user.password_confirmation = password
+        end
       end
     end
 
@@ -277,9 +280,9 @@ module Glysellin
         # If quantity is 0 we won't add it
         if product_id && quantity > 0
           # Try create item from given product_id and quantity
-          item = OrderItem.create_from_product_id(product_id, quantity)
+          items = OrderItem.create_from_product_id(product_id, quantity)
           # Add it to items if it has been created
-          self.items << item if item
+          self.items += items
         end
       end
     end
