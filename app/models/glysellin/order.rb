@@ -103,7 +103,7 @@ module Glysellin
     def next_step
       completed_steps = {}
       completed_steps[ORDER_STEP_CART] = items.length > 0
-      completed_steps[ORDER_STEP_ADDRESS] = billing_address
+      completed_steps[ORDER_STEP_ADDRESS] = billing_address && billing_address.valid?
       completed_steps[ORDER_STEP_PAYMENT_METHOD] = payments.length > 0
       completed_steps[ORDER_STEP_PAYMENT] = payment && payment.status == Payment::PAYMENT_STATUS_PAID
 
@@ -211,6 +211,10 @@ module Glysellin
       # Fetch order from ref or create a new one
       order = ref ? Order.find_by_ref(ref) : Order.new
 
+      # errors = %w(addresses user payment_method products product_choices).reduce([]) do |errors, method|
+      #   errors += (order.send("fill_#{ method }_from_hash", data) || [])
+      # end
+
       # Try to fill as much as we can
       order.fill_addresses_from_hash(data)
       order.fill_user_from_hash(data)
@@ -223,16 +227,17 @@ module Glysellin
     end
 
     def fill_addresses_from_hash data
-      return unless data[:billing_address_attributes]
+      return unless (billing_params = data[:billing_address_attributes])
+
       # Store billing address
-      self.build_billing_address(data[:billing_address_attributes])
+      self.build_billing_address(billing_params)
 
       # Check if we have to use the billing address for shipping
       same_address = data[:use_billing_address_for_shipping].presence
 
       # Define shipping address if we must use same address
       if same_address
-        self.build_shipping_address(data[:billing_address_attributes])
+        self.build_shipping_address(billing_params)
       # Else, if we are given a specific shipping address
       elsif data[:shipping_address_attributes]
         self.build_shipping_address(data[:shipping_address_attributes])
@@ -244,7 +249,9 @@ module Glysellin
 
       email = data[:customer_attributes][:email]
 
-      unless (user = Glysellin.user_class_name.constantize.find_by_email email)
+      if (user = Glysellin.user_class_name.constantize.find_by_email email)
+        self.customer = user
+      else
         user = self.build_customer(data[:customer_attributes])
 
         unless user.password && user.password_confirmation

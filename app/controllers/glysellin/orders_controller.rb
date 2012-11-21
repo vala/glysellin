@@ -29,7 +29,7 @@ module Glysellin
         end
         redirect_to :action => @order.next_step.to_s, :id => @order.ref
       else
-        redirect_to :back
+        render @order.next_step.to_s
       end
     end
 

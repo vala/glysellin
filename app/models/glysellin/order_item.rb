@@ -18,13 +18,10 @@ module Glysellin
       def create_from_product_id id, quantity
         product = Glysellin::Product.find_by_id(id)
 
-        attrs = Hash[PRODUCT_ATTRIBUTES_FOR_ITEM.map { |key| [key, product.send(key)] }]
-
         # Auxiliary function for creating a product
         create_product = lambda do |product|
-          OrderItem.new attrs.merge({
-            'price' => product.price, 'quantity' => quantity
-          })
+          attrs = Hash[PRODUCT_ATTRIBUTES_FOR_ITEM.map { |key| [key, product.send(key)] }]
+          OrderItem.new attrs.merge('quantity' => quantity)
         end
 
         if product.bundle?
