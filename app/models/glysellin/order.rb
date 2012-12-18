@@ -196,6 +196,14 @@ module Glysellin
       payment.status == Payment::PAYMENT_STATUS_PAID
     end
 
+    def shipping?
+      payment.status == Payment::PAYMENT_STATUS_SHIPPING
+    end
+
+    def shipped?
+      payment.status == Payment::ORDER_STATUS_SHIPPED
+    end
+
     # Permits to create or update an order from nested forms (hashes)
     #   and can create a whole order object ready to be paid but
     #   only modifies the order from the params passed in the data param
