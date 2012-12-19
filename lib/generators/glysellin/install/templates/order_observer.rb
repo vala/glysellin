@@ -1,17 +1,12 @@
-module Glysellin
-  class OrderObserver < ActiveRecord::Observer
-    
-    def after_payment order
-      puts "### AFTER PAYMENT"
-      puts order.inspect
-      # This will be run once the payment method has been chosen
-    end
+class OrderObserver < ActiveRecord::Observer
+  observe Glysellin::Order 
 
-    def after_paid order
-      puts "### AFTER PAID"
-      puts order.inspect
-      # This will be run once the order has been paid
-    end
-
+  def after_set_payment order, transition
+    # This will be run once the payment method has been chosen
   end
+
+  def after_set_paid order, transition
+    # This will be run once the order has been paid
+  end
+
 end

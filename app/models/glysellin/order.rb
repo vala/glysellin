@@ -1,15 +1,17 @@
+require 'state_machine'
+
 module Glysellin
   class Order < ActiveRecord::Base
 
     self.table_name = 'glysellin_orders'
 
     state_machine initial: :created do
-      event :payment do
-        transition created: :payment
+      event :set_payment do
+        transition any => :payment
       end
 
-      event :paid do
-        transition payment: :paid
+      event :set_paid do
+        transition any => :paid
       end
     end
 
@@ -195,7 +197,7 @@ module Glysellin
     # @return [Boolean] if the doc was saved
     def pay!
       self.payment.new_status Payment::PAYMENT_STATUS_PAID
-      self.paid
+      self.set_paid
       self.status = ORDER_STATUS_PAID
       self.paid_on = payment.last_payment_action_on
       self.save
@@ -282,7 +284,7 @@ module Glysellin
       payment_hash = data[:payments_attributes].first.last
       payment.type = PaymentMethod.find(payment_hash[:type_id])
       self.status = ORDER_STATUS_PAYMENT_PENDING
-      self.payment
+      set_payment
     end
 
     def fill_products_from_hash data

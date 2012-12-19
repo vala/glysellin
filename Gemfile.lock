@@ -27,6 +27,7 @@ PATH
       paperclip
       rails (~> 3.2.0)
       simple_form
+      state_machine
 
 GEM
   remote: http://rubygems.org/
