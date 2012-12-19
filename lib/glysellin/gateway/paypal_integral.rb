@@ -41,7 +41,7 @@ module Glysellin
         if notification.acknowledge
           begin
             if notification.complete?
-              @order.pay!
+              @order.paid!
             else
               @errors.push("Failed to verify Paypal's notification, please investigate")
             end

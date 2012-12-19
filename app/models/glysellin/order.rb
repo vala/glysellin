@@ -6,13 +6,24 @@ module Glysellin
     self.table_name = 'glysellin_orders'
 
     state_machine initial: :created do
-      event :set_payment do
-        transition any => :payment
+
+      event :cart_filled do
+        transition created: :cart
       end
 
-      event :set_paid do
-        transition any => :paid
+      event :address_filled do
+        transition cart: :address
       end
+
+      event :payment_method_chosen do
+        transition address: :payment
+      end
+
+      event :paid do
+        transition payment: :paid
+      end
+
+      after_transition on: :paid, do: :set_payment
     end
 
     # Relations
@@ -41,28 +52,29 @@ module Glysellin
       :user, :items, :payments, :customer_attributes, :payments_attributes,
       :items_attributes
 
-    # Status const to be used to define order status to payment
-    ORDER_STATUS_PAYMENT_PENDING = 'payment'
-    # Status const to be used to define order status to paid
-    ORDER_STATUS_PAID = 'paid'
-    # Status const to be used to define order status to shipping
-    ORDER_STATUS_SHIPPING_PENDING = 'shipping'
-    # Status const to be used to define order status to shipped
-    ORDER_STATUS_SHIPPED = 'shipped'
+    after_save :check_ref
+    before_save :set_paid_if_paid_by_check
 
     # Ensure there is always an order reference for billing purposes
-    after_save do
-      unless self.ref
-        self.ref = self.generate_ref
-        self.save
-      end
+    def check_ref
+      update_attribute(:ref, self.generate_ref) unless self.ref
     end
 
-    def status_enum
-      [ORDER_STATUS_PAYMENT_PENDING, ORDER_STATUS_PAID, ORDER_STATUS_SHIPPING_PENDING, ORDER_STATUS_SHIPPED].map do |s|
-        [I18n.t("glysellin.labels.orders.statuses.#{ s }"), s]
-      end
+    # If admin sets payment date by hand and order was paid by check, fire :paid event
+    def set_paid_if_paid_by_check
+      paid! if (paid_on_changed? and payment? and paid_by_check?)
     end
+
+    def paid_by_check?
+      payment and payment.by_check?
+    end
+
+    # Callback invoked after event :paid
+    def set_payment
+        self.payment.new_status Payment::PAYMENT_STATUS_PAID
+        update_attribute(:paid_on, payment.last_payment_action_on)
+    end
+
 
     def use_billing_address_for_shipping; nil; end
 
@@ -114,18 +126,7 @@ module Glysellin
     #   given the state of the current order deined by the informations
     #   already filled in the model
     def next_step
-      completed_steps = {}
-      completed_steps[ORDER_STEP_CART] = items.length > 0
-      completed_steps[ORDER_STEP_ADDRESS] = billing_address && billing_address.valid?
-      completed_steps[ORDER_STEP_PAYMENT_METHOD] = payments.length > 0
-      completed_steps[ORDER_STEP_PAYMENT] = payment && payment.status == Payment::PAYMENT_STATUS_PAID
-
-      Glysellin.order_steps_process.each_with_index.reduce({ step: nil, continue: true }) do |acc, val|
-        # Process step and store it if we haven't reached current step yet
-        acc = { step: val.first, continue: completed_steps[val.first] } if acc[:continue]
-        # If we're on the last step, only return the desired step
-        (val.last == (Glysellin.order_steps_process.length - 1)) ? acc[:step] : acc
-      end
+      Glysellin.step_routes[state_name]
     end
 
     # Gets order subtotal from items only
@@ -191,25 +192,6 @@ module Glysellin
       payment.type rescue nil
     end
 
-    # Tells the order it is paid and processes to the necessary
-    #   updates the model and related object need to retrieve payment infos
-    #
-    # @return [Boolean] if the doc was saved
-    def pay!
-      self.payment.new_status Payment::PAYMENT_STATUS_PAID
-      self.set_paid
-      self.status = ORDER_STATUS_PAID
-      self.paid_on = payment.last_payment_action_on
-      self.save
-    end
-
-    # Tells if the order is currently paid or not
-    #
-    # @return [Boolean] whether it is paid or not
-    def paid?
-      payment.status == Payment::PAYMENT_STATUS_PAID
-    end
-
     # Permits to create or update an order from nested forms (hashes)
     #   and can create a whole order object ready to be paid but
     #   only modifies the order from the params passed in the data param
@@ -256,6 +238,7 @@ module Glysellin
       elsif data[:shipping_address_attributes]
         self.build_shipping_address(data[:shipping_address_attributes])
       end
+      address_filled
     end
 
     def fill_user_from_hash data
@@ -283,8 +266,7 @@ module Glysellin
 
       payment_hash = data[:payments_attributes].first.last
       payment.type = PaymentMethod.find(payment_hash[:type_id])
-      self.status = ORDER_STATUS_PAYMENT_PENDING
-      set_payment
+      payment_method_chosen
     end
 
     def fill_products_from_hash data
@@ -305,6 +287,7 @@ module Glysellin
           items = OrderItem.create_from_product_id(product_id, quantity)
           # Add it to items if it has been created
           self.items += items
+          cart_filled
         end
       end
     end

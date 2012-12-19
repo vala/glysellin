@@ -18,7 +18,7 @@ module Glysellin
   # Status const to be used to define order step to cart shopping
   ORDER_STEP_CART = 'cart'
   # Status const to be used to define order step to address
-  ORDER_STEP_ADDRESS = 'fill_addresses'
+  ORDER_STEP_ADDRESS = 'addresses'
   # Status const to be used to define order step to defining payment method
   ORDER_STEP_PAYMENT_METHOD = 'payment_method'
   # Status const to be used to define order step to payment
@@ -81,13 +81,13 @@ module Glysellin
   mattr_accessor :default_vat_rate
   @@default_vat_rate = 19.6
 
-  mattr_accessor :order_steps_process
-  @@order_steps_process = [
-    ORDER_STEP_CART,
-    ORDER_STEP_ADDRESS,
-    ORDER_STEP_PAYMENT_METHOD,
-    ORDER_STEP_PAYMENT
-  ]
+  mattr_accessor :step_routes
+  @@step_routes = {
+    created: ORDER_STEP_CART,
+    cart: ORDER_STEP_ADDRESS,
+    address: ORDER_STEP_PAYMENT_METHOD,
+    payment: ORDER_STEP_PAYMENT
+  }
 
   # Public: Permits using config block in order to set
   #   Glysellin module attributes
