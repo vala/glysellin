@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "activemerchant"
   s.add_dependency "simple_form"
   s.add_dependency "country_select"
+  s.add_dependency "state_machine"
 
   s.add_development_dependency "mysql2"
 end
