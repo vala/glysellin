@@ -1,6 +1,17 @@
 module Glysellin
   class Order < ActiveRecord::Base
+
     self.table_name = 'glysellin_orders'
+
+    state_machine initial: :created do
+      event :payment do
+        transition created: :payment
+      end
+
+      event :paid do
+        transition payment: :paid
+      end
+    end
 
     # Relations
     #
@@ -184,6 +195,7 @@ module Glysellin
     # @return [Boolean] if the doc was saved
     def pay!
       self.payment.new_status Payment::PAYMENT_STATUS_PAID
+      self.paid
       self.status = ORDER_STATUS_PAID
       self.paid_on = payment.last_payment_action_on
       self.save
@@ -194,14 +206,6 @@ module Glysellin
     # @return [Boolean] whether it is paid or not
     def paid?
       payment.status == Payment::PAYMENT_STATUS_PAID
-    end
-
-    def shipping?
-      payment.status == Payment::PAYMENT_STATUS_SHIPPING
-    end
-
-    def shipped?
-      payment.status == Payment::ORDER_STATUS_SHIPPED
     end
 
     # Permits to create or update an order from nested forms (hashes)
@@ -278,6 +282,7 @@ module Glysellin
       payment_hash = data[:payments_attributes].first.last
       payment.type = PaymentMethod.find(payment_hash[:type_id])
       self.status = ORDER_STATUS_PAYMENT_PENDING
+      self.payment
     end
 
     def fill_products_from_hash data

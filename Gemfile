@@ -10,4 +10,6 @@ gem "jquery-rails"
 gem "devise"
 gem 'paperclip'
 
+gem 'state_machine'
+
 gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
