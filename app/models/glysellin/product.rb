@@ -101,6 +101,10 @@ module Glysellin
       1 + vat_rate / 100
     end
 
+    def image
+      images.length > 0 ? images.first.image : nil
+    end
+
     bundle_attribute :price do |product|
       product.bundled_products.reduce(0) do |total, product|
         total + product.price

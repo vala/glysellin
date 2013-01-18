@@ -1,7 +1,7 @@
 module Glysellin
 
   def self.shipping_carriers
-    Hash[ShippingCarrier.shipping_carriers_list.map {|sc| [sc[:name], sc[:carrier]]}]
+    Hash[ShippingCarrier.shipping_carriers_list.map { |sc| [sc[:name], sc[:carrier]] }]
   end
 
   module ShippingCarrier
@@ -38,7 +38,6 @@ module Glysellin
         # Return nil if country not accepted
         nil
       end
-
 
       def process_rate order, rates
 
