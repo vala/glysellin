@@ -38,10 +38,10 @@ module Glysellin
     def cart
     end
 
-    def validate_cart
+    def validate
     end
 
-    def fill_addresses
+    def addresses
       @order.init_addresses!
     end
 
