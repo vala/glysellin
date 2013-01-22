@@ -1,0 +1,7 @@
+<div class="cart-container">
+  <% if (products_len = cart.products).length > 0 %>
+    <%= t('glysellin.labels.cart.products_count', count: products_len) %>
+  <% else %>
+    <%= t('glysellin.labels.cart.no_products_in_cart') %>
+  <% end %>
+</div>

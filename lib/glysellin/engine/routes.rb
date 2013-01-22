@@ -31,6 +31,10 @@ module ActionDispatch::Routing
           end
         end
 
+        resource :cart, controller: 'cart', only: [:show] do
+          post "add-product", action: "add", as: 'add_to'
+        end
+
         root :to => 'products#index'
       end
     end

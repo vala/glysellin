@@ -2,6 +2,7 @@ require "glysellin/engine"
 require "glysellin/helpers"
 require "glysellin/gateway"
 require "glysellin/product_methods"
+require "glysellin/cart"
 
 module Glysellin
   # Public: Main app root to be defined inside engine initialization process
