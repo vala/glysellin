@@ -26,7 +26,7 @@ module Glysellin
           OrderCustomerMailer.send_order_created_email(@order).deliver
 
           if @order.payment_method.slug == 'check'
-            OrderAdminMailer.send_new_check_order_email(g.order).deliver
+            OrderAdminMailer.send_new_check_order_email(@order).deliver
           end
         end
         redirect_to :action => @order.next_step.to_s, :id => @order.ref
