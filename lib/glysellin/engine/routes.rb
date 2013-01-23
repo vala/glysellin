@@ -13,6 +13,7 @@ module ActionDispatch::Routing
             # Routes to handle statically parametered Gateways
             post 'gateway/:gateway', :action => 'gateway_response', :as => 'named_gateway_response'
             post 'gateway/response/:type', :action => 'payment_response', :as => 'typed_payment_response'
+            get 'create-from-cart', :action => 'create_from_cart', :as => 'from_cart_create'
           end
           member do
             put 'process_order', :as => 'process'
@@ -32,7 +33,7 @@ module ActionDispatch::Routing
         end
 
         resource :cart, controller: 'cart', only: [:show] do
-          post "add-product", action: "add", as: 'add_to'
+          post "add-product", action: "add", as: "add_to"
         end
 
         root :to => 'products#index'

@@ -2,13 +2,13 @@ require "glysellin/engine"
 require "glysellin/helpers"
 require "glysellin/gateway"
 require "glysellin/product_methods"
+require "glysellin/products_list"
 require "glysellin/cart"
 
 module Glysellin
   # Public: Main app root to be defined inside engine initialization process
   #   so we can refer to it from inside the lib
   mattr_accessor :app_root
-
 
   ################################################################
   #
@@ -24,7 +24,6 @@ module Glysellin
   ORDER_STEP_PAYMENT_METHOD = 'payment_method'
   # Status const to be used to define order step to payment
   ORDER_STEP_PAYMENT = 'payment'
-
 
   ################################################################
   #
@@ -84,8 +83,7 @@ module Glysellin
 
   mattr_accessor :step_routes
   @@step_routes = {
-    created: ORDER_STEP_CART,
-    cart: ORDER_STEP_ADDRESS,
+    created: ORDER_STEP_ADDRESS,
     address: ORDER_STEP_PAYMENT_METHOD,
     payment: ORDER_STEP_PAYMENT
   }
@@ -104,8 +102,6 @@ module Glysellin
     yield self
   end
 
-
   # Load helpers
   ActionController::Base.send(:include, Helpers)
-
 end

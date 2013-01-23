@@ -8,12 +8,8 @@ module Glysellin
 
     state_machine initial: :created do
 
-      event :cart_filled do
-        transition created: :cart
-      end
-
       event :address_filled do
-        transition cart: :address
+        transition created: :address
       end
 
       event :payment_method_chosen do
@@ -33,7 +29,8 @@ module Glysellin
     #   so the Order propererties can't be affected by product updates
     has_many :items, :class_name => 'Glysellin::OrderItem', :foreign_key => 'order_id'
     # The actual buyer
-    belongs_to :customer, :class_name => "::#{ Glysellin.user_class_name }", :inverse_of => :orders, :autosave => true
+    belongs_to :customer, :class_name => "::#{ Glysellin.user_class_name }",
+      :foreign_key => 'customer_id', :inverse_of => :orders, :autosave => true
     # Addresses
     belongs_to :billing_address, :foreign_key => 'billing_address_id', :class_name => 'Glysellin::Address', :inverse_of => :billed_orders
     belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address', :inverse_of => :shipped_orders
@@ -55,6 +52,12 @@ module Glysellin
 
     after_save :check_ref
     before_save :set_paid_if_paid_by_check
+
+    scope :from_customer, lambda { |customer_id| where(customer_id: customer_id) }
+
+    def quantified_items
+      items.map { |product| [product, product.quantity] }
+    end
 
     # Ensure there is always an order reference for billing purposes
     def check_ref
@@ -80,6 +83,7 @@ module Glysellin
     def use_billing_address_for_shipping; nil; end
 
     def init_addresses!
+      self.build_customer unless customer
       self.build_billing_address unless billing_address
       self.build_shipping_address unless shipping_address
     end
@@ -208,10 +212,10 @@ module Glysellin
     end
 
     def fill_user_from_hash data
-      return unless data[:customer_attributes] && data[:customer_attributes].length > 0
+      return if customer
+      return unless data[:customer_attributes] && data[:customer_attributes][:email]
 
       email = data[:customer_attributes][:email]
-
       if (user = Glysellin.user_class_name.constantize.find_by_email email)
         self.customer = user
       else
@@ -250,7 +254,7 @@ module Glysellin
         # If quantity is 0 we won't add it
         if product_id && quantity > 0
           # Try create item from given product_id and quantity
-          items = OrderItem.create_from_product_id(product_id, quantity)
+          items = OrderItem.create_from_product(product_id, quantity)
           # Add it to items if it has been created
           self.items += items
           cart_filled
@@ -263,10 +267,35 @@ module Glysellin
 
       data[:product_choice].each do |product_id|
         if product_id
-          item = OrderItem.create_from_product_id(product_id, 1)
+          item = OrderItem.create_from_product(product_id, 1)
           self.items << item if item
         end
       end
+    end
+
+
+    def self.create_from_cart cart, customer
+      order = self.new
+      # Fill items from cart
+      cart.items.each do |item|
+        order.items += OrderItem.create_from_product(
+          item[:product],
+          item[:quantity]
+        )
+      end
+      # Fill address from user if signed in and already has address
+      if customer
+        order.customer_id = customer.id
+        last_order = Order.from_customer(customer.id).last
+        if last_order
+          if last_order.billing_address
+            order.billing_address = Address.new last_order.billing_address.clone.attributes
+            order.shipping_address = Address.new last_order.shipping_address.clone.attributes
+          end
+        end
+      end
+      # Return order to be saved
+      order
     end
   end
 

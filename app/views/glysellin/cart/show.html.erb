@@ -1,7 +1,16 @@
 <h2><%= t('glysellin.labels.cart.your_cart') %></h2>
 
-<% if @cart.products.length > 0 %>
-  <%= render :partial => 'products', :locals => { :cart => @cart, :editable => true } %>
-<% else %>
+<% if @cart.empty? %>
+
   <%= t('glysellin.labels.cart.no_products_in_cart') %>
+
+<% else %>
+
+  <!-- Cart products list -->
+  <%= render :partial => 'products', :locals => { :cart => @cart, :editable => true } %>
+  <!-- Submit order from cart -->
+  <%= link_to from_cart_create_orders_path do %>
+    <%= t('glysellin.labels.cart.create_order') %>
+  <% end %>
+
 <% end %>

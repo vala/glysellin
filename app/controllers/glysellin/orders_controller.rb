@@ -4,7 +4,7 @@ module Glysellin
     before_filter :init_order!
 
     def index
-      @orders = current_user.orders
+      @orders = Order.from_customer(current_user)
     end
 
     def show
@@ -14,6 +14,16 @@ module Glysellin
       else
         flash[:alert] = t('glysellin.controllers.errors.order_doesnt_exist')
         redirect_to :action => 'index'
+      end
+    end
+
+    def create_from_cart
+      order = Order.create_from_cart(current_cart, current_user)
+
+      if order.save
+        redirect_to :action => order.next_step, :id => order.ref
+      else
+        redirect_to :back
       end
     end
 
@@ -53,7 +63,6 @@ module Glysellin
     end
 
     def payment
-      @order = Order.find_by_ref(params[:id])
     end
 
     def offline_payment
@@ -86,7 +95,6 @@ module Glysellin
     protected
 
     def init_order!
-      get_customer!
       @order = Order.find_by_ref(params[:id]) if params[:id]
     end
   end

@@ -15,8 +15,12 @@ module Glysellin
       # @param [Boolean] bundle If it's a bundle or just one product
       #
       # @return [OrderItem] The created order item
-      def create_from_product_id id, quantity
-        product = Glysellin::Product.find_by_id(id)
+      def create_from_product product_or_id, quantity
+        if product_or_id.is_a? Integer
+          product = Glysellin::Product.find_by_id(product_or_id)
+        else
+          product = product_or_id
+        end
 
         # Auxiliary function for creating a product
         create_product = lambda do |product|

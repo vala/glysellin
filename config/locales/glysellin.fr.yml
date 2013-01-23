@@ -7,10 +7,14 @@ fr:
       misc:
         back_to_homepage: "Retour à l'accueil"
       forms:
+        customer_details: "Votre compte"
         fill_in_your_address: "Merci de renseigner votre adresse"
         confirm_addresses: "Confirmer votre adresse"
         choose_payment_method: "Merci de sélectionner un moyen de paiement"
         confirm_payment_method: "Confirmer mon moyen de paiement"
+      customer:
+        sign_in: "Se connecter"
+        sign_up: "Créer un compte"
       order:
         billing_address: Adresse de facturation
         shipping_address: Adresse de livraison
@@ -59,6 +63,7 @@ fr:
         no_products_in_cart: "Pas d'article dans votre panier"
         products_count: "%{count} articles dans votre panier"
         your_cart: "Votre panier"
+        create_order: "Passer la commande"
 
     # Order e-mails subjects
     order_admin_mailer:

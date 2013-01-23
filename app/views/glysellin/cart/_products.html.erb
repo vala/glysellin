@@ -7,8 +7,7 @@
     <th><%= t('glysellin.labels.order.eot_price') %></th>
     <th><%= t('glysellin.labels.order.price') %></th>
   </tr>
-  <% cart.items.each do |product| %>
-    <%= item, quantity = split_order_item_details(product) %>
+  <% cart.each_items do |item, quantity| %>
     <tr>
       <td><%= item.sku %></td>
       <td><%= item.name %></td>

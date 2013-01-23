@@ -2,17 +2,33 @@ module Glysellin
   module ProductsList
     extend ActiveSupport::Concern
 
+    def quantified_items
+      raise "You should implement `#quantified_items` in any class including Glysellin::ProductsList"
+    end
+
+    def each_items &block
+      quantified_items.each do |item, quantity|
+        yield item, quantity
+      end
+    end
+
     # Gets order subtotal from items only
     #
     # @param [Boolean] df Defines if we want to get duty free price or not
     #
     # @return [BigDecimal] the calculated subtotal
     def subtotal
-      @_subtotal ||= items.reduce(0) {|total, item| total + (item.price * item.quantity) }
+      @_subtotal ||= quantified_items.reduce(0) do |total, quantified_item|
+        item, quantity = quantified_item
+        total + (item.price * quantity)
+      end
     end
 
     def eot_subtotal
-      @_eot_subtotal ||= items.reduce(0) {|total, item| total + (item.eot_price * item.quantity) }
+      @_eot_subtotal ||= quantified_items.reduce(0) do |total, quantified_item|
+        item, quantity = quantified_item
+        total + (item.eot_price * quantity)
+      end
     end
 
     # Not implemented yet

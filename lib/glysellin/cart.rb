@@ -27,6 +27,18 @@ module Glysellin
       self.extra_data = {}
     end
 
+    def quantified_items
+      products.map { |product| [product[:product], product[:quantity]] }
+    end
+
+    def empty?
+      products.length == 0
+    end
+
+    def products_total
+      products.reduce(0) { |total, product| total + product[:quantity] }
+    end
+
     def self.to_hash(cookie)
       cookie ||= ''
       cookie.split(';').inject({}) do |hash, item|

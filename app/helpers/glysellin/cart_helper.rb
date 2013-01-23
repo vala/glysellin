@@ -9,13 +9,5 @@ module Glysellin
         options: options
       }
     end
-
-    def split_order_item_details product
-      if product.is_a? OrderItem
-        [product, product.quantity]
-      else
-        [product[:product], product[:quantity]]
-      end
-    end
   end
 end
