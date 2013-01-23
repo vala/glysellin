@@ -3,6 +3,8 @@
 #
 module Glysellin
   class Cart
+    include ProductsList
+
     attr_accessor :products
     attr_accessor :total
     attr_accessor :errors
@@ -72,15 +74,15 @@ module Glysellin
       self.errors = []
       new_products = []
       self.products.each do |item|
-        if !item[:product].active
+        if !item[:product].published
           self.errors << ["Sorry, #{item[:product].description} is no longer for sale"]
-        elsif item[:product].unlimited_inventory || item[:product].quantity >= item[:quantity]
+        elsif item[:product].unlimited_stock || item[:product].in_stock >= item[:quantity]
           new_products << item
         elsif item[:product].in_stock == 0
           self.errors << ["Sorry, #{item[:product].description} is no longer available"]
         else
-          self.errors << ["Sorry, only #{item[:product].quantity} available for #{item[:product].description}"]
-          item[:quantity] = item[:product].quantity
+          self.errors << ["Sorry, only #{item[:product].in_stock} available for #{item[:product].description}"]
+          item[:quantity] = item[:product].in_stock
           new_products << item if item[:quantity] > 0
         end
       end

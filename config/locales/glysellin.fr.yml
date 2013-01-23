@@ -58,6 +58,7 @@ fr:
         add_to_cart: "Ajouter au panier"
         no_products_in_cart: "Pas d'article dans votre panier"
         products_count: "%{count} articles dans votre panier"
+        your_cart: "Votre panier"
 
     # Order e-mails subjects
     order_admin_mailer:

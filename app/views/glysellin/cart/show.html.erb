@@ -1,0 +1,7 @@
+<h2><%= t('glysellin.labels.cart.your_cart') %></h2>
+
+<% if @cart.products.length > 0 %>
+  <%= render :partial => 'products', :locals => { :cart => @cart, :editable => true } %>
+<% else %>
+  <%= t('glysellin.labels.cart.no_products_in_cart') %>
+<% end %>

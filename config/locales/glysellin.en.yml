@@ -52,6 +52,7 @@ en:
         add_to_cart: "Add to cart"
         no_products_in_cart: "No products in your cart"
         products_count: "%{count} products in your cart"
+        your_cart: "Your cart"
 
     order_admin_mailer:
       send_order_paid_email:

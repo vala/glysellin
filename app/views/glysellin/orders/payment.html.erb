@@ -10,66 +10,7 @@
 <%= render :partial => 'show_address', :locals => { :address => @order.shipping_address } %>
 
 <h3><%= t('glysellin.labels.order.your_cart') %></h3>
-<table id="order_recap_table">
-	<tr>
-		<th><%= t('glysellin.labels.order.sku') %></th>
-		<th><%= t('glysellin.labels.order.name') %></th>
-		<th><%= t('glysellin.labels.order.unit_price') %></th>
-		<th><%= t('glysellin.labels.order.quantity') %></th>
-		<th><%= t('glysellin.labels.order.eot_price') %></th>
-		<th><%= t('glysellin.labels.order.price') %></th>
-	</tr>
-	<% @order.items.each do |item| %>
-		<tr>
-			<td><%= item.sku %></td>
-			<td><%= item.name %></td>
-			<td><%= number_to_currency(item.price) %></td>
-			<td><%= item.quantity %></td>
-			<td><%= number_to_currency(item.total_eot_price) %></td>
-			<td><%= number_to_currency(item.total_price) %></td>
-		</tr>
-	<% end %>
-	<% if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical %>
-		<tr>
-			<td colspan="4">
-				<%= t('glysellin.labels.order.subtotal') %>
-			</td>
-			<td>
-
-			</td>
-			<td>
-				<%= number_to_currency(@order.subtotal(true)) %>
-			</td>
-			<td>
-				<%= number_to_currency(@order.subtotal) %>
-			</td>
-		</tr>
-	<% end %>
-	<% if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
-		<tr>
-			<td colspan="4">
-				<%= t('glysellin.labels.order.shipping') %>
-			</td>
-			<td>
-				<%= number_to_currency(@order.shipping_price(true)) %>
-			</td>
-			<td>
-				<%= number_to_currency(@order.shipping_price) %>
-			</td>
-		</tr>
-	<% end %>
-	<tr>
-		<td colspan="4">
-			<%= t('glysellin.labels.order.total') %>
-		</td>
-		<td>
-			<%= number_to_currency(@order.total_eot_price) %>
-		</td>
-		<td>
-			<%= number_to_currency(@order.total_price) %>
-		</td>
-	</tr>
-</table>
+<%= render :partial => 'glysellin/cart/products', :locals => { cart: @order } %>
 
 <h3><%= t('glysellin.labels.order.pay') %></h3>
 <% if @order.payment_method %>
