@@ -41,8 +41,8 @@ module Glysellin
       last_item = self.class.select(:id).order('id DESC').first
       # Generate SKU from the last product id we got,
       # or appending "1" if there's no product
-      sku = "#{ self.class.to_s.underscore }"
-      sku += "-#{ last_item ? (last_item.id + 1).to_s : '1' }"
+      sku = (last_item ? (last_item.id + 1).to_s : '1')
+      sku += self.name.parameterize
     end
 
     # Checks if a product is a bundle of other sub products

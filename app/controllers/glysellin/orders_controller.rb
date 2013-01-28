@@ -63,6 +63,7 @@ module Glysellin
     end
 
     def payment
+      cookies["glysellin.cart"] = { :value => '', :path => '/' }
     end
 
     def offline_payment

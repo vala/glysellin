@@ -75,8 +75,8 @@ module Glysellin
 
     # Callback invoked after event :paid
     def set_payment
-        self.payment.new_status Payment::PAYMENT_STATUS_PAID
-        update_attribute(:paid_on, payment.last_payment_action_on)
+      self.payment.new_status Payment::PAYMENT_STATUS_PAID
+      update_attribute(:paid_on, payment.last_payment_action_on)
     end
 
 

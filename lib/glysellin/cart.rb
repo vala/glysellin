@@ -35,6 +35,10 @@ module Glysellin
       products.length == 0
     end
 
+    def empty!
+      cookie = ''
+    end
+
     def products_total
       products.reduce(0) { |total, product| total + product[:quantity] }
     end

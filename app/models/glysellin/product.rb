@@ -35,12 +35,13 @@ module Glysellin
     has_many :properties, :class_name => 'Glysellin::ProductProperty'
 
     accepts_nested_attributes_for :images
-    accepts_nested_attributes_for :bundled_products, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :properties
+    # accepts_nested_attributes_for :bundled_products, allow_destroy: true, reject_if: :all_blank
 
     attr_accessible :description, :eot_price, :name, :sku, :slug, :vat_rate,
       :brand, :taxonomies, :images, :properties, :in_stock, :price, :published,
       :taxonomies, :display_priority, :images_attributes, :taxonomy_ids,
-      :bundled_products_attributes
+      :bundled_products_attributes, :unlimited_stock, :properties_attributes
 
     # Validations
     #
