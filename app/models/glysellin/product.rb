@@ -31,7 +31,7 @@ module Glysellin
     accepts_nested_attributes_for :images
 
     attr_accessible :description, :eot_price, :name, :sku, :slug, :vat_rate,
-      :brand, :taxonomies, :images, :properties, :in_stock, :price, :published,
+      :brand, :images, :properties, :in_stock, :price, :published,
       :taxonomies, :display_priority, :images_attributes, :taxonomy_ids
 
     # Validations
