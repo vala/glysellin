@@ -18,6 +18,11 @@ module Glysellin
       copy_file "initializer.rb", "config/initializers/glysellin.rb"
     end
 
+    def copy_order_observer
+      do_say "Installing order observer"
+      copy_file "order_observer.rb", "app/models/order_observer.rb"
+    end
+
     def copy_migrations
       do_say "Installing migrations, don't forget to `rake db:migrate`"
       rake "glysellin_engine:install:migrations"

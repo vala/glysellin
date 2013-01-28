@@ -2,6 +2,7 @@ module Glysellin
   class ProductProperty < ActiveRecord::Base
     self.table_name = 'glysellin_product_properties'
     attr_accessible :adjustement, :name, :value, :product, :product_id
-    belongs_to :product
+
+    belongs_to :product, :class_name => 'Glysellin::Product'
   end
 end

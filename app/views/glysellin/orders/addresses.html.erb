@@ -1,10 +1,31 @@
-<h2><%= t('glysellin.labels.forms.fill_in_your_address') %></h2>
-
 <%= simple_form_for @order, url: process_order_path(id: @order.ref) do |f| %>
+  <h2><%= t('glysellin.labels.forms.customer_details') %></h2>
+
+  <%= f.simple_fields_for :customer do |fc| %>
+    <% new_record = fc.object.new_record? %>
+
+    <%= fc.input :email, :input_html => { :disabled => !new_record } %>
+
+    <% if new_record %>
+      <%= link_to new_user_session_path do %>
+        <%= t('glysellin.labels.customer.sign_in') %>
+      <% end %>
+      -
+      <%= link_to new_user_registration_path do %>
+        <%= t('glysellin.labels.customer.sign_up') %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <h2><%= t('glysellin.labels.forms.fill_in_your_address') %></h2>
+
+  <%= @order.errors.messages.inspect if @order.errors.any? %>
+
+
   <%= f.simple_fields_for :billing_address do |fsa| %>
     <%= fsa.input :last_name %>
     <%= fsa.input :first_name %>
-    <%= fsa.input :address %>
+    <%= fsa.input :address, :as => :string %>
     <%= fsa.input :zip %>
     <%= fsa.input :city %>
     <%= fsa.input :country, collection: countries_option_list %>
@@ -16,7 +37,7 @@
   <%= f.simple_fields_for :shipping_address do |fsa| %>
     <%= fsa.input :last_name %>
     <%= fsa.input :first_name %>
-    <%= fsa.input :address %>
+    <%= fsa.input :address, :as => :string %>
     <%= fsa.input :zip %>
     <%= fsa.input :city %>
     <%= fsa.input :country, collection: countries_option_list %>

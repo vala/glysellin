@@ -7,7 +7,7 @@ class CreateGlysellinProducts < ActiveRecord::Migration
       t.text :description
       t.decimal :eot_price, :precision => 11, :scale => 2
       t.decimal :vat_rate, :precision => 11, :scale => 2
-      t.integer :in_stock
+      t.integer :in_stock, :default => 0
       t.timestamps
     end
   end

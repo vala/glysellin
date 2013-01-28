@@ -1,6 +1,27 @@
+require 'state_machine'
+
 module Glysellin
   class Order < ActiveRecord::Base
+    include ProductsList
+
     self.table_name = 'glysellin_orders'
+
+    state_machine initial: :created do
+
+      event :address_filled do
+        transition created: :address
+      end
+
+      event :payment_method_chosen do
+        transition address: :payment
+      end
+
+      event :paid do
+        transition payment: :paid
+      end
+
+      after_transition on: :paid, do: :set_payment
+    end
 
     # Relations
     #
@@ -8,7 +29,8 @@ module Glysellin
     #   so the Order propererties can't be affected by product updates
     has_many :items, :class_name => 'Glysellin::OrderItem', :foreign_key => 'order_id'
     # The actual buyer
-    belongs_to :customer, :class_name => "::#{ Glysellin.user_class_name }", :inverse_of => :orders, :autosave => true
+    belongs_to :customer, :class_name => "::#{ Glysellin.user_class_name }",
+      :foreign_key => 'customer_id', :inverse_of => :orders, :autosave => true
     # Addresses
     belongs_to :billing_address, :foreign_key => 'billing_address_id', :class_name => 'Glysellin::Address', :inverse_of => :billed_orders
     belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address', :inverse_of => :shipped_orders
@@ -28,32 +50,40 @@ module Glysellin
       :user, :items, :payments, :customer_attributes, :payments_attributes,
       :items_attributes
 
-    # Status const to be used to define order status to payment
-    ORDER_STATUS_PAYMENT_PENDING = 'payment'
-    # Status const to be used to define order status to paid
-    ORDER_STATUS_PAID = 'paid'
-    # Status const to be used to define order status to shipping
-    ORDER_STATUS_SHIPPING_PENDING = 'shipping'
-    # Status const to be used to define order status to shipped
-    ORDER_STATUS_SHIPPED = 'shipped'
+    after_save :check_ref
+    before_save :set_paid_if_paid_by_check
+
+    scope :from_customer, lambda { |customer_id| where(customer_id: customer_id) }
+
+    def quantified_items
+      items.map { |product| [product, product.quantity] }
+    end
 
     # Ensure there is always an order reference for billing purposes
-    after_save do
-      unless self.ref
-        self.ref = self.generate_ref
-        self.save
-      end
+    def check_ref
+      update_attribute(:ref, self.generate_ref) unless self.ref
     end
 
-    def status_enum
-      [ORDER_STATUS_PAYMENT_PENDING, ORDER_STATUS_PAID, ORDER_STATUS_SHIPPING_PENDING, ORDER_STATUS_SHIPPED].map do |s|
-        [I18n.t("glysellin.labels.orders.statuses.#{ s }"), s]
-      end
+    # If admin sets payment date by hand and order was paid by check, fire :paid event
+    def set_paid_if_paid_by_check
+      paid! if (paid_on_changed? and payment? and paid_by_check?)
     end
+
+    def paid_by_check?
+      payment and payment.by_check?
+    end
+
+    # Callback invoked after event :paid
+    def set_payment
+      self.payment.new_status Payment::PAYMENT_STATUS_PAID
+      update_attribute(:paid_on, payment.last_payment_action_on)
+    end
+
 
     def use_billing_address_for_shipping; nil; end
 
     def init_addresses!
+      self.build_customer unless customer
       self.build_billing_address unless billing_address
       self.build_shipping_address unless shipping_address
     end
@@ -101,53 +131,7 @@ module Glysellin
     #   given the state of the current order deined by the informations
     #   already filled in the model
     def next_step
-      completed_steps = {}
-      completed_steps[ORDER_STEP_CART] = items.length > 0
-      completed_steps[ORDER_STEP_ADDRESS] = billing_address
-      completed_steps[ORDER_STEP_PAYMENT_METHOD] = payments.length > 0
-      completed_steps[ORDER_STEP_PAYMENT] = payment && payment.status == Payment::PAYMENT_STATUS_PAID
-
-      Glysellin.order_steps_process.each_with_index.reduce({ step: nil, continue: true }) do |acc, val|
-        # Process step and store it if we haven't reached current step yet
-        acc = { step: val.first, continue: completed_steps[val.first] } if acc[:continue]
-        # If we're on the last step, only return the desired step
-        (val.last == (Glysellin.order_steps_process.length - 1)) ? acc[:step] : acc
-      end
-    end
-
-    # Gets order subtotal from items only
-    #
-    # @param [Boolean] df Defines if we want to get duty free price or not
-    #
-    # @return [BigDecimal] the calculated subtotal
-    def subtotal
-      @_subtotal ||= items.reduce(0) {|total, item| total + (item.price * item.quantity) }
-    end
-
-    def eot_subtotal
-      @_eot_subtotal ||= items.reduce(0) {|total, item| total + (item.eot_price * item.quantity) }
-    end
-
-    # Not implemented yet
-    def shipping_price
-      0
-    end
-
-    def eot_shipping_price
-      0
-    end
-
-    # Gets order total price from subtotal and adjustments
-    #
-    # @param [Boolean] df Defines if we want to get duty free price or not
-    #
-    # @return [BigDecimal] the calculated total price
-    def total_price
-      @_total_price ||= (subtotal + shipping_price)
-    end
-
-    def total_eot_price
-      @_total_eot_price ||= (eot_subtotal + eot_shipping_price)
+      Glysellin.step_routes[state_name]
     end
 
     # Customer's e-mail directly accessible from the order
@@ -178,24 +162,6 @@ module Glysellin
       payment.type rescue nil
     end
 
-    # Tells the order it is paid and processes to the necessary
-    #   updates the model and related object need to retrieve payment infos
-    #
-    # @return [Boolean] if the doc was saved
-    def pay!
-      self.payment.new_status Payment::PAYMENT_STATUS_PAID
-      self.status = ORDER_STATUS_PAID
-      self.paid_on = payment.last_payment_action_on
-      self.save
-    end
-
-    # Tells if the order is currently paid or not
-    #
-    # @return [Boolean] whether it is paid or not
-    def paid?
-      payment.status == Payment::PAYMENT_STATUS_PAID
-    end
-
     # Permits to create or update an order from nested forms (hashes)
     #   and can create a whole order object ready to be paid but
     #   only modifies the order from the params passed in the data param
@@ -211,6 +177,10 @@ module Glysellin
       # Fetch order from ref or create a new one
       order = ref ? Order.find_by_ref(ref) : Order.new
 
+      # errors = %w(addresses user payment_method products product_choices).reduce([]) do |errors, method|
+      #   errors += (order.send("fill_#{ method }_from_hash", data) || [])
+      # end
+
       # Try to fill as much as we can
       order.fill_addresses_from_hash(data)
       order.fill_user_from_hash(data)
@@ -223,32 +193,39 @@ module Glysellin
     end
 
     def fill_addresses_from_hash data
-      return unless data[:billing_address_attributes]
+      return unless (billing_params = data[:billing_address_attributes])
+
       # Store billing address
-      self.build_billing_address(data[:billing_address_attributes])
+      self.build_billing_address(billing_params)
 
       # Check if we have to use the billing address for shipping
       same_address = data[:use_billing_address_for_shipping].presence
 
       # Define shipping address if we must use same address
       if same_address
-        self.build_shipping_address(data[:billing_address_attributes])
+        self.build_shipping_address(billing_params)
       # Else, if we are given a specific shipping address
       elsif data[:shipping_address_attributes]
         self.build_shipping_address(data[:shipping_address_attributes])
       end
+      address_filled
     end
 
     def fill_user_from_hash data
-      return unless data[:customer_attributes] && data[:customer_attributes].length > 0
+      return if customer
+      return unless data[:customer_attributes] && data[:customer_attributes][:email]
 
-      user = self.build_customer(data[:customer_attributes])
+      email = data[:customer_attributes][:email]
+      if (user = Glysellin.user_class_name.constantize.find_by_email email)
+        self.customer = user
+      else
+        user = self.build_customer(data[:customer_attributes])
 
-      unless user.password && user.password_confirmation
-        password = (rand*(10**20)).to_i.to_s(36)
-        user.password = password
-        user.password_confirmation = password
-
+        unless user.password && user.password_confirmation
+          password = (rand*(10**20)).to_i.to_s(36)
+          user.password = password
+          user.password_confirmation = password
+        end
       end
     end
 
@@ -259,7 +236,7 @@ module Glysellin
 
       payment_hash = data[:payments_attributes].first.last
       payment.type = PaymentMethod.find(payment_hash[:type_id])
-      self.status = ORDER_STATUS_PAYMENT_PENDING
+      payment_method_chosen
     end
 
     def fill_products_from_hash data
@@ -277,9 +254,10 @@ module Glysellin
         # If quantity is 0 we won't add it
         if product_id && quantity > 0
           # Try create item from given product_id and quantity
-          item = OrderItem.create_from_product_id(product_id, quantity)
+          items = OrderItem.create_from_product(product_id, quantity)
           # Add it to items if it has been created
-          self.items << item if item
+          self.items += items
+          cart_filled
         end
       end
     end
@@ -289,10 +267,35 @@ module Glysellin
 
       data[:product_choice].each do |product_id|
         if product_id
-          item = OrderItem.create_from_product_id(product_id, 1)
+          item = OrderItem.create_from_product(product_id, 1)
           self.items << item if item
         end
       end
+    end
+
+
+    def self.create_from_cart cart, customer
+      order = self.new
+      # Fill items from cart
+      cart.items.each do |item|
+        order.items += OrderItem.create_from_product(
+          item[:product],
+          item[:quantity]
+        )
+      end
+      # Fill address from user if signed in and already has address
+      if customer
+        order.customer_id = customer.id
+        last_order = Order.from_customer(customer.id).last
+        if last_order
+          if last_order.billing_address
+            order.billing_address = Address.new last_order.billing_address.clone.attributes
+            order.shipping_address = Address.new last_order.shipping_address.clone.attributes
+          end
+        end
+      end
+      # Return order to be saved
+      order
     end
   end
 

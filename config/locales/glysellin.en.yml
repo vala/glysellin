@@ -1,4 +1,4 @@
-fr:
+en:
   glysellin:
     controllers:
       errors:
@@ -7,10 +7,14 @@ fr:
       misc:
         back_to_homepage: "Back to home page"
       forms:
+        customer_details: "Your account"
         fill_in_your_address: "Fill in your address"
         confirm_addresses: "Confirm your address"
         choose_payment_method: "Choose your payment method"
         confirm_payment_method: "Confirm payment method"
+      customer:
+        sign_in: "Sign in"
+        sign_up: "Sign up"
       order:
         billing_address: "Billing address"
         shipping_address: "Shipping address"
@@ -48,6 +52,12 @@ fr:
           paid: Paid
           shipping: Shipping
           shipped: Shipped
+      cart:
+        add_to_cart: "Add to cart"
+        no_products_in_cart: "No products in your cart"
+        products_count: "%{count} products in your cart"
+        your_cart: "Your cart"
+        create_order: "Order"
 
     order_admin_mailer:
       send_order_paid_email:

@@ -13,7 +13,7 @@ module Glysellin
     #
     # @return [String] the slugged string
     def to_slug
-      self.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+      self.parameterize
     end
   end
 
@@ -33,6 +33,7 @@ module Glysellin
 
     included do
       self.send(:include, Countries)
+      self.send(:include, Views)
     end
   end
 end

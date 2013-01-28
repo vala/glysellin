@@ -1,54 +1,74 @@
 Une commande a été validée sur le site.
 
+--------------------------------------------------------
 Récapitulatif de la commande Numéro : <%= @order.ref %>:
-
 --------------------------------------------------------
 
-  Client / Adresse de livraison et facturation :
+Email du client: <%= @order.customer.email %>
 
-  <% address = @order.billing_address %>
+Adresse de facturation :
+------------------------------
 
-  Nom complet : <%= address.last_name %> <%= address.first_name %>
+<% billing_address = @order.billing_address %>
 
-  Adresse:
-      <%= address.address %>
-      <%= address.zip %> <%= address.city %>
-      <%= address.country %>
+Nom complet : <%= billing_address.last_name %> <%= billing_address.first_name %>
+<%- if billing_address.tel -%>
+Tél: <%= billing_address.tel %>
+<%- end -%>
 
-  E-mail: <%= @order.customer.email %>
-  <%- if address.tel -%>
-  Tél: <%= address.tel %>
-  <%- end -%>
-
---------------------------------------------------------
-
-	Produits :
-
-			<% @order.items.each do |item| %>
-			Sku / Référence : <%= item.sku %>
-			Nom : <%= item.name %>
-			Quantité : <%= item.quantity %>
-			Prix HT : <%= number_to_currency(item.eot_price) %>
-			Prix TTC : <%= number_to_currency(item.price) %>
-			------------------------
-			<% end %>
+<%= billing_address.billing_address %>
+<%= billing_address.zip %> <%= billing_address.city %>
+<%= billing_address.country %>
 
 
-			<%- if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical -%>
-			Sous Total HT / TTC : <%= number_to_currency(@order.eot_subtotal) %> / <%= number_to_currency(@order.subtotal) %>
-			<%- end -%>
-			<%- if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero -%>
-			Frais de ports HT / TTC : <%= number_to_currency(@order.eot_shipping_price) %> / <%= number_to_currency(@order.shipping_price) %>
-			<%- end -%>
-			Total HT / TTC : <%= number_to_currency(@order.total_eot_price) %> / <%= number_to_currency(@order.total_price) %>
+Adresse de livraison :
+------------------------------
+
+<% shipping_address = @order.shipping_address %>
+
+Nom complet : <%= shipping_address.last_name %> <%= shipping_address.first_name %>
+<%- if shipping_address.tel -%>
+Tél: <%= shipping_address.tel %>
+<%- end -%>
+
+<%= shipping_address.shipping_address %>
+<%= shipping_address.zip %> <%= shipping_address.city %>
+<%= shipping_address.country %>
 
 
 --------------------------------------------------------
 
-	Paiement :
+Vos produits :
 
-		Mode de paiement : <%= @order.payment_method.name %>
-		Statut : Payé
-		Date : <%= @order.payments.last.last_payment_action_on %>
+<%- @order.items.each do |item| -%>
+Nom : <%= item.name %>
+Quantité : <%= item.quantity %>
+Prix TTC : <%= number_to_currency(item.price) %>
+------------------------
+<%- end -%>
+
+<%- if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical -%>
+Sous Total TTC : <%= number_to_currency(@order.subtotal) %>
+<% end %>
+<%- if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero -%>
+Frais de ports TTC : <%= number_to_currency(@order.shipping_price) %>
+<%- end -%>
+Total TTC : <%= number_to_currency(@order.total_price) %>
+
 
 --------------------------------------------------------
+
+Paiement :
+
+Mode de paiement : <%= @order.payment_method.name %>
+Statut : Payé
+Date : <%= @order.payment.last_payment_action_on %>
+
+--------------------------------------------------------
+
+
+Toute l'équipe de <%= Glysellin.shop_name %> vous remercie pour votre commande !
+
+
+--------------------------------------------------------------------------------
+Ceci est un message généré automatiquement, merci de ne pas essayer d'y répondre

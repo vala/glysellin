@@ -1,0 +1,12 @@
+<%= form_tag add_to_cart_path, class: 'add-to-cart-form', remote: options[:remote] do %>
+  <div class="product-quantity">
+    <%= number_field :cart, :quantity, value: 1 %>
+  </div>
+  <div class="submit-container">
+    <%= hidden_field :cart, :product_id, value: product.id %>
+    <button class="submit" type="submit">
+      <%= t('glysellin.labels.cart.add_to_cart') %>
+    </button>
+  </div>
+
+<% end %>

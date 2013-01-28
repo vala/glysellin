@@ -38,5 +38,9 @@ module Glysellin
         [I18n.t("glysellin.labels.payments.statuses.#{ s }"), s]
       end
     end
+
+    def by_check?
+      type.slug == 'check'
+    end
   end
 end

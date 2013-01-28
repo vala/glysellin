@@ -91,7 +91,7 @@ module Glysellin
         
         Rails.logger.debug("Process payment : #{valid} DIRTY BITCH")
         
-        result = valid ? @order.pay! : false
+        result = valid ? @order.paid! : false
         
         @order.save
         result

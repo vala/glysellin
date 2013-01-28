@@ -2,12 +2,13 @@ require "glysellin/engine"
 require "glysellin/helpers"
 require "glysellin/gateway"
 require "glysellin/product_methods"
+require "glysellin/products_list"
+require "glysellin/cart"
 
 module Glysellin
   # Public: Main app root to be defined inside engine initialization process
   #   so we can refer to it from inside the lib
   mattr_accessor :app_root
-
 
   ################################################################
   #
@@ -18,12 +19,11 @@ module Glysellin
   # Status const to be used to define order step to cart shopping
   ORDER_STEP_CART = 'cart'
   # Status const to be used to define order step to address
-  ORDER_STEP_ADDRESS = 'fill_addresses'
+  ORDER_STEP_ADDRESS = 'addresses'
   # Status const to be used to define order step to defining payment method
   ORDER_STEP_PAYMENT_METHOD = 'payment_method'
   # Status const to be used to define order step to payment
   ORDER_STEP_PAYMENT = 'payment'
-
 
   ################################################################
   #
@@ -43,7 +43,7 @@ module Glysellin
   # Public: Defines which fields must be present when validating an
   #    Address model
   mattr_accessor :address_presence_validation_keys
-  @@address_presence_validation_keys = *[:first_name, :last_name, :address, :zip, :city, :country]
+  @@address_presence_validation_keys = [:first_name, :last_name, :address, :zip, :city, :country]
 
   # Public: Has to be filled if there are additional address fields to
   #   store in database
@@ -81,13 +81,12 @@ module Glysellin
   mattr_accessor :default_vat_rate
   @@default_vat_rate = 19.6
 
-  mattr_accessor :order_steps_process
-  @@order_steps_process = [
-    ORDER_STEP_CART,
-    ORDER_STEP_ADDRESS,
-    ORDER_STEP_PAYMENT_METHOD,
-    ORDER_STEP_PAYMENT
-  ]
+  mattr_accessor :step_routes
+  @@step_routes = {
+    created: ORDER_STEP_ADDRESS,
+    address: ORDER_STEP_PAYMENT_METHOD,
+    payment: ORDER_STEP_PAYMENT
+  }
 
   # Public: Permits using config block in order to set
   #   Glysellin module attributes
@@ -103,8 +102,6 @@ module Glysellin
     yield self
   end
 
-
   # Load helpers
   ActionController::Base.send(:include, Helpers)
-
 end
