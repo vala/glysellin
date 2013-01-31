@@ -30,8 +30,6 @@ module Glysellin
     def process_order
       @order = Order.from_sub_forms(params[:glysellin_order], params[:id])
 
-      # render :text => params.inspect + '<br/><br/>' + @order.items.inspect.gsub(/[<>]/, {'<' => '&lt;', '>' => '&gt;'})
-
       if @order.save
         next_step = @order.next_step
         if @order.next_step == ORDER_STEP_PAYMENT

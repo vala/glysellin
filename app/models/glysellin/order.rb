@@ -52,6 +52,7 @@ module Glysellin
 
     after_save :check_ref
     before_save :set_paid_if_paid_by_check
+    before_save :update_state_if_needed
 
     scope :from_customer, lambda { |customer_id| where(customer_id: customer_id) }
 
@@ -64,13 +65,29 @@ module Glysellin
       update_attribute(:ref, self.generate_ref) unless self.ref
     end
 
-    # If admin sets payment date by hand and order was paid by check, fire :paid event
+    # If admin sets payment date by hand and order was paid by check,
+    # fire :paid event
+    #
     def set_paid_if_paid_by_check
       paid! if (paid_on_changed? and payment? and paid_by_check?)
     end
 
     def paid_by_check?
       payment and payment.by_check?
+    end
+
+    # Allows to change state after order's validation and related items
+    # validations are done, just before it is saved
+    #
+    def update_state_if_needed
+      # Set address as filled
+      if created? && customer && billing_address && shipping_address
+        address_filled
+      end
+      # Set payment method chosen
+      if address? && payment && payment.type
+         payment_method_chosen
+      end
     end
 
     # Callback invoked after event :paid
@@ -208,7 +225,6 @@ module Glysellin
       elsif data[:shipping_address_attributes]
         self.build_shipping_address(data[:shipping_address_attributes])
       end
-      address_filled
     end
 
     def fill_user_from_hash data
@@ -216,6 +232,7 @@ module Glysellin
       return unless data[:customer_attributes] && data[:customer_attributes][:email]
 
       email = data[:customer_attributes][:email]
+
       if (user = Glysellin.user_class_name.constantize.find_by_email email)
         self.customer = user
       else
@@ -236,7 +253,6 @@ module Glysellin
 
       payment_hash = data[:payments_attributes].first.last
       payment.type = PaymentMethod.find(payment_hash[:type_id])
-      payment_method_chosen
     end
 
     def fill_products_from_hash data
@@ -257,7 +273,6 @@ module Glysellin
           items = OrderItem.create_from_product(product_id, quantity)
           # Add it to items if it has been created
           self.items += items
-          cart_filled
         end
       end
     end
