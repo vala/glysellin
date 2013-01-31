@@ -8,8 +8,12 @@ module Glysellin
 
     state_machine initial: :created do
 
+      event :fill_address do
+        transition created: :filling_address
+      end
+
       event :address_filled do
-        transition created: :address
+        transition filling_address: :address
       end
 
       event :payment_method_chosen do
@@ -81,7 +85,7 @@ module Glysellin
     #
     def update_state_if_needed
       # Set address as filled
-      if created? && customer && billing_address && shipping_address
+      if filling_address? && customer && billing_address && shipping_address
         address_filled
       end
       # Set payment method chosen
@@ -212,6 +216,9 @@ module Glysellin
     def fill_addresses_from_hash data
       return unless (billing_params = data[:billing_address_attributes])
 
+      # Switch to filling address state so address can be validated
+      fill_address if created?
+
       # Store billing address
       self.build_billing_address(billing_params)
 
@@ -228,13 +235,19 @@ module Glysellin
     end
 
     def fill_user_from_hash data
-      return if customer
-      return unless data[:customer_attributes] && data[:customer_attributes][:email]
+      return unless data[:customer_attributes] &&
+        (customer || (email = data[:customer_attributes][:email]))
 
-      email = data[:customer_attributes][:email]
+      user = customer || Glysellin.user_class_name.constantize.find_by_email(email)
 
-      if (user = Glysellin.user_class_name.constantize.find_by_email email)
+      if user
         self.customer = user
+
+        user_params = data[:customer_attributes].delete_if { |key, _|
+          key.match /((^password)|id|email)/
+        }
+
+        self.customer.update_attributes(user_params)
       else
         user = self.build_customer(data[:customer_attributes])
 
