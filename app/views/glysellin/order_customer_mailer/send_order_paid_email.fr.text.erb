@@ -9,17 +9,31 @@ Votre numéro de commande : <%= @order.ref %>:
 Votre adresse de facturation :
 ------------------------------
 
-<% address = @order.billing_address %>
+<% billing_address = @order.billing_address %>
 
-Nom complet : <%= address.last_name %> <%= address.first_name %>
-E-mail: <%= @order.customer.email %>
-<%- if address.tel -%>
-Tél: <%= address.tel %>
+Nom complet : <%= billing_address.last_name %> <%= billing_address.first_name %>
+<%- if billing_address.tel -%>
+Tél: <%= billing_address.tel %>
 <%- end -%>
 
-<%= address.address %>
-<%= address.zip %> <%= address.city %>
-<%= address.country %>
+<%= billing_address.address %>
+<%= billing_address.zip %> <%= billing_address.city %>
+<%= billing_address.country %>
+
+
+Votre adresse de livraison :
+------------------------------
+
+<% shipping_address = @order.shipping_address %>
+
+Nom complet : <%= shipping_address.last_name %> <%= shipping_address.first_name %>
+<%- if shipping_address.tel -%>
+Tél: <%= shipping_address.tel %>
+<%- end -%>
+
+<%= shipping_address.address %>
+<%= shipping_address.zip %> <%= shipping_address.city %>
+<%= shipping_address.country %>
 
 
 --------------------------------------------------------
@@ -32,7 +46,6 @@ Quantité : <%= item.quantity %>
 Prix TTC : <%= number_to_currency(item.price) %>
 ------------------------
 <%- end -%>
-
 
 <%- if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical -%>
 Sous Total TTC : <%= number_to_currency(@order.subtotal) %>

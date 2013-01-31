@@ -38,7 +38,7 @@ Tél: <%= shipping_address.tel %>
 
 --------------------------------------------------------
 
-Vos produits :
+Produits commandés :
 
 <%- @order.items.each do |item| -%>
 Nom : <%= item.name %>
@@ -66,8 +66,6 @@ Date : <%= @order.payment.last_payment_action_on %>
 
 --------------------------------------------------------
 
-
-Toute l'équipe de <%= Glysellin.shop_name %> vous remercie pour votre commande !
 
 
 --------------------------------------------------------------------------------
