@@ -15,5 +15,5 @@ The routes to redirect the payments gateways to are :
 
 * For the automatic Server to Server response : `http://yourapp.com/<glysellin_mount_point>/orders/gateway/:gateway` where :gateway is the gateway slug
 * For the "Return to shop" redirections :
-    * Success response : `http://yourapp.com/<glysellin_mount_point>/orders/gateway/response/success`
+    * Success response : `http://yourapp.com/<glysellin_mount_point>/orders/gateway/response/paid`
     * Error response : `http://yourapp.com/<glysellin_mount_point>/orders/gateway/response/cancel`
