@@ -16,7 +16,7 @@ Nom complet : <%= billing_address.last_name %> <%= billing_address.first_name %>
 Tél: <%= billing_address.tel %>
 <%- end -%>
 
-<%= billing_address.billing_address %>
+<%= billing_address.address %>
 <%= billing_address.zip %> <%= billing_address.city %>
 <%= billing_address.country %>
 
@@ -31,7 +31,7 @@ Nom complet : <%= shipping_address.last_name %> <%= shipping_address.first_name 
 Tél: <%= shipping_address.tel %>
 <%- end -%>
 
-<%= shipping_address.shipping_address %>
+<%= shipping_address.address %>
 <%= shipping_address.zip %> <%= shipping_address.city %>
 <%= shipping_address.country %>
 

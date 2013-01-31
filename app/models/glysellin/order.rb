@@ -17,7 +17,7 @@ module Glysellin
       end
 
       event :paid do
-        transition payment: :paid
+        transition any => :paid
       end
 
       after_transition on: :paid, do: :set_payment
