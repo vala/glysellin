@@ -5,6 +5,7 @@ class CreateGlysellinPayments < ActiveRecord::Migration
       t.integer :type_id
       t.integer :order_id
       t.datetime :last_payment_action_on
+      t.integer :transaction_id
 
       t.timestamps
     end

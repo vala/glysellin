@@ -7,7 +7,9 @@ class CreateGlysellinOrders < ActiveRecord::Migration
       t.integer :user_id
       t.integer :billing_address_id
       t.integer :shipping_address_id
-      
+      t.string :state
+      t.integer :customer_id
+
       t.timestamps
     end
   end

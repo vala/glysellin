@@ -14,6 +14,7 @@ class CreateGlysellinAddresses < ActiveRecord::Migration
       t.string :country
       t.string :tel
       t.string :fax
+      t.text :additional_fields
 
       t.timestamps
     end
