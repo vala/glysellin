@@ -4,7 +4,7 @@ module ActionDispatch::Routing
 
       controllers = parse_controllers(options)
 
-      scope mount_location, :module => 'glysellin' do
+      scope mount_location do
         resources :orders, controller: controllers[:orders], :only => [:new, :create, :edit, :update] do
           collection do
             get 'cart'

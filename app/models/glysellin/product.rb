@@ -18,16 +18,16 @@ module Glysellin
       join_table: 'glysellin_products_taxonomies', :foreign_key => 'product_id'
 
     # N..N relation between bundles and products
-    has_many :bundle_products, class_name: 'Glysellin::BundleProduct',
-      foreign_key: 'product_id'
-    has_many :bundles, class_name: 'Glysellin::Product',
-      through: :bundle_products
+    # has_many :bundle_products, class_name: 'Glysellin::BundleProduct',
+    #   foreign_key: 'product_id'
+    # has_many :bundles, class_name: 'Glysellin::Product',
+    #   through: :bundle_products
 
-    # Bundled products in current_product
-    has_many :product_bundles, class_name: 'Glysellin::BundleProduct',
-      foreign_key: 'bundle_id'
-    has_many :bundled_products, class_name: 'Glysellin::Product',
-      through: :product_bundles
+    # # Bundled products in current_product
+    # has_many :product_bundles, class_name: 'Glysellin::BundleProduct',
+    #   foreign_key: 'bundle_id'
+    # has_many :bundled_products, class_name: 'Glysellin::Product',
+    #   through: :product_bundles
 
     # Products can belong to a brand
     belongs_to :brand, :inverse_of => :products
@@ -40,9 +40,10 @@ module Glysellin
 
     attr_accessible :description, :eot_price, :name, :sku, :slug, :vat_rate,
       :brand, :taxonomies, :images, :properties, :in_stock, :price, :published,
-      :display_priority, :images_attributes, :taxonomy_ids,
-      :bundled_products_attributes, :unlimited_stock, :properties_attributes,
-      :position
+      :display_priority, :images_attributes, :taxonomy_ids, :unlimited_stock,
+      :properties_attributes, :position
+
+      # :bundled_products_attributes
 
     # Validations
     #
@@ -50,7 +51,7 @@ module Glysellin
     # Validates price related attributes only unless we have bundled products
     # so we can defer validations to them
     validates :eot_price, :vat_rate, :price, presence: true,
-      numericality: true, unless: proc { |p| p.bundled_products.length > 0 }
+      numericality: true # , unless: proc { |p| p.bundled_products.length > 0 }
 
     # We check presence of sku if set in global config
     validates :sku, presence: true, if: proc { Glysellin.autoset_sku }
@@ -107,22 +108,22 @@ module Glysellin
       images.length > 0 ? images.first.image : nil
     end
 
-    bundle_attribute :price do |product|
-      product.bundled_products.reduce(0) do |total, product|
-        total + product.price
-      end
-    end
+    # bundle_attribute :price do |product|
+    #   product.bundled_products.reduce(0) do |total, product|
+    #     total + product.price
+    #   end
+    # end
 
-    bundle_attribute :eot_price do |product, att|
-      product.bundled_products.reduce(0) do |total, product|
-        total + product.eot_price
-      end
-    end
+    # bundle_attribute :eot_price do |product, att|
+    #   product.bundled_products.reduce(0) do |total, product|
+    #     total + product.eot_price
+    #   end
+    # end
 
-    bundle_attribute :vat_rate do |product|
-      product.bundled_products.reduce(0) do |total, product|
-        total + (product.vat_rate * product.price)
-      end / product.price
-    end
+    # bundle_attribute :vat_rate do |product|
+    #   product.bundled_products.reduce(0) do |total, product|
+    #     total + (product.vat_rate * product.price)
+    #   end / product.price
+    # end
   end
 end

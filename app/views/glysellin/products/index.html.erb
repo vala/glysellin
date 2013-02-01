@@ -5,7 +5,7 @@
     </span>
     <% if product.image %>
       <div class="image">
-        <%= product.name %>
+        <%= image_tag product.image.url(:thumb) %>
       </div>
     <% end %>
     <div class="description">
