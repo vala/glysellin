@@ -2,9 +2,15 @@
 
 Glysellin is a Rails lightweight e-commerce solution that helps you get simple products, orders and payment gateways without the whole set of functionalities a real e-commerce needs.
 
-It is exposed as a mountable engine so you can customize what you want... doc be written
+In order to stay simple, we choosed for now to keep with some strong dependencies that may not fit to your app.
 
-## Warning
+## Dependencies
+
+* [Devise](https://github.com/plataformatec/devise)
+* [Paperclip](https://github.com/thoughtbot/paperclip)
+* [Simple Form](https://github.com/plataformatec/simple_form)
+
+## Disclaimer
 
 Glysellin is under development and can now be used, but documentation is poor, there are no tests and API can change quickly while we don't have tested it within enough projects.
 
@@ -59,6 +65,21 @@ You must pass the helper a `Glysellin::Product` instance in order to make it wor
 
 ```erb
 <%= add_to_cart_form(@product) %>
+```
+
+## Managing orders
+
+By default, being bound to Devise, Glysellin automatically generates anonymous users to bind orders to. You can choose to keep this behavior alone, or add real subscription in the ordering process or remove the default behavior to force users to create an account by switching off the default functionality in the initializer (default parameter is commented) :
+
+```ruby
+# config/initializers/glysellin.rb
+Glysellin.config do |config|
+  # Allows creating fake accounts for customers with automatic random
+  # password generation
+  # Defaults to true
+  #
+  config.allow_anonymous_orders = true
+end
 ```
 
 ## Gateway integration
