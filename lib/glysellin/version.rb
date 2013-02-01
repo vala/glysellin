@@ -1,3 +1,3 @@
 module Glysellin
-  VERSION = "0.3.beta"
+  VERSION = "0.3.0"
 end
