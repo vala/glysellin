@@ -8,9 +8,6 @@ module Glysellin
     belongs_to :imageable, :polymorphic => true
 
     has_attached_file :image,
-      :styles => {
-        :thumb => '100x100#',
-        :content => '300x300'
-      }
+      :styles => Glysellin.product_images_styles
   end
 end

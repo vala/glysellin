@@ -54,6 +54,12 @@ Glysellin.config do |config|
   #     end
   #   end
 
+  # Product images paperclip styles, defaults are listed below
+  # config.product_images_styles = {
+  #   :thumb => '100x100#',
+  #   :content => '300x300'
+  # }
+
   # Config mercanet account
   # config.gateways['mercanet'].config do |m|
   #   m.merchant_id = '0123012302130120'

@@ -89,6 +89,12 @@ module Glysellin
     payment: ORDER_STEP_PAYMENT
   }
 
+  # Product images paperclip styles
+  mattr_accessor :product_images_styles
+  @@product_images_styles = {
+    :thumb => '100x100#',
+    :content => '300x300'
+  }
 
   mattr_accessor :allow_anonymous_orders
   @@allow_anonymous_orders = true
