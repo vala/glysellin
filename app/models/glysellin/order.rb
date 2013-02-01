@@ -34,7 +34,7 @@ module Glysellin
     has_many :items, :class_name => 'Glysellin::OrderItem', :foreign_key => 'order_id'
     # The actual buyer
     belongs_to :customer, :class_name => "::#{ Glysellin.user_class_name }",
-      :foreign_key => 'customer_id', :inverse_of => :orders, :autosave => true
+      :foreign_key => 'customer_id', :autosave => true
     # Addresses
     belongs_to :billing_address, :foreign_key => 'billing_address_id', :class_name => 'Glysellin::Address', :inverse_of => :billed_orders
     belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address', :inverse_of => :shipped_orders

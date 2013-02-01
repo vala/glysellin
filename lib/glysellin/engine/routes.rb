@@ -32,8 +32,12 @@ module ActionDispatch::Routing
 
         resources :products, controller: controllers[:products] do
           collection do
-            get 'filter'
+            get 'taxonomy/:id', action: "filter", as: "filter"
           end
+        end
+
+        resources :taxonomies, only: [] do
+          resources :products, only: [:index]
         end
 
         resource :cart, controller: controllers[:cart], only: [:show] do
@@ -42,7 +46,7 @@ module ActionDispatch::Routing
           get "remove-product/:id", action: "remove", as: "remove_from"
         end
 
-        get '/' => 'products#index'
+        get '/' => 'glysellin/products#index', as: 'shop'
       end
     end
 

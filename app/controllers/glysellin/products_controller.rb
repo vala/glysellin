@@ -1,10 +1,8 @@
 module Glysellin
   class ProductsController < ApplicationController
     def index
-      @products = Product.order('created_at DESC').limit(10)
-    end
-
-    def filter
+      @products = Glysellin::Product.order('created_at DESC').limit(10)
+      @products = @products.with_taxonomy(params[:taxonomy_id]) if params[:taxonomy_id]
     end
 
     def show

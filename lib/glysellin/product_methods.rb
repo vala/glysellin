@@ -49,7 +49,8 @@ module Glysellin
     #
     # @return  [true, false]
     def bundle?
-      bundled_products.length > 0
+      return false
+      # bundled_products.length > 0
     end
   end
 end
