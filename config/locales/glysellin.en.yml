@@ -61,6 +61,15 @@ en:
         remove_from_cart: "Delete"
         update: "Update cart"
 
+    orders:
+      states:
+        created: "Created"
+        filling_address: "Addresses not filled"
+        address: "Addresses filled"
+        payment: "Payment method chosen"
+        paid: "Paid"
+        shipped: "Shipped"
+
     order_admin_mailer:
       send_order_paid_email:
         subject: "A new order has validated"

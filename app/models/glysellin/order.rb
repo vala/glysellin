@@ -24,6 +24,10 @@ module Glysellin
         transition any => :paid
       end
 
+      event :shipped do
+        transition :paid => :shipped
+      end
+
       after_transition on: :paid, do: :set_payment
     end
 
@@ -49,10 +53,10 @@ module Glysellin
     accepts_nested_attributes_for :payments
 
     attr_accessible :billing_address_attributes, :shipping_address_attributes,
-      :billing_address, :shipping_address, :payments,
-      :items, :items_ids, :customer, :customer_id, :ref, :status, :paid_on,
-      :user, :items, :payments, :customer_attributes, :payments_attributes,
-      :items_attributes
+      :billing_address, :shipping_address, :payments, :items, :items_ids,
+      :customer, :customer_id, :ref, :user, :items, :payments,
+      :customer_attributes, :payments_attributes, :items_attributes, :paid_on,
+      :state
 
     after_save :check_ref
     before_save :set_paid_if_paid_by_check

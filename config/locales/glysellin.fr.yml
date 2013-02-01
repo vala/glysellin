@@ -67,6 +67,15 @@ fr:
         create_order: "Passer la commande"
         update: "Mettre à jour le panier"
 
+    orders:
+      states:
+        created: "Créée"
+        filling_address: "Adresses non remplies"
+        address: "Adresses remplies"
+        payment: "Méthode de paiement choisie"
+        paid: "Payée"
+        shipped: "Expédiée"
+
     # Order e-mails subjects
     order_admin_mailer:
       send_order_paid_email:
