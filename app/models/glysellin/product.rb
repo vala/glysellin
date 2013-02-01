@@ -41,7 +41,8 @@ module Glysellin
     attr_accessible :description, :eot_price, :name, :sku, :slug, :vat_rate,
       :brand, :taxonomies, :images, :properties, :in_stock, :price, :published,
       :display_priority, :images_attributes, :taxonomy_ids,
-      :bundled_products_attributes, :unlimited_stock, :properties_attributes
+      :bundled_products_attributes, :unlimited_stock, :properties_attributes,
+      :position
 
     # Validations
     #
