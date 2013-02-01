@@ -1,8 +1,11 @@
 module ActionDispatch::Routing
   class Mapper
-    def glysellin_at(mount_location)
+    def glysellin_at(mount_location, options = {})
+
+      controllers = parse_controllers(options)
+
       scope mount_location, :module => 'glysellin' do
-        resources :orders, :only => [:new, :create, :edit, :update] do
+        resources :orders, controller: controllers[:orders], :only => [:new, :create, :edit, :update] do
           collection do
             get 'cart'
             post 'validate_cart'
@@ -15,9 +18,10 @@ module ActionDispatch::Routing
             match 'gateway/response/:type', :action => 'payment_response', :as => 'typed_payment_response'
             get 'create-from-cart', :action => 'create_from_cart', :as => 'from_cart_create'
           end
+
           member do
             put 'process_order', :as => 'process'
-            get 'addresses'#, :action => 'fill_addresses', :as => 'fill_addresses'
+            get 'addresses'
             post 'validate_addresses'
             get 'payment_method'
             get 'payment'
@@ -26,20 +30,31 @@ module ActionDispatch::Routing
           end
         end
 
-        resources :products do
+        resources :products, controller: controllers[:products] do
           collection do
             get 'filter'
           end
         end
 
-        resource :cart, controller: 'cart', only: [:show] do
+        resource :cart, controller: controllers[:cart], only: [:show] do
           post "add-product", action: "add", as: "add_to"
           put "update", action: "update", as: "update"
           get "remove-product/:id", action: "remove", as: "remove_from"
         end
 
-        root :to => 'products#index'
+        get '/' => 'products#index'
       end
+    end
+
+    # Allows user to define app controllers to handle glysellin routes
+    def parse_controllers options
+      defaults = {
+        orders: 'glysellin/orders',
+        products: 'glysellin/products',
+        cart: 'glysellin/cart'
+      }
+
+      defaults.merge(options)
     end
   end
 end

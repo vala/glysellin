@@ -1,0 +1,23 @@
+<% @products.each do |product| %>
+  <div class="product-container">
+    <span class="name">
+      <%= product.name %>
+    </span>
+    <% if product.image %>
+      <div class="image">
+        <%= product.name %>
+      </div>
+    <% end %>
+    <div class="description">
+      <%= product.description %>
+    </div>
+
+    <div class="buying-infos">
+      <span class="price">
+        <%= number_to_currency(product.price) %>
+      </span>
+
+      <%= add_to_cart_form(product) %>
+    </div>
+  </div>
+<% end %>
