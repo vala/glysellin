@@ -4,6 +4,8 @@ Glysellin is a Rails lightweight e-commerce solution that helps you get simple p
 
 In order to stay simple, we choosed for now to keep with some strong dependencies that may not fit to your app.
 
+Also, no admin interface is provided so you can integrate it, but we always use [RailsAdmin](https://github.com/sferik/rails_admin).
+
 ## Dependencies
 
 * [Devise](https://github.com/plataformatec/devise)
