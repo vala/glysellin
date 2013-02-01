@@ -20,13 +20,19 @@ Glysellin.config do |config|
   # Set default VAT rate for products when it is not set in db
   config.default_vat_rate = 19.6
 
+  # Allows creating fake accounts for customers with automatic random
+  # password generation
+  # Defaults to true
+  #
+  # config.allow_anonymous_orders = true
+
   # Set steps order to be used while using automatic order process
-  # config.order_steps_process [
-  #   Glysellin::ORDER_STEP_CART,
-  #   Glysellin::ORDER_STEP_ADDRESS,
-  #   Glysellin::ORDER_STEP_PAYMENT_METHOD,
-  #   Glysellin::ORDER_STEP_PAYMENT
-  # ]
+  # config.step_routes = {
+  #   created: Glysellin::ORDER_STEP_ADDRESS,
+  #   filling_address: Glysellin::ORDER_STEP_ADDRESS,
+  #   address: Glysellin::ORDER_STEP_PAYMENT_METHOD,
+  #   payment: Glysellin::ORDER_STEP_PAYMENT
+  # }
 
   # Change presence validation of Address fields
   #   default: *[:first_name, :last_name, :address, :zip, :city, :country]

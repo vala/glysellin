@@ -12,7 +12,7 @@ module ActionDispatch::Routing
             get 'payment_response'
             # Routes to handle statically parametered Gateways
             post 'gateway/:gateway', :action => 'gateway_response', :as => 'named_gateway_response'
-            post 'gateway/response/:type', :action => 'payment_response', :as => 'typed_payment_response'
+            match 'gateway/response/:type', :action => 'payment_response', :as => 'typed_payment_response'
             get 'create-from-cart', :action => 'create_from_cart', :as => 'from_cart_create'
           end
           member do

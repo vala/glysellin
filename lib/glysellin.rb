@@ -84,9 +84,14 @@ module Glysellin
   mattr_accessor :step_routes
   @@step_routes = {
     created: ORDER_STEP_ADDRESS,
+    filling_address: ORDER_STEP_ADDRESS,
     address: ORDER_STEP_PAYMENT_METHOD,
     payment: ORDER_STEP_PAYMENT
   }
+
+
+  mattr_accessor :allow_anonymous_orders
+  @@allow_anonymous_orders = true
 
   # Public: Permits using config block in order to set
   #   Glysellin module attributes

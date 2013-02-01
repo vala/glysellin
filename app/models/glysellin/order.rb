@@ -251,7 +251,9 @@ module Glysellin
       else
         user = self.build_customer(data[:customer_attributes])
 
-        unless user.password && user.password_confirmation
+        if Glysellin.allow_anonymous_orders &&
+          !(user.password || user.password_confirmation)
+
           password = (rand*(10**20)).to_i.to_s(36)
           user.password = password
           user.password_confirmation = password
