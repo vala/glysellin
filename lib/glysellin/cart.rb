@@ -68,7 +68,7 @@ module Glysellin
 
     def self.remove(cookie, product_id)
       cart = to_hash(cookie)
-      cart[product_id] = 0
+      cart.delete product_id.to_s
       to_string(cart)
     end
 

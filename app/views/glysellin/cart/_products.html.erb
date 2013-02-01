@@ -1,60 +1,94 @@
-<table id="order_recap_table">
-  <tr>
-    <th><%= t('glysellin.labels.order.sku') %></th>
-    <th><%= t('glysellin.labels.order.name') %></th>
-    <th><%= t('glysellin.labels.order.unit_price') %></th>
-    <th><%= t('glysellin.labels.order.quantity') %></th>
-    <th><%= t('glysellin.labels.order.eot_price') %></th>
-    <th><%= t('glysellin.labels.order.price') %></th>
-  </tr>
-  <% cart.each_items do |item, quantity| %>
+<%= form_tag update_cart_path, method: "put" do %>
+  <table id="order_recap_table">
     <tr>
-      <td><%= item.sku %></td>
-      <td><%= item.name %></td>
-      <td><%= number_to_currency(item.price) %></td>
-      <td><%= quantity %></td>
-      <td><%= number_to_currency(quantity * item.eot_price) %></td>
-      <td><%= number_to_currency(quantity * item.price) %></td>
+      <th><%= t('glysellin.labels.order.sku') %></th>
+      <th><%= t('glysellin.labels.order.name') %></th>
+      <th><%= t('glysellin.labels.order.unit_price') %></th>
+      <th><%= t('glysellin.labels.order.quantity') %></th>
+      <th><%= t('glysellin.labels.order.eot_price') %></th>
+      <th><%= t('glysellin.labels.order.price') %></th>
+      <% if editable %>
+        <th></th>
+      <% end %>
     </tr>
-  <% end %>
-  <% if cart.subtotal != cart.total_price || Glysellin.show_subtotal_if_identical %>
-    <tr>
-      <td colspan="4">
-        <%= t('glysellin.labels.order.subtotal') %>
-      </td>
-      <td>
+    <% cart.each_items do |item, quantity| %>
+      <tr>
+        <td>
+          <%= item.sku %>
+        </td>
+        <td>
+          <%= item.name %>
+        </td>
+        <td>
+          <%= number_to_currency(item.price) %>
+        </td>
+        <td>
+          <% if editable %>
+            <%= number_field :quantity, item.id, value: quantity %>
+          <% else %>
+            <%= quantity %>
+          <% end %>
+        </td>
+        <td>
+          <%= number_to_currency(quantity * item.eot_price) %>
+        </td>
+        <td>
+          <%= number_to_currency(quantity * item.price) %>
+        </td>
+        <% if editable %>
+          <td>
+            <%= link_to remove_from_cart_path(item.id) do %>
+              <%= t('glysellin.labels.cart.remove_from_cart') %>
+            <% end %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    <% if cart.subtotal != cart.total_price || Glysellin.show_subtotal_if_identical %>
+      <tr>
+        <td colspan="4">
+          <%= t('glysellin.labels.order.subtotal') %>
+        </td>
+        <td>
 
-      </td>
-      <td>
-        <%= number_to_currency(cart.subtotal(true)) %>
-      </td>
-      <td>
-        <%= number_to_currency(cart.subtotal) %>
-      </td>
-    </tr>
-  <% end %>
-  <% if cart.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
+        </td>
+        <td>
+          <%= number_to_currency(cart.subtotal(true)) %>
+        </td>
+        <td>
+          <%= number_to_currency(cart.subtotal) %>
+        </td>
+      </tr>
+    <% end %>
+    <% if cart.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
+      <tr>
+        <td colspan="4">
+          <%= t('glysellin.labels.order.shipping') %>
+        </td>
+        <td>
+          <%= number_to_currency(cart.shipping_price(true)) %>
+        </td>
+        <td>
+          <%= number_to_currency(cart.shipping_price) %>
+        </td>
+      </tr>
+    <% end %>
     <tr>
       <td colspan="4">
-        <%= t('glysellin.labels.order.shipping') %>
+        <%= t('glysellin.labels.order.total') %>
       </td>
       <td>
-        <%= number_to_currency(cart.shipping_price(true)) %>
+        <%= number_to_currency(cart.total_eot_price) %>
       </td>
       <td>
-        <%= number_to_currency(cart.shipping_price) %>
+        <%= number_to_currency(cart.total_price) %>
       </td>
     </tr>
+  </table>
+
+  <% if editable %>
+    <button type="submit">
+      <%= t('glysellin.labels.cart.update') %>
+    </button>
   <% end %>
-  <tr>
-    <td colspan="4">
-      <%= t('glysellin.labels.order.total') %>
-    </td>
-    <td>
-      <%= number_to_currency(cart.total_eot_price) %>
-    </td>
-    <td>
-      <%= number_to_currency(cart.total_price) %>
-    </td>
-  </tr>
-</table>
+<% end %>

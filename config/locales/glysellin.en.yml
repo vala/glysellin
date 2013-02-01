@@ -58,6 +58,8 @@ en:
         products_count: "%{count} products in your cart"
         your_cart: "Your cart"
         create_order: "Order"
+        remove_from_cart: "Delete"
+        update: "Update cart"
 
     order_admin_mailer:
       send_order_paid_email:

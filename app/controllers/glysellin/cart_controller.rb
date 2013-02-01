@@ -15,18 +15,18 @@ module Glysellin
     end
 
     def remove
-      update_cookie Cart.remove(cookies["glysellin.cart"], params[:item]), set: true
-      render_cart_partial
+      update_cookie Cart.remove(cookies["glysellin.cart"], params[:id]), set: true
+      redirect_to cart_path
     end
 
     def clear
       update_cookie ''
-      render_cart_partial
+      redirect_to cart_path
     end
 
     def update
       update_cookie Cart.update(cookies["glysellin.cart"], params)
-      redirect_to glysellin.cart_path
+      redirect_to cart_path
     end
 
     protected

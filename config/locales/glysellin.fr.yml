@@ -60,10 +60,12 @@ fr:
           shipped: Livré
       cart:
         add_to_cart: "Ajouter au panier"
+        remove_from_cart: "Supprimer"
         no_products_in_cart: "Pas d'article dans votre panier"
         products_count: "%{count} articles dans votre panier"
         your_cart: "Votre panier"
         create_order: "Passer la commande"
+        update: "Mettre à jour le panier"
 
     # Order e-mails subjects
     order_admin_mailer:
