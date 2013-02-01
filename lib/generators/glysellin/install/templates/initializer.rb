@@ -13,8 +13,14 @@ Glysellin.config do |config|
   # Reproducting default generator would be this :
   # config.order_reference_generator = lambda { |order| "#{ Time.now.strftime('%Y%m%d%H%M') }-#{ order.id }" }
 
-  config.contact_email = 'change-me-in-glysellin-initialize-file@example.com'
+  # Configure your shop name, used to send e-mails
   config.shop_name = 'My super shop'
+
+  # Configure sender e-mail address used when sending e-mails to customers and
+  # to admins
+  config.contact_email = 'change-me-in-glysellin-initialize-file@example.com'
+
+  # Configure recipient e-mail address used to send orders when completed
   config.admin_email = 'change-me-in-glysellin-initialize-file@example.com'
 
   # Set default VAT rate for products when it is not set in db
