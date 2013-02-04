@@ -1,5 +1,7 @@
+<% editable = false unless defined?(editable) && editable == true %>
+
 <%= form_tag update_cart_path, method: "put" do %>
-  <table id="order_recap_table">
+  <table id="order_recap_table" class="table">
     <tr>
       <th><%= t('glysellin.labels.order.sku') %></th>
       <th><%= t('glysellin.labels.order.name') %></th>
@@ -46,19 +48,31 @@
     <% end %>
     <% if cart.subtotal != cart.total_price || Glysellin.show_subtotal_if_identical %>
       <tr>
-        <td colspan="4">
+        <td colspan="3">
           <%= t('glysellin.labels.order.subtotal') %>
         </td>
         <td>
 
         </td>
         <td>
-          <%= number_to_currency(cart.subtotal(true)) %>
+          <%= number_to_currency(cart.eot_subtotal) %>
         </td>
         <td>
           <%= number_to_currency(cart.subtotal) %>
         </td>
       </tr>
+    <% end %>
+    <% if cart.adjustments_total != 0 %>
+      <% cart.adjustments.each do |adjustment| %>
+        <tr>
+          <td colspan="5">
+            <%= adjustment.name %>
+          </td>
+          <td>
+            <%= number_to_currency(adjustment.value) %>
+          </td>
+        </tr>
+      <% end %>
     <% end %>
     <% if cart.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
       <tr>

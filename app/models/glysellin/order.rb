@@ -4,6 +4,8 @@ module Glysellin
   class Order < ActiveRecord::Base
     include ProductsList
 
+    attr_reader :discount_code
+
     self.table_name = 'glysellin_orders'
 
     state_machine initial: :created do
@@ -44,6 +46,8 @@ module Glysellin
     belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address', :inverse_of => :shipped_orders
     # Payment tries
     has_many :payments, :inverse_of => :order
+
+    has_many :order_adjustments, :inverse_of => :order
 
     # We want to be able to see fields_for addresses
     accepts_nested_attributes_for :billing_address
@@ -212,6 +216,7 @@ module Glysellin
       order.fill_payment_method_from_hash(data)
       order.fill_products_from_hash(data)
       order.fill_product_choices_from_hash(data)
+      order.fill_coupon_code_from_hash(data)
 
       #
       order
@@ -307,6 +312,13 @@ module Glysellin
       end
     end
 
+    def fill_coupon_code_from_hash data
+      return unless (code = data[:discount_code].presence)
+      if (existing_code = DiscountCode.find_by_code(code.downcase))
+        order_adjustments.build(existing_code.to_adjustment(self))
+      end
+    end
+
 
     def self.create_from_cart cart, customer
       order = self.new
@@ -323,8 +335,9 @@ module Glysellin
         last_order = Order.from_customer(customer.id).last
         if last_order
           if last_order.billing_address
-            order.billing_address = Address.new last_order.billing_address.clone.attributes
-            order.shipping_address = Address.new last_order.shipping_address.clone.attributes
+            protected_field = lambda { |key, _| %w(id created_at updated_at).include?(key) }
+            order.billing_address = Address.new last_order.billing_address.clone.attributes.reject &protected_field
+            order.shipping_address = Address.new last_order.shipping_address.clone.attributes.reject &protected_field
           end
         end
       end

@@ -1,6 +1,7 @@
 require "glysellin/engine"
 require "glysellin/helpers"
 require "glysellin/gateway"
+require "glysellin/discount_type_calculator"
 require "glysellin/product_methods"
 require "glysellin/products_list"
 require "glysellin/cart"

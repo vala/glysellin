@@ -40,17 +40,31 @@ module Glysellin
       0
     end
 
+    def adjustments
+      respond_to?(:order_adjustments) ? order_adjustments : []
+    end
+
+    def adjustments_total
+      @_adjustments_total ||= adjustments.reduce(0) do |total, adj|
+        total + adj.value
+      end
+    end
+
+    def eot_adjustments_total
+      adjustments_total * (eot_subtotal / subtotal)
+    end
+
     # Gets order total price from subtotal and adjustments
     #
     # @param [Boolean] df Defines if we want to get duty free price or not
     #
     # @return [BigDecimal] the calculated total price
     def total_price
-      @_total_price ||= (subtotal + shipping_price)
+      @_total_price ||= (subtotal + adjustments_total)
     end
 
     def total_eot_price
-      @_total_eot_price ||= (eot_subtotal + eot_shipping_price)
+      @_total_eot_price ||= (eot_subtotal + eot_adjustments_total)
     end
   end
 end

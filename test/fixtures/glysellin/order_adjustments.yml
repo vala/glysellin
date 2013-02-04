@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  value: 9.99
+  order_id: 1
+  adjustment_id: 1
+  adjustment_type: MyString
+
+two:
+  name: MyString
+  value: 9.99
+  order_id: 1
+  adjustment_id: 1
+  adjustment_type: MyString
