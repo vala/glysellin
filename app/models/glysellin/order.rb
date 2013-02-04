@@ -4,9 +4,9 @@ module Glysellin
   class Order < ActiveRecord::Base
     include ProductsList
 
-    attr_reader :discount_code
-
     self.table_name = 'glysellin_orders'
+
+    attr_reader :discount_code
 
     state_machine initial: :created do
 
@@ -18,8 +18,12 @@ module Glysellin
         transition filling_address: :address
       end
 
-      event :payment_method_chosen do
-        transition address: :payment
+      event :choose_shipping_method do
+        transition address: :shipping_method_chosen
+      end
+
+      event :choose_payment_method do
+        transition [:address, :shipping_method_chosen] => :payment_method_chosen
       end
 
       event :paid do
@@ -27,9 +31,10 @@ module Glysellin
       end
 
       event :shipped do
-        transition :paid => :shipped
+        transition paid: :shipped
       end
 
+      after_transition on: :choose_shipping_method, do: :set_shipping_price
       after_transition on: :paid, do: :set_payment
     end
 
@@ -37,17 +42,19 @@ module Glysellin
     #
     # Order items are used to map order to cloned and simplified products
     #   so the Order propererties can't be affected by product updates
-    has_many :items, :class_name => 'Glysellin::OrderItem', :foreign_key => 'order_id'
+    has_many :items, class_name: 'Glysellin::OrderItem', foreign_key: 'order_id'
     # The actual buyer
-    belongs_to :customer, :class_name => "::#{ Glysellin.user_class_name }",
-      :foreign_key => 'customer_id', :autosave => true
+    belongs_to :customer, class_name: "::#{ Glysellin.user_class_name }",
+      foreign_key: 'customer_id', :autosave => true
     # Addresses
-    belongs_to :billing_address, :foreign_key => 'billing_address_id', :class_name => 'Glysellin::Address', :inverse_of => :billed_orders
-    belongs_to :shipping_address, :foreign_key => 'shipping_address_id', :class_name => 'Glysellin::Address', :inverse_of => :shipped_orders
+    belongs_to :billing_address, foreign_key: 'billing_address_id', class_name: 'Glysellin::Address', inverse_of: :billed_orders
+    belongs_to :shipping_address, foreign_key: 'shipping_address_id', class_name: 'Glysellin::Address', inverse_of: :shipped_orders
     # Payment tries
-    has_many :payments, :inverse_of => :order
+    has_many :payments, inverse_of: :order
 
-    has_many :order_adjustments, :inverse_of => :order
+    belongs_to :shipping_method, inverse_of: :orders
+
+    has_many :order_adjustments, inverse_of: :order
 
     # We want to be able to see fields_for addresses
     accepts_nested_attributes_for :billing_address
@@ -88,6 +95,10 @@ module Glysellin
       payment and payment.by_check?
     end
 
+    def set_shipping_price
+      build_adjustment_from shipping_method if shipping_method
+    end
+
     # Allows to change state after order's validation and related items
     # validations are done, just before it is saved
     #
@@ -96,9 +107,14 @@ module Glysellin
       if filling_address? && customer && billing_address && shipping_address
         address_filled
       end
+
+      if address? && shipping_method
+        choose_shipping_method
+      end
+
       # Set payment method chosen
-      if address? && payment && payment.type
-         payment_method_chosen
+      if (address? || shipping_method_chosen?) && payment && payment.type
+         choose_payment_method
       end
     end
 
@@ -170,6 +186,21 @@ module Glysellin
       customer.email
     end
 
+    def total_weight
+      4
+    end
+
+
+    def build_adjustment_from item
+      # Handle replacing duplicate adjustments on the same order
+      existing_adjustments = order_adjustments.where(
+        adjustment_type: item.class.to_s
+      )
+      # Destroy exisiting ones
+      existing_adjustments.each(&:destroy) if existing_adjustments.length > 0
+      # Build new adjustment from existing discount code
+      order_adjustments.build(item.to_adjustment(self))
+    end
     ########################################
     #
     #               Payment
@@ -199,7 +230,12 @@ module Glysellin
     # @param [Customer] customer Customer object to map to the order
     #
     # @example Setting shipping address
-    #   Glysellin::Order.from_sub_forms { shipping_address: { first_name: 'Me' ... } }
+    #   Glysellin::Order.from_sub_forms { shipping_address: {
+    #     first_name: 'Me',
+    #     last_name: 'My name',
+    #     address: "8 rue du vié",
+    #     (...)
+    #   } }
     #
     # @return [] the created or updated Order item
     def self.from_sub_forms data, ref = nil
@@ -312,14 +348,24 @@ module Glysellin
       end
     end
 
+    # Retrieves a coupon code from form data to create an adjustment
+    #
     def fill_coupon_code_from_hash data
-      return unless (code = data[:discount_code].presence)
-      if (existing_code = DiscountCode.find_by_code(code.downcase))
-        order_adjustments.build(existing_code.to_adjustment(self))
+      return if data[:discount_code].blank?
+      existing_code = DiscountCode.find_by_code(data[:discount_code])
+
+      if existing_code && existing_code.applicable?
+        build_adjustment_from(existing_code)
       end
     end
 
-
+    # Creates an order from a given Cart object and it's related customer
+    #
+    # @param  [Cart]  cart  The customer's active cart
+    # @params [User?] customer  The current customer if signed in
+    #
+    # @return [Order]  The built order
+    #
     def self.create_from_cart cart, customer
       order = self.new
       # Fill items from cart
@@ -335,7 +381,9 @@ module Glysellin
         last_order = Order.from_customer(customer.id).last
         if last_order
           if last_order.billing_address
-            protected_field = lambda { |key, _| %w(id created_at updated_at).include?(key) }
+            protected_field = lambda { |key, _|
+              %w(id created_at updated_at).include?(key)
+            }
             order.billing_address = Address.new last_order.billing_address.clone.attributes.reject &protected_field
             order.shipping_address = Address.new last_order.shipping_address.clone.attributes.reject &protected_field
           end

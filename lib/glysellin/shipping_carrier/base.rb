@@ -4,6 +4,14 @@ module Glysellin
     Hash[ShippingCarrier.shipping_carriers_list.map { |sc| [sc[:name], sc[:carrier]] }]
   end
 
+  def shipping_carrier &block
+    if block_given?
+      ShippingCarrier.config &block
+    else
+      ShippingCarrier
+    end
+  end
+
   module ShippingCarrier
     extend AbstractController::Rendering
 
@@ -14,7 +22,7 @@ module Glysellin
     class Base
       class << self
         def register name, carrier
-          ShippingCarrier.shipping_carriers_list << {:name => name, :carrier => carrier}
+          ShippingCarrier.shipping_carriers_list << { :name => name, :carrier => carrier }
         end
 
         def config

@@ -4,3 +4,4 @@ module Glysellin
 end
 
 require 'glysellin/shipping_carrier/base'
+require 'glysellin/shipping_carrier/colissimo'

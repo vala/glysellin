@@ -13,6 +13,10 @@ module Glysellin
       self.code.downcase!
     end
 
+    def applicable?
+      !expires_on || expires_on > Time.now
+    end
+
     def to_adjustment order
       calculator = Glysellin.discount_type_calculators[discount_type.identifier].new(order, value)
 

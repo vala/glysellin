@@ -4,6 +4,7 @@ require "glysellin/gateway"
 require "glysellin/discount_type_calculator"
 require "glysellin/product_methods"
 require "glysellin/products_list"
+require "glysellin/shipping_carrier"
 require "glysellin/cart"
 
 module Glysellin
@@ -21,6 +22,8 @@ module Glysellin
   ORDER_STEP_CART = 'cart'
   # Status const to be used to define order step to address
   ORDER_STEP_ADDRESS = 'addresses'
+  # Status const to be used to define order step to choose shipping method
+  ORDER_STEP_SHIPPING_METHOD = 'shipping_method'
   # Status const to be used to define order step to defining payment method
   ORDER_STEP_PAYMENT_METHOD = 'payment_method'
   # Status const to be used to define order step to payment
@@ -86,8 +89,9 @@ module Glysellin
   @@step_routes = {
     created: ORDER_STEP_ADDRESS,
     filling_address: ORDER_STEP_ADDRESS,
-    address: ORDER_STEP_PAYMENT_METHOD,
-    payment: ORDER_STEP_PAYMENT
+    address: ORDER_STEP_SHIPPING_METHOD,
+    shipping_method_chosen: ORDER_STEP_PAYMENT_METHOD,
+    payment_method_chosen: ORDER_STEP_PAYMENT
   }
 
   # Product images paperclip styles

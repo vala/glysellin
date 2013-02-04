@@ -84,6 +84,20 @@ Glysellin.config do |config|
 end
 ```
 
+## Customizing Order behavior
+
+Since the Order object is implemented with the [state_machine gem](), it emits state transition events.
+On install, a sample observer is copied to `app/models/order_observer.rb` in your application.
+To be able to use it, you must configure your app to allow the `OrderObserver` to listen to `Order` state transitions by uncommenting and editing the following `active_record.observers` config line in your `application.rb` file :
+
+```ruby
+# config/application.rb
+
+# Activate observers that should always be running.
+config.active_record.observers = :order_observer
+```
+
+
 ## Gateway integration
 
 The routes to redirect the payments gateways to are :
