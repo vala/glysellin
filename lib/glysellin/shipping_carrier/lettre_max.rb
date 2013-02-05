@@ -1,11 +1,11 @@
 module Glysellin
   module ShippingCarrier
-    class Colissimo < Base
+    class LettreMax < Glysellin::ShippingCarrier::Base
       include Helpers::CountryWeightTable
 
-      register 'colissimo', self
+      register 'lettre-max', self
 
-      country_weight_table_file 'colissimo.csv'
+      country_weight_table_file 'lettre-max.csv'
 
       def initialize order
         @order = order
