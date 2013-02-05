@@ -72,7 +72,8 @@ fr:
         created: "Créée"
         filling_address: "Adresses non remplies"
         address: "Adresses remplies"
-        payment: "Méthode de paiement choisie"
+        shipping_method_chosen: "Méthode de transport choisie"
+        payment_method_chosen: "Méthode de paiement choisie"
         paid: "Payée"
         shipped: "Expédiée"
 

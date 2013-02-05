@@ -62,7 +62,7 @@ module Glysellin
     #
     # @return [BigDecimal] the calculated total price
     def total_price
-      @_total_price ||= (subtotal + adjustments_total)
+      @_total_price ||= (subtotal + adjustments_total).round(2)
     end
 
     def total_eot_price
