@@ -7,8 +7,10 @@ module Glysellin
     end
 
     def each_items &block
-      quantified_items.each do |item, quantity|
-        yield item, quantity
+      if block_given?
+        quantified_items.each &block
+      else
+        quantified_items.each
       end
     end
 

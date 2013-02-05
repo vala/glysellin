@@ -85,6 +85,9 @@ module Glysellin
   mattr_accessor :default_vat_rate
   @@default_vat_rate = 19.6
 
+  mattr_accessor :default_product_weight
+  @@default_product_weight = 0
+
   mattr_accessor :step_routes
   @@step_routes = {
     created: ORDER_STEP_ADDRESS,

@@ -187,9 +187,18 @@ module Glysellin
     end
 
     def total_weight
-      4
+      each_items.reduce(0) do |total, quantified_item|
+        item, quantity = quantified_item
+        weight = item.weight.presence || Glysellin.default_product_weight
+        total + (quantity * weight)
+      end
     end
 
+    ########################################
+    #
+    #               Adjustments
+    #
+    ########################################
 
     def build_adjustment_from item
       # Handle replacing duplicate adjustments on the same order
@@ -201,6 +210,7 @@ module Glysellin
       # Build new adjustment from existing discount code
       order_adjustments.build(item.to_adjustment(self))
     end
+
     ########################################
     #
     #               Payment

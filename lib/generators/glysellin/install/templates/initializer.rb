@@ -26,6 +26,11 @@ Glysellin.config do |config|
   # Set default VAT rate for products when it is not set in db
   config.default_vat_rate = 19.6
 
+  # Default product weight for shipping rate calculation, expressed in kilograms
+  # Defaults to 0. For 100g, use value : 0.1
+  #
+  # config.default_product_weight = 0.1
+
   # Allows creating fake accounts for customers with automatic random
   # password generation
   # Defaults to true
@@ -33,11 +38,13 @@ Glysellin.config do |config|
   # config.allow_anonymous_orders = true
 
   # Set steps order to be used while using automatic order process
+  #
   # config.step_routes = {
-  #   created: Glysellin::ORDER_STEP_ADDRESS,
-  #   filling_address: Glysellin::ORDER_STEP_ADDRESS,
-  #   address: Glysellin::ORDER_STEP_PAYMENT_METHOD,
-  #   payment: Glysellin::ORDER_STEP_PAYMENT
+  #   created: ORDER_STEP_ADDRESS,
+  #   filling_address: ORDER_STEP_ADDRESS,
+  #   address: ORDER_STEP_SHIPPING_METHOD,
+  #   shipping_method_chosen: ORDER_STEP_PAYMENT_METHOD,
+  #   payment_method_chosen: ORDER_STEP_PAYMENT
   # }
 
   # Change presence validation of Address fields

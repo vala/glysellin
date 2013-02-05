@@ -3,10 +3,11 @@ module Glysellin
     self.table_name = 'glysellin_order_items'
     belongs_to :order, inverse_of: :items
 
-    attr_accessible :sku, :name, :eot_price, :vat_rate, :bundle, :price, :quantity
+    attr_accessible :sku, :name, :eot_price, :vat_rate, :bundle, :price,
+      :quantity, :weight
 
     # The attributes we getch from a product to build our order item
-    PRODUCT_ATTRIBUTES_FOR_ITEM = %w(sku name eot_price vat_rate price)
+    PRODUCT_ATTRIBUTES_FOR_ITEM = %w(sku name eot_price vat_rate price weight)
 
     class << self
       # Public: Create an item from product or bundle id
