@@ -11,3 +11,4 @@ require 'glysellin/shipping_carrier/base'
 # Shipping Carriers
 require 'glysellin/shipping_carrier/colissimo'
 require 'glysellin/shipping_carrier/lettre_max'
+require 'glysellin/shipping_carrier/free_shipping'

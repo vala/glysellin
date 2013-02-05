@@ -11,6 +11,14 @@ namespace :glysellin do
       Glysellin::PaymentMethod.create(attributes)
       puts "Created payment method : #{ attributes[:name] }"
     end
+
+    [
+      { name: 'Colissimo', identifier: 'colissimo' },
+      { name: 'Lettre Max', identifier: 'lettre-max' },
+      { name: 'Frais de ports Gratuits', identifier: 'free-shipping' }
+    ].each do |attributes|
+      Glysellin::ShippingMethod.create! attributes
+    end
   end
 
   task :copy_views => :environment do
