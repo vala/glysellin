@@ -32,16 +32,18 @@ module Glysellin
     # Products can belong to a brand
     belongs_to :brand, :inverse_of => :products
 
-    has_many :properties, :class_name => 'Glysellin::ProductProperty'
+    has_many :properties, class_name: 'Glysellin::ProductProperty', as: :variant
+    has_many :variants, class_name: 'Glysellin::Variant'
 
     accepts_nested_attributes_for :images
     accepts_nested_attributes_for :properties
+    accepts_nested_attributes_for :variants
     # accepts_nested_attributes_for :bundled_products, allow_destroy: true, reject_if: :all_blank
 
     attr_accessible :description, :eot_price, :name, :sku, :slug, :vat_rate,
       :brand, :taxonomies, :images, :properties, :in_stock, :price, :published,
       :display_priority, :images_attributes, :taxonomy_ids, :unlimited_stock,
-      :properties_attributes, :position, :weight, :brand_id
+      :properties_attributes, :position, :weight, :brand_id, :variants_attributes
 
       # :bundled_products_attributes
 

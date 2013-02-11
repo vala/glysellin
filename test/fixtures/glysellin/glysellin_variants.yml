@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  sku: MyString
+  name: MyString
+  slug: MyString
+  eot_price: 9.99
+  price: 9.99
+  in_stock: 1
+  unlimited_stock: false
+  published: false
+  position: 1
+
+two:
+  sku: MyString
+  name: MyString
+  slug: MyString
+  eot_price: 9.99
+  price: 9.99
+  in_stock: 1
+  unlimited_stock: false
+  published: false
+  position: 1
