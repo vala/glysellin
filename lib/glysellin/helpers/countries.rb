@@ -76,7 +76,7 @@ module Glysellin
         "FM" => "Micronesia",
         "FO" => "Faroe Islands",
         "FR" => "France",
-        "FX" => "France, Metropolitan",
+        "FX" => "France, Métropolitain",
         "GA" => "Gabon",
         "GB" => "United Kingdom (Great Britain)",
         "GD" => "Grenada",
