@@ -4,9 +4,11 @@ class GlysellinProduct
     @bindAll()
 
   bindAll: ->
-    @add_to_cart_form.on 'ajax:success', (e, resp) => @itemAdded(resp)
+    @add_to_cart_form.on 'ajax:success', (e, resp) => 
+      @itemAdded(resp)
 
   itemAdded: (markup) ->
+    console.log $(markup).html()
     @cart_container.html($(markup).html())
       # Allow app to update cart handlers when content updated
       .trigger('updated.glysellin')

@@ -17,7 +17,7 @@ module Glysellin
       self.errors = []
       cookie ||= ''
       cookie.split(';').each do |item|
-        item_product = Glysellin::Product.find_by_id(item.split(':')[0])
+        item_product = Glysellin::Variant.find(item.split(':')[0])
         if item_product.present?
           self.products << { :product => item_product, :quantity => (item.split(':')[1]).to_i }
         end
@@ -88,22 +88,21 @@ module Glysellin
 
     def update_quantities
       self.errors = []
-      new_products = []
+      
       self.products.each do |item|
         if !item[:product].published
           self.errors << ["Sorry, #{item[:product].description} is no longer for sale"]
         elsif item[:product].unlimited_stock || item[:product].in_stock >= item[:quantity]
-          new_products << item
+          self.products << item
         elsif item[:product].in_stock == 0
           self.errors << ["Sorry, #{item[:product].description} is no longer available"]
         else
           self.errors << ["Sorry, only #{item[:product].in_stock} available for #{item[:product].description}"]
           item[:quantity] = item[:product].in_stock
-          new_products << item if item[:quantity] > 0
+          self.products << item if item[:quantity] > 0
         end
       end
-      self.products = new_products
-
+      
       process_total!
     end
 

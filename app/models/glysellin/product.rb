@@ -32,18 +32,16 @@ module Glysellin
     # Products can belong to a brand
     belongs_to :brand, :inverse_of => :products
 
-    has_many :properties, class_name: 'Glysellin::ProductProperty', as: :variant
     has_many :variants, class_name: 'Glysellin::Variant'
 
     accepts_nested_attributes_for :images
-    accepts_nested_attributes_for :properties
     accepts_nested_attributes_for :variants
     # accepts_nested_attributes_for :bundled_products, allow_destroy: true, reject_if: :all_blank
 
-    attr_accessible :description, :eot_price, :name, :sku, :slug, :vat_rate,
-      :brand, :taxonomies, :images, :properties, :in_stock, :price, :published,
+    attr_accessible :description, :name, :sku, :slug, :vat_rate,
+      :brand, :taxonomies, :images, :published,
       :display_priority, :images_attributes, :taxonomy_ids, :unlimited_stock,
-      :properties_attributes, :position, :weight, :brand_id, :variants_attributes
+      :position, :brand_id, :variants_attributes, :variants
 
       # :bundled_products_attributes
 
@@ -52,15 +50,11 @@ module Glysellin
     validates_presence_of :name, :slug
     # Validates price related attributes only unless we have bundled products
     # so we can defer validations to them
-    validates :eot_price, :vat_rate, :price, presence: true,
+    validates :vat_rate, presence: true,
       numericality: true # , unless: proc { |p| p.bundled_products.length > 0 }
 
     # We check presence of sku if set in global config
     validates :sku, presence: true, if: proc { Glysellin.autoset_sku }
-    # Prices validation
-    validates_numericality_of :eot_price, :vat_rate, :price
-    # validates_numericality_of :display_priority
-    validates_numericality_of :in_stock, if: proc { |p| p.in_stock.presence }
 
     # Callbacks
     #
@@ -75,13 +69,6 @@ module Glysellin
 
       if !self.vat_rate
         self.vat_rate = Glysellin.default_vat_rate
-      end
-      # If we have to fill one of the prices when changed
-      if (self.eot_price_changed? && !self.price_changed?) ||
-          (self.new_record? && self.eot_price && !self.price)
-        self.price = self.eot_price * self.vat_ratio
-      elsif self.price_changed? || (self.new_record? && self.price)
-        self.eot_price = self.price / self.vat_ratio
       end
     end
 
@@ -109,6 +96,11 @@ module Glysellin
     def image
       images.length > 0 ? images.first.image : nil
     end
+
+    def price
+      self.variants.first.price rescue nil
+    end
+  
 
     # bundle_attribute :price do |product|
     #   product.bundled_products.reduce(0) do |total, product|

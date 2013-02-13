@@ -3,6 +3,7 @@ fr:
     controllers:
       errors:
         order_doesnt_exist: "Le numéro de commande demandé n'existe pas"
+        double_property: "existe déjà"
     labels:
       misc:
         back_to_homepage: "Retour à l'accueil"
