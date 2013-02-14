@@ -1,5 +1,6 @@
 module Glysellin
   class Variant < ActiveRecord::Base
+    include ProductMethods
     self.table_name = 'glysellin_variants'
     attr_accessible :eot_price, :in_stock, :name, :position, :price, 
       :published, :sku, :slug, :unlimited_stock, :product, :product_id, 
@@ -14,6 +15,10 @@ module Glysellin
 
     def description
       product.description 
+    end
+
+    def vat_rate
+      product.vat_rate 
     end
 
     # TODO : make it work

@@ -88,7 +88,7 @@ module Glysellin
 
     def update_quantities
       self.errors = []
-
+      
       self.products.reduce([]) do |products, item|
         if !item[:product].published
           self.errors << ["Sorry, #{item[:product].description} is no longer for sale"]
