@@ -32,7 +32,8 @@ module Glysellin
     # Products can belong to a brand
     belongs_to :brand, :inverse_of => :products
 
-    has_many :variants, class_name: 'Glysellin::Variant'
+    has_many :variants, class_name: 'Glysellin::Variant',
+      before_add: :set_product_on_variant
 
     accepts_nested_attributes_for :images
     accepts_nested_attributes_for :variants
@@ -89,10 +90,6 @@ module Glysellin
       end
     end
 
-    def vat_ratio
-      1 + vat_rate / 100
-    end
-
     def image
       images.length > 0 ? images.first.image : nil
     end
@@ -102,7 +99,11 @@ module Glysellin
         self.variants.first.price
       end
     end
-  
+
+    def set_product_on_variant variant
+      variant.product = self
+    end
+
 
     # bundle_attribute :price do |product|
     #   product.bundled_products.reduce(0) do |total, product|

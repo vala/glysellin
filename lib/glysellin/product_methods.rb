@@ -49,8 +49,18 @@ module Glysellin
     #
     # @return  [true, false]
     def bundle?
-      return false
+      false
       # bundled_products.length > 0
+    end
+
+    # Gives calculable vat rate
+    #
+    # Example :
+    #    If vat_rate is set to 19.6%, returns back 1.196
+    #
+    # @return  [Float]  The processed VAT rate
+    def vat_ratio
+      1 + vat_rate / 100
     end
   end
 end

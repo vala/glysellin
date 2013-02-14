@@ -10,7 +10,7 @@ module Glysellin
 
     validates_presence_of :type, :value
     # validates_associated :type, :if => Proc.new { |type| !self.variant.properties.map(&:type).include?(type) }
-    
+
     private
 
     def check_uniqueness_of_type

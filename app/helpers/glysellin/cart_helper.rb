@@ -9,5 +9,9 @@ module Glysellin
         options: options
       }
     end
+
+    def added_to_cart_warning
+      render partial: 'glysellin/cart/added_to_cart_warning'
+    end
   end
 end

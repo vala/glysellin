@@ -8,7 +8,7 @@ class CreateGlysellinVariants < ActiveRecord::Migration
       t.decimal :price, precision: 11, scale: 2
       t.integer :in_stock, default: 0
       t.boolean :unlimited_stock, default: false
-      t.boolean :published, default: false
+      t.boolean :published, default: true
       t.integer :position
 
       t.timestamps

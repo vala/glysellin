@@ -11,6 +11,7 @@ module Glysellin
 
     def add
       update_cookie Cart.add(cookies["glysellin.cart"], params[:cart])
+      @product_added_to_cart = true
       render_cart_partial
     end
 
