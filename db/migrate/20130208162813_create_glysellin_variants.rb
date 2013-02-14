@@ -6,7 +6,7 @@ class CreateGlysellinVariants < ActiveRecord::Migration
       t.string :slug
       t.decimal :eot_price, precision: 11, scale: 2
       t.decimal :price, precision: 11, scale: 2
-      t.integer :in_stock
+      t.integer :in_stock, default: 0
       t.boolean :unlimited_stock, default: false
       t.boolean :published, default: false
       t.integer :position

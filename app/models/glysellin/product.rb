@@ -98,7 +98,9 @@ module Glysellin
     end
 
     def price
-      self.variants.first.price rescue nil
+      if self.variants.first
+        self.variants.first.price
+      end
     end
   
 
