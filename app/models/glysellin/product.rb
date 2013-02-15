@@ -32,6 +32,8 @@ module Glysellin
     # Products can belong to a brand
     belongs_to :brand, :inverse_of => :products
 
+    belongs_to :product_type
+
     has_many :variants, class_name: 'Glysellin::Variant',
       before_add: :set_product_on_variant
 
@@ -42,7 +44,7 @@ module Glysellin
     attr_accessible :description, :name, :sku, :slug, :vat_rate,
       :brand, :taxonomies, :images, :published,
       :display_priority, :images_attributes, :taxonomy_ids, :unlimited_stock,
-      :position, :brand_id, :variants_attributes, :variants
+      :position, :brand_id, :variants_attributes, :variants, :product_type_id
 
       # :bundled_products_attributes
 
@@ -59,19 +61,42 @@ module Glysellin
 
     # Callbacks
     #
+    before_validation :set_slug, :set_sku, :set_vat_rate, :ensure_variant
+
     # We always check we have a slug for our product
+    def set_slug
+      self.slug = name.to_slug
+    end
+
     # And as for the validation, if the SKU is configured to be autoset,
     # we check generate it
-    before_validation do
-      self.slug = self.name.to_slug
-      unless (self.sku && self.sku.length > 0) || !Glysellin.autoset_sku
-        self.sku = self.generate_sku
+    def set_sku
+      unless (sku && sku.length > 0) || !Glysellin.autoset_sku
+        self.sku = generate_sku
       end
+    end
 
-      if !self.vat_rate
+    def set_vat_rate
+      if !vat_rate
         self.vat_rate = Glysellin.default_vat_rate
       end
     end
+
+    def ensure_variant
+      variants.build(product: self) unless variants.length > 0
+
+      if product_type
+        variants.each do |variant|
+          product_type.property_types.each do |type|
+            unless variant.properties.send(type.name)
+              variant.properties.build(type_id: type.id, variant: variant)
+            end
+          end
+        end
+      end
+    end
+
+    scope :published, where('glysellin_products.published = ?', true)
 
     class << self
       # Find products with taxonomy slugs or taxonomies

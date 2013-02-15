@@ -18,6 +18,16 @@ module Glysellin
 
     before_validation :check_prices
 
+    after_initialize :prepare_properties
+
+    def prepare_properties
+      if product && product.product_type
+        product.product_type.property_types.each do |type|
+          properties.build(type: type) unless properties.send(type)
+        end
+      end
+    end
+
     def description
       product.description
     end
