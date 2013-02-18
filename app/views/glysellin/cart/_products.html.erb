@@ -101,8 +101,17 @@
   </table>
 
   <% if editable %>
-    <button type="submit">
+    <div class="discount-code">
+      <%= label_tag :discount_code, t('glysellin.labels.order.discount_code') %>
+      <%= text_field_tag :discount_code, cart.discount_code %>
+    </div>
+    <!-- Update cart contents -->
+    <button type="submit" name="update_order">
       <%= t('glysellin.labels.cart.update') %>
+    </button>
+    <!-- Submit order from cart -->
+    <button type="submit" name="submit_order">
+      <%= t('glysellin.labels.cart.create_order_form') %>
     </button>
   <% end %>
 <% end %>

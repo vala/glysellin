@@ -388,16 +388,24 @@ module Glysellin
       # Fill address from user if signed in and already has address
       if customer
         order.customer_id = customer.id
+        # Check if there already is an order from this customer
         last_order = Order.from_customer(customer.id).last
-        if last_order
-          if last_order.billing_address
-            protected_field = lambda { |key, _|
-              %w(id created_at updated_at).include?(key)
-            }
-            order.billing_address = Address.new last_order.billing_address.clone.attributes.reject &protected_field
-            order.shipping_address = Address.new last_order.shipping_address.clone.attributes.reject &protected_field
+        if last_order && last_order.billing_address
+          # Build addresses from the ones in the last order
+          %w(billing_address shipping_address).each do |addr|
+            order.send(
+              "build_#{ addr }",
+              last_order.send(addr).clone.attributes.select do |key, _|
+                !(%w(id created_at updated_at).include?(key))
+              end
+            )
           end
         end
+      end
+
+      # Fill discount code if present in cart
+      if cart.discount_code
+        order.fill_coupon_code_from_hash(discount_code: cart.discount_code)
       end
       # Return order to be saved
       order

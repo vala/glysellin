@@ -1,32 +1,42 @@
-# Cart class borrowed from Piggybak's gem before we write our own one
+# Cart class inspired from Piggybak's gem before we write our own one
 # Piggyback : http://github.com/piggybak/piggybak
 #
 module Glysellin
   class Cart
     include ProductsList
 
-    attr_accessor :products
+    attr_writer :products
     attr_accessor :total
     attr_accessor :errors
-    attr_accessor :extra_data
     alias :subtotal :total
-    alias :items :products
+
+    METADATA = %w(discount_code)
+    METADATA.each { |header| attr_accessor header }
 
     def initialize(cookie='')
-      self.products = []
-      self.errors = []
-      cookie ||= ''
-      cookie.split(';').each do |item|
-        id, quantity = item.split(':').map(&:to_i)
-        item_product = Glysellin::Variant.find(id)
-        
-        self.products << { :product => item_product, :quantity => quantity }
-      end
+      parse!(cookie)
       process_total!
-
-      self.extra_data = {}
     end
 
+    #############################################
+    #
+    #        Accessors with defaults
+    #
+    #############################################
+
+    # Accessors that we initialize as empty arrays
+    def products() @products ||= [] end
+    alias :items :products
+
+    def errors() @errors ||= [] end
+
+    #############################################
+    #
+    #         Cart content management
+    #
+    #############################################
+
+    # Used to implement ProductsList interface #each method
     def quantified_items
       products.map { |product| [product[:product], product[:quantity]] }
     end
@@ -43,73 +53,177 @@ module Glysellin
       products.reduce(0) { |total, product| total + product[:quantity] }
     end
 
-    def self.to_hash(cookie)
-      cookie ||= ''
-      cookie.split(';').inject({}) do |hash, item|
-        hash[item.split(':')[0]] = (item.split(':')[1]).to_i
-        hash
+    def product product_id
+      products.find { |p| p[:product].id == product_id.to_i }
+    end
+
+    #############################################
+    #
+    #          Quantities management
+    #
+    #############################################
+
+    # Product scoped quantity update
+    #
+    def set_quantity product_id, quantity, options = {}
+      options.reverse_merge!(override: false)
+      quantity = quantity.to_i
+
+      # If product was in cart
+      if (product = self.product(product_id))
+        if options[:override]
+          product[:quantity] = quantity
+        else
+          product[:quantity] += quantity
+        end
+      else
+        products << {
+          product: Glysellin::Variant.find(product_id),
+          quantity: quantity
+        }
       end
     end
 
-    def self.to_string(cart)
-      cookie = ''
-      cart.each do |k, v|
-        cookie += "#{k.to_s}:#{v.to_s};" if v.to_i > 0
-      end
-      cookie
+    # Remove product from cart, given its id
+    #
+    def remove product_id
+      products.reject! { |p| p[:product].id == product_id.to_i }
     end
 
-    def self.add(cookie, params)
-      cart = to_hash(cookie)
-      cart["#{params[:product_id]}"] ||= 0
-      cart["#{params[:product_id]}"] += params[:quantity].to_i
-      to_string(cart)
-    end
-
-    def self.remove(cookie, product_id)
-      cart = to_hash(cookie)
-      cart.delete product_id.to_s
-      to_string(cart)
-    end
-
-    def self.update(cookie, params)
-      cart = to_hash(cookie)
-      cart.each { |k, v| cart[k] = params[:quantity][k].to_i }
-      to_string(cart)
-    end
-
-    def to_cookie
-      cookie = ''
-      self.products.each do |item|
-        cookie += "#{item[:product].id.to_s}:#{item[:quantity].to_s};" if item[:quantity].to_i > 0
-      end
-      cookie
-    end
-
+    # General check to see if cart is valid
+    #
     def update_quantities
       self.errors = []
-      
-      self.products.reduce([]) do |products, item|
-        if !item[:product].published
-          self.errors << ["Sorry, #{item[:product].description} is no longer for sale"]
-        elsif item[:product].unlimited_stock || item[:product].in_stock >= item[:quantity]
-          products << item
-        elsif item[:product].in_stock.presence == 0
-          self.errors << ["Sorry, #{item[:product].description} is no longer available"]
-        else
-          self.errors << ["Sorry, only #{item[:product].in_stock} available for #{item[:product].description}"]
+
+      self.products = self.products.reduce([]) do |products, item|
+        case
+        # If item is not published
+        when !item[:product].published
+          set_error(:item_not_for_sale, item: item[:product].name)
+        # If item is not in stock
+        when !item[:product].in_stock?
+          set_error(:item_out_of_stock, item: item[:product].name)
+        # If item's available stock is less than required quantity
+        when !item[:product].available_for(item[:quantity])
+          set_error(
+            :not_enough_stock_for_item,
+            item: item[:product].name, stock: item[:product].in_stock
+          )
           item[:quantity] = item[:product].in_stock
           products << item if item[:quantity] > 0
+        # Else, keep product as is in cart
+        else item[:product].unlimited_stock || item[:product].in_stock >= item[:quantity]
+          products << item
         end
         products
       end
-      
+
       process_total!
     end
 
-    def set_extra_data(form_params)
-      form_params.each do |k, v|
-        self.extra_data[k.to_sym] = v if ![:controller, :action].include?(k)
+    #############################################
+    #
+    #       Parsing cookie from string
+    #
+    #############################################
+
+    def parse! cookie
+
+      return unless cookie.presence
+
+      headers, products = cookie.split('::')
+
+      parse_metadata!(headers || '')
+      parse_products!(products || '')
+    end
+
+    def parse_metadata! headers
+      headers.split(';').each do |item|
+        key, value = item.split(':')
+        if METADATA.include?(key)
+          send("#{ key }=", value)
+        end
+      end
+    end
+
+    def parse_products! products
+      products.split(';').each do |item|
+        id, quantity = item.split(':').map(&:to_i)
+        item_product = Glysellin::Variant.find(id)
+        self.products << { :product => item_product, :quantity => quantity }
+      end
+    end
+
+    #############################################
+    #
+    #               Serialization
+    #
+    #############################################
+
+    def serialize
+      # Serialize headers
+      headers = METADATA.reduce([]) do |headers, key|
+        value = send(key)
+        if value.presence
+          headers << "#{ key }:#{ value }"
+        end
+        headers
+      end
+
+      # Serialize products
+      products = self.products.reduce([]) do |products, item|
+        if item[:quantity].to_i > 0
+          products << "#{ item[:product].id.to_s }:#{ item[:quantity].to_s }"
+        end
+        products
+      end
+
+      # Join headers and products
+      headers.join(';') + "::" + products.join(';')
+    end
+
+    #############################################
+    #
+    #                 Errors
+    #
+    #############################################
+
+    def set_error(key, options = {})
+      errors << I18n.t("glysellin.errors.cart.#{ key }", options)
+    end
+
+    #############################################
+    #
+    #         Class method shortcuts
+    #
+    #############################################
+
+    class << self
+      def add(cookie, params)
+        cart = new(cookie)
+        cart.set_quantity(params[:product_id], params[:quantity])
+        cart.serialize
+      end
+
+      def remove(cookie, product_id)
+        cart = new(cookie)
+        cart.remove(product_id)
+        cart.serialize
+      end
+
+      def update(cookie, params)
+        cart = new(cookie)
+        # Update each product in cart
+        cart.products.each do |p|
+          id = p[:product].id
+          cart.set_quantity(id, params[:quantity][id.to_s], override: true)
+        end
+
+        if (code = params[:discount_code].presence)
+          cart.discount_code = code
+        end
+
+        cart.serialize
       end
     end
 

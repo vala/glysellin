@@ -3,6 +3,11 @@ en:
     controllers:
       errors:
         order_doesnt_exist: "The requested order reference doesn't exist"
+    errors:
+      cart:
+        item_not_for_sale: "Sorry, %{item} is no longer for sale"
+        item_out_of_stock: "Sorry, %{item} is out of stock"
+        not_enough_stock_for_item: "Sorry, only #{stock} #{item} are still available"
     labels:
       misc:
         back_to_homepage: "Back to home page"
@@ -34,6 +39,7 @@ en:
         order_title: Order
         quantity: "Quantity"
         unit_price: "Unit price"
+        discount_code: "Discount code"
       payment_methods:
         pay_with_paypal: Payer avec paypal
         check:
@@ -60,7 +66,6 @@ en:
         create_order: "Order"
         remove_from_cart: "Delete"
         update: "Update cart"
-
     orders:
       states:
         created: "Created"
@@ -69,7 +74,6 @@ en:
         payment: "Payment method chosen"
         paid: "Paid"
         shipped: "Shipped"
-
     order_admin_mailer:
       send_order_paid_email:
         subject: "A new order has validated"

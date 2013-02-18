@@ -11,7 +11,7 @@ module Glysellin
     #
     # The ProductImage model is used for products and bundles with the same
     has_many :images, as: :imageable, class_name: 'Glysellin::ProductImage',
-      inverse_of: :imageable
+      inverse_of: :imageable, dependent: :destroy
 
     # Can have multiple taxonomies
     has_and_belongs_to_many :taxonomies, :class_name => 'Glysellin::Taxonomy',
@@ -35,10 +35,11 @@ module Glysellin
     belongs_to :product_type
 
     has_many :variants, class_name: 'Glysellin::Variant',
-      before_add: :set_product_on_variant
+      before_add: :set_product_on_variant, dependent: :destroy
 
-    accepts_nested_attributes_for :images
-    accepts_nested_attributes_for :variants
+    accepts_nested_attributes_for :images, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :variants, allow_destroy: true, reject_if: :all_blank
+
     # accepts_nested_attributes_for :bundled_products, allow_destroy: true, reject_if: :all_blank
 
     attr_accessible :description, :name, :sku, :slug, :vat_rate,
@@ -62,6 +63,8 @@ module Glysellin
     # Callbacks
     #
     before_validation :set_slug, :set_sku, :set_vat_rate, :ensure_variant
+
+    scope :published, where('glysellin_products.published = ?', true)
 
     # We always check we have a slug for our product
     def set_slug
@@ -96,7 +99,11 @@ module Glysellin
       end
     end
 
-    scope :published, where('glysellin_products.published = ?', true)
+    # Fetches all available variants for the current product
+    #
+    def available_variants
+      variants.available
+    end
 
     class << self
       # Find products with taxonomy slugs or taxonomies

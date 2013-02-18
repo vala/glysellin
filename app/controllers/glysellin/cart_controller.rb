@@ -6,7 +6,9 @@ module Glysellin
     def show
       @cart = Cart.new(cookies["glysellin.cart"])
       @cart.update_quantities
-      update_cookie @cart.to_cookie
+      # Display errors in flash
+      flash[:error] = @cart.errors.join('<br>') if @cart.errors.length > 0
+      update_cookie @cart.serialize
     end
 
     def add
@@ -27,7 +29,12 @@ module Glysellin
 
     def update
       update_cookie Cart.update(cookies["glysellin.cart"], params)
-      redirect_to cart_path
+      case
+      when params[:submit_order]
+        redirect_to from_cart_create_orders_path
+      else
+        redirect_to cart_path
+      end
     end
 
     protected

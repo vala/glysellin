@@ -4,6 +4,11 @@ fr:
       errors:
         order_doesnt_exist: "Le numéro de commande demandé n'existe pas"
         double_property: "existe déjà"
+    errors:
+      cart:
+        item_not_for_sale: "Désolé mais le produit %{item} n'est plus disponible"
+        item_out_of_stock: "Désolé mais le produit %{item} n'est plus en stock"
+        not_enough_stock_for_item: "Désolé mais il ne reste que %{stock} %{item} en stock"
     labels:
       misc:
         back_to_homepage: "Retour à l'accueil"
@@ -34,6 +39,7 @@ fr:
         order_title: "Commande"
         quantity: "Quantité"
         unit_price: "Prix unitaire"
+        discount_code: "Code promo"
       payment_methods:
         pay_with_paypal: "Payer avec Paypal"
         check:
@@ -69,7 +75,6 @@ fr:
         update: "Mettre à jour le panier"
         added_to_cart: "Produit ajouté au panier"
         continue_shopping: "Continuer mes achats"
-
     orders:
       states:
         created: "Créée"
@@ -79,8 +84,6 @@ fr:
         payment_method_chosen: "Méthode de paiement choisie"
         paid: "Payée"
         shipped: "Expédiée"
-
-    # Order e-mails subjects
     order_admin_mailer:
       send_order_paid_email:
         subject: "Une nouvelle commande a été validée sur le site"

@@ -6,12 +6,13 @@ module Glysellin
       :published, :sku, :slug, :unlimited_stock, :product, :product_id,
       :properties_attributes, :properties, :weight
 
-    belongs_to :product, class_name: 'Glysellin::Product', foreign_key: 'product_id'
+    belongs_to :product, class_name: 'Glysellin::Product',
+      foreign_key: 'product_id'
 
     has_many :properties, class_name: 'Glysellin::ProductProperty',
-      as: :variant, extend: Glysellin::PropertyFinder
+      as: :variant, extend: Glysellin::PropertyFinder, dependent: :destroy
 
-    accepts_nested_attributes_for :properties
+    accepts_nested_attributes_for :properties, allow_destroy: true
 
     validates_numericality_of :eot_price, :price
     validates_numericality_of :in_stock, if: proc { |p| p.in_stock.presence }
@@ -19,6 +20,16 @@ module Glysellin
     before_validation :check_prices
 
     after_initialize :prepare_properties
+
+
+    AVAILABLE_QUERY = <<-SQL
+      glysellin_variants.published = ? AND (
+        glysellin_variants.unlimited_stock = ? OR
+        glysellin_variants.in_stock > ?
+      )
+    SQL
+
+    scope :available, where(AVAILABLE_QUERY, true, true, 0)
 
     def prepare_properties
       if product && product.product_type
@@ -55,6 +66,14 @@ module Glysellin
 
     def price_changed_alone?
       self.price_changed? || (self.new_record? && self.price)
+    end
+
+    def in_stock?
+      unlimited_stock || in_stock > 0
+    end
+
+    def available_for quantity
+      unlimited_stock || in_stock >= quantity
     end
   end
 end
