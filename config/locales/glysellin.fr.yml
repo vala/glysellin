@@ -9,6 +9,8 @@ fr:
         item_not_for_sale: "Désolé mais le produit %{item} n'est plus disponible"
         item_out_of_stock: "Désolé mais le produit %{item} n'est plus en stock"
         not_enough_stock_for_item: "Désolé mais il ne reste que %{stock} %{item} en stock"
+      variant:
+        multiple_properties_with_same_type: "Il y a plusieurs types de propriété identiques pour cette même déclinaison de produit"
     labels:
       misc:
         back_to_homepage: "Retour à l'accueil"
@@ -22,8 +24,8 @@ fr:
         sign_in: "Se connecter"
         sign_up: "Créer un compte"
       order:
-        billing_address: Adresse de facturation
-        shipping_address: Adresse de livraison
+        billing_address: "Adresse de facturation"
+        shipping_address: "Adresse de livraison"
         order_summary_title: "Récapitulatif de la commande"
         your_informations: "Vos informations"
         your_cart: "Votre panier"
@@ -61,10 +63,10 @@ fr:
           sogenactif: "Carte bancaire - Sogenactif"
       orders:
         statuses:
-          payment: Paiement en attente
-          paid: Payé
-          shipping: Livraison en cours
-          shipped: Livré
+          payment: "Paiement en attente"
+          paid: "Payé"
+          shipping: "Livraison en cours"
+          shipped: "Livré"
       cart:
         add_to_cart: "Ajouter au panier"
         remove_from_cart: "Supprimer"

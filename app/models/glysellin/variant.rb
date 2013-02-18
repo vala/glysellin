@@ -12,7 +12,7 @@ module Glysellin
     has_many :properties, class_name: 'Glysellin::ProductProperty',
       as: :variant, extend: Glysellin::PropertyFinder, dependent: :destroy
 
-    accepts_nested_attributes_for :properties, allow_destroy: true
+    accepts_nested_attributes_for :properties, allow_destroy: true, reject_if: :blank_property_value
 
     validates_numericality_of :eot_price, :price
     validates_numericality_of :in_stock, if: proc { |p| p.in_stock.presence }
@@ -20,7 +20,6 @@ module Glysellin
     before_validation :check_prices
 
     after_initialize :prepare_properties
-
 
     AVAILABLE_QUERY = <<-SQL
       glysellin_variants.published = ? AND (
@@ -34,9 +33,13 @@ module Glysellin
     def prepare_properties
       if product && product.product_type
         product.product_type.property_types.each do |type|
-          properties.build(type: type) unless properties.send(type)
+          properties.build(type: type) if properties.send(type.name) != false
         end
       end
+    end
+
+    def blank_property_name property
+      property.value.blank?
     end
 
     def description

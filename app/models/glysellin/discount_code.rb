@@ -7,7 +7,7 @@ module Glysellin
     belongs_to :discount_type, inverse_of: :discount_codes
     has_many :order_adjustments, as: :adjustment
 
-    validates_presence_of :discount_type
+    validates_presence_of :name, :code, :discount_type, :value
 
     before_save do
       self.code.downcase!
