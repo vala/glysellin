@@ -87,16 +87,6 @@ module Glysellin
 
     def ensure_variant
       variants.build(product: self) unless variants.length > 0
-
-      if product_type
-        variants.each do |variant|
-          product_type.property_types.each do |type|
-            unless variant.properties.send(type.name)
-              variant.properties.build(type_id: type.id, variant: variant)
-            end
-          end
-        end
-      end
     end
 
     # Fetches all available variants for the current product
