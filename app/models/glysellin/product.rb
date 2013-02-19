@@ -65,6 +65,12 @@ module Glysellin
     before_validation :set_slug, :set_sku, :set_vat_rate, :ensure_variant
 
     scope :published, where('glysellin_products.published = ?', true)
+    scope :with_taxonomy, lambda { |*taxonomies|
+      # Ensure we only have slugs so we got a string vector
+      taxonomies.map! { |t| t.kind_of?(Glysellin::Taxonomy) ? t.slug : t }
+      # Get products with those taxonomies
+      includes(:taxonomies).where('glysellin_taxonomies.slug IN (?)', taxonomies)
+    }
 
     # We always check we have a slug for our product
     def set_slug
@@ -93,23 +99,6 @@ module Glysellin
     #
     def available_variants
       variants.available
-    end
-
-    class << self
-      # Find products with taxonomy slugs or taxonomies
-      #
-      # @param *[Taxonomy, String] taxonomies One or more taxonomy objects or
-      #   slug strings
-      #
-      # @return [ActiveRecord::Relation] the products that correspond to the
-      #   taxonomies passed
-      def with_taxonomy *taxonomies
-        # Ensure we only have slugs so we got a string vector
-        taxonomies.map! { |t| t.kind_of?(Glysellin::Taxonomy) ? t.slug : t }
-        # Get products with those taxonomies
-        Product.includes(:taxonomies).
-          where('glysellin_taxonomies.slug IN (?)', taxonomies)
-      end
     end
 
     def image
