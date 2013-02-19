@@ -75,5 +75,9 @@ module Glysellin
     def available_for quantity
       unlimited_stock || in_stock >= quantity
     end
+
+    def name fullname = true
+      fullname ? "#{ product.name } - #{ super() }" : super()
+    end
   end
 end
