@@ -249,8 +249,13 @@ module Glysellin
         helper_method :countries_option_list, :country_from_code
       end
 
-      def countries_option_list
-        COUNTRIES_LIST.map { |code, country| [country, code] }
+      def countries_option_list order=true
+        if order
+          arr = COUNTRIES_LIST.sort_by {|k,v| v}
+        else
+          arr = COUNTRIES_LIST
+        end
+        arr.map { |code, country| [country, code] }
       end
 
       def country_from_code code
