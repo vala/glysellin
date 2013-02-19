@@ -256,13 +256,15 @@ module Glysellin
       #   errors += (order.send("fill_#{ method }_from_hash", data) || [])
       # end
 
-      # Try to fill as much as we can
-      order.fill_addresses_from_hash(data)
-      order.fill_user_from_hash(data)
-      order.fill_payment_method_from_hash(data)
-      order.fill_products_from_hash(data)
-      order.fill_product_choices_from_hash(data)
-      order.fill_coupon_code_from_hash(data)
+      if data
+        # Try to fill as much as we can
+        order.fill_addresses_from_hash(data)
+        order.fill_user_from_hash(data)
+        order.fill_payment_method_from_hash(data)
+        order.fill_products_from_hash(data)
+        order.fill_product_choices_from_hash(data)
+        order.fill_coupon_code_from_hash(data)
+      end
 
       #
       order

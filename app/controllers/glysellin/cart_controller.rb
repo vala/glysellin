@@ -3,32 +3,37 @@
 #
 module Glysellin
   class CartController < ApplicationController
+    before_filter :set_cart
     def show
-      @cart = Cart.new(cookies["glysellin.cart"])
       @cart.update_quantities
       # Display errors in flash
       flash[:error] = @cart.errors.join('<br>') if @cart.errors.length > 0
-      update_cookie @cart.serialize
+      update_cookie
     end
 
     def add
-      update_cookie Cart.add(cookies["glysellin.cart"], params[:cart])
+      @cart.add(params[:cart])
+      update_cookie
       @product_added_to_cart = true
       render_cart_partial
     end
 
     def remove
-      update_cookie Cart.remove(cookies["glysellin.cart"], params[:id]), set: true
+      @cart.remove(params[:id])
+      update_cookie set: true
       redirect_to cart_path
     end
 
     def clear
-      update_cookie ''
+      @cart.empty!
+      update_cookie
       redirect_to cart_path
     end
 
     def update
-      update_cookie Cart.update(cookies["glysellin.cart"], params)
+      @cart.update(params)
+      update_cookie
+
       case
       when params[:submit_order]
         redirect_to from_cart_create_orders_path
@@ -40,18 +45,22 @@ module Glysellin
     protected
 
     # Helper method to set cookie value
-    def update_cookie value, options = {}
+    def update_cookie options = {}
       if options[:set]
-        response.set_cookie("glysellin.cart", { :value => value, :path => '/' })
+        response.set_cookie("glysellin.cart", { :value => @cart.serialize, :path => '/' })
       else
-        cookies["glysellin.cart"] = { :value => value, :path => '/' }
+        cookies["glysellin.cart"] = { :value => @cart.serialize, :path => '/' }
       end
     end
 
     def render_cart_partial
       render partial: 'cart', locals: {
-        cart: Cart.new(cookies["glysellin.cart"])
+        cart: @cart
       }
+    end
+
+    def set_cart
+      @cart = Cart.new(cookies["glysellin.cart"])
     end
   end
 end

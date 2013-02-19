@@ -46,7 +46,8 @@ module Glysellin
     end
 
     def empty!
-      cookie = ''
+      self.products = []
+      METADATA.each { |key| self.send("#{ key }=", nil) }
     end
 
     def products_total
@@ -194,36 +195,23 @@ module Glysellin
 
     #############################################
     #
-    #         Class method shortcuts
+    #           Quantity management
     #
     #############################################
 
-    class << self
-      def add(cookie, params)
-        cart = new(cookie)
-        cart.set_quantity(params[:product_id], params[:quantity])
-        cart.serialize
+    def add(params)
+      set_quantity(params[:product_id], params[:quantity])
+    end
+
+    def update(params)
+      # Update each product in cart
+      products.each do |p|
+        id = p[:product].id
+        set_quantity(id, params[:quantity][id.to_s], override: true)
       end
 
-      def remove(cookie, product_id)
-        cart = new(cookie)
-        cart.remove(product_id)
-        cart.serialize
-      end
-
-      def update(cookie, params)
-        cart = new(cookie)
-        # Update each product in cart
-        cart.products.each do |p|
-          id = p[:product].id
-          cart.set_quantity(id, params[:quantity][id.to_s], override: true)
-        end
-
-        if (code = params[:discount_code].presence)
-          cart.discount_code = code
-        end
-
-        cart.serialize
+      if (code = params[:discount_code].presence)
+        self.discount_code = code
       end
     end
 
