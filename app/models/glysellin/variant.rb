@@ -14,9 +14,9 @@ module Glysellin
 
     accepts_nested_attributes_for :properties, allow_destroy: true
 
-    validates_presence_of :name
+    validates_presence_of :name, if: proc { |v| v.product.variants.length > 1 }
     validates_numericality_of :price
-    validates_numericality_of :in_stock, if: proc { |p| p.in_stock.presence }
+    validates_numericality_of :in_stock, if: proc { |v| v.in_stock.presence }
 
     before_validation :check_prices
 
@@ -74,6 +74,16 @@ module Glysellin
 
     def available_for quantity
       unlimited_stock || in_stock >= quantity
+    end
+
+    def name fullname = true
+      variant_name, product_name = super().presence, product.name
+
+      if fullname
+        variant_name ? "#{ product_name } - #{ variant_name }" : product_name
+      else
+        variant_name ? variant_name : product_name
+      end
     end
   end
 end
