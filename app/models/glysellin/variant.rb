@@ -4,7 +4,7 @@ module Glysellin
     self.table_name = 'glysellin_variants'
     attr_accessible :eot_price, :in_stock, :name, :position, :price,
       :published, :sku, :slug, :unlimited_stock, :product, :product_id,
-      :properties_attributes, :properties, :weight
+      :properties_attributes, :properties, :weight, :unmarked_price
 
     belongs_to :product, class_name: 'Glysellin::Product',
       foreign_key: 'product_id'
@@ -51,9 +51,9 @@ module Glysellin
       vat_ratio = self.product.vat_ratio rescue Glysellin.default_vat_rate
       # If we have to fill one of the prices when changed
       if eot_changed_alone?
-        self.price = self.eot_price * vat_ratio
+        self.price = (self.eot_price * vat_ratio).round(2)
       elsif price_changed_alone?
-        self.eot_price = self.price / vat_ratio
+        self.eot_price = (self.price / vat_ratio).round(2)
       end
     end
 
@@ -84,6 +84,10 @@ module Glysellin
       else
         variant_name ? variant_name : product_name
       end
+    end
+
+    def marked_down?
+      (p = unmarked_price.presence) && p != price
     end
   end
 end

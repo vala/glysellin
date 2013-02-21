@@ -72,6 +72,9 @@ module Glysellin
       includes(:taxonomies).where('glysellin_taxonomies.slug IN (?)', taxonomies)
     }
 
+    # Master variant methods delegation
+    delegate :price, :unmarked_price, :marked_down?, to: :master_variant
+
     # We always check we have a slug for our product
     def set_slug
       self.slug = name.to_slug
@@ -105,16 +108,13 @@ module Glysellin
       images.length > 0 ? images.first.image : nil
     end
 
-    def price
-      if self.variants.first
-        self.variants.first.price
-      end
+    def master_variant
+      self.variants.first
     end
 
     def set_product_on_variant variant
       variant.product = self
     end
-
 
     # bundle_attribute :price do |product|
     #   product.bundled_products.reduce(0) do |total, product|
