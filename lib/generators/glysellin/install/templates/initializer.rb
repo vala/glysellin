@@ -76,7 +76,7 @@ module Glysellin
     #   atos.merchant_country = 'fr'
     #   atos.capture_mode = 'AUTHOR_CAPTURE'
     #   atos.capture_days = nil
-    #   atos.debug = false
+    #   atos.activate_logger = false
     # end
 
     # config.gateways['check'].config do |c|

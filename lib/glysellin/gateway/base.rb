@@ -12,16 +12,19 @@ module Glysellin
     @@gateways_list = []
 
     class Base
-      def log message
-        if self.class.debug
-          Rails.logger.debug(
-            "[Glysellin - #{ self.class.gateway_name }] :: #{ message }"
-          )
-        end
-      end
-
       class << self
         attr_accessor :gateway_name
+
+        mattr_accessor :activate_logger
+        @@activate_logger = false
+
+        def log message
+          if @@activate_logger
+            Rails.logger.info(
+              "[Glysellin - #{ self.class.gateway_name }] :: #{ message }"
+            )
+          end
+        end
 
         def register name, gateway
           Gateway.gateways_list << {:name => name, :gateway => gateway}
@@ -32,6 +35,9 @@ module Glysellin
           yield self
         end
       end
+
+      # Defer #log to ::log class method
+      def log(msg) self.class.log(msg) end
     end
   end
 end

@@ -14,10 +14,11 @@ module Glysellin
       @@account = ''
 
       # Production mode by default
+      mattr_accessor :test
       @@test = false
 
       attr_accessor :errors, :order
-      
+
       def initialize order
         @order = order
         @errors = []
@@ -32,18 +33,25 @@ module Glysellin
       end
 
       def render_request_button
-         {:partial => 'glysellin/payment_methods/paypal-integral', :locals => {:order => @order}}
+        {
+          :partial => 'glysellin/payment_methods/paypal-integral',
+          :locals => { :order => @order }
+        }
       end
 
       # Launch payment processing
       def process_payment! post_data
         notification = Paypal::Notification.new(post_data)
+        log "Processing payment from #{ post_data }"
         if notification.acknowledge
           begin
             if notification.complete?
+              log "Order successfullt set to paid"
               @order.paid!
             else
-              @errors.push("Failed to verify Paypal's notification, please investigate")
+              error = "Failed to verify Paypal's notification, please investigate"
+              log error
+              @errors.push(error)
             end
           rescue => e
             raise
