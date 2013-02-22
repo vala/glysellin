@@ -68,18 +68,15 @@ module Glysellin
     #   :content => '300x300'
     # }
 
-    # Config mercanet account
-    # config.gateways['mercanet'].config do |m|
-    #   m.merchant_id = '0123012302130120'
-    #   m.pathfile_path = Rails.root.join('vendor', 'mercanet', 'param', 'pathfile')
-    #   m.bin_path = Rails.root.join('vendor', 'mercanet', 'bin', 'static')
-    # end
-
     # Config sogenactif account
-    # config.gateways['sogenactif'].config do |s|
-    #   s.merchant_id = '0123012302130120'
-    #   s.pathfile_path = Rails.root.join('vendor', 'mercanet', 'param', 'pathfile')
-    #   s.bin_path = Rails.root.join('vendor', 'mercanet', 'bin', 'static')
+    # config.gateways['atos'].config do |atos|
+    #   atos.merchant_id = '0123012302130120'
+    #   atos.pathfile_path = Rails.root.join('vendor', 'atos', 'param', 'pathfile')
+    #   atos.bin_path = Rails.root.join('bin')
+    #   atos.merchant_country = 'fr'
+    #   atos.capture_mode = 'AUTHOR_CAPTURE'
+    #   atos.capture_days = nil
+    #   atos.debug = false
     # end
 
     # config.gateways['check'].config do |c|

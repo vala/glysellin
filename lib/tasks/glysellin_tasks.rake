@@ -5,8 +5,7 @@ namespace :glysellin do
   task :seed => :environment do
     [['Chèque', 'check'],
     ['Paypal', 'paypal-integral'],
-    ['BNP Paribas', 'mercanet'],
-    ['Société Général', 'sogenactif']].each do |payment_method|
+    ['Atos', 'atos']].each do |payment_method|
       attributes = Hash[[:name, :slug].zip(payment_method)]
       Glysellin::PaymentMethod.create(attributes)
       puts "Created payment method : #{ attributes[:name] }"
@@ -15,7 +14,7 @@ namespace :glysellin do
     [
       { name: 'Colissimo', identifier: 'colissimo' },
       { name: 'Lettre Max', identifier: 'lettre-max' },
-      { name: 'Frais de ports Gratuits', identifier: 'free-shipping' }
+      { name: 'Frais de ports Offerts', identifier: 'free-shipping' }
     ].each do |attributes|
       Glysellin::ShippingMethod.create! attributes
     end
