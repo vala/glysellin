@@ -104,6 +104,7 @@ module Glysellin
     #
     def update_state_if_needed
       # Set address as filled
+
       if filling_address? && customer && billing_address && shipping_address
         address_filled
       end
@@ -125,7 +126,7 @@ module Glysellin
     end
 
 
-    def use_billing_address_for_shipping; nil; end
+    def use_another_address_for_shipping; nil; end
 
     def init_addresses!
       self.build_customer unless customer
@@ -280,11 +281,12 @@ module Glysellin
       self.build_billing_address(billing_params)
 
       # Check if we have to use the billing address for shipping
-      use_another_address = data[:use_billing_address_for_shipping].presence
-      
+      use_another_address = data[:use_another_address_for_shipping] == "1"
+     
       # If we are given a specific shipping address
       if use_another_address && data[:shipping_address_attributes]
         self.build_shipping_address(data[:shipping_address_attributes])
+      
       # Else, define shipping address if we must use same address
       else
         self.build_shipping_address(billing_params)
@@ -296,7 +298,7 @@ module Glysellin
         (customer || (email = data[:customer_attributes][:email]))
 
       user = customer || Glysellin.user_class_name.constantize.find_by_email(email)
-
+      p user
       if user
         self.customer = user
 

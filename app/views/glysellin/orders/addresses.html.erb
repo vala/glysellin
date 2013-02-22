@@ -32,7 +32,7 @@
     <%= fsa.input :tel %>
   <% end %>
 
-  <%= f.input :use_billing_address_for_shipping, as: 'boolean' %>
+  <%= f.input :use_another_address_for_shipping, as: 'boolean' %>
 
   <%= f.simple_fields_for :shipping_address do |fsa| %>
     <%= fsa.input :last_name %>
