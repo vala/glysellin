@@ -88,7 +88,7 @@ module Glysellin
     # fire :paid event
     #
     def set_paid_if_paid_by_check
-      paid! if (paid_on_changed? and payment? and paid_by_check?)
+      paid! if (paid_on_changed? and payment_method_chosen? and paid_by_check?)
     end
 
     def paid_by_check?
@@ -282,11 +282,11 @@ module Glysellin
 
       # Check if we have to use the billing address for shipping
       use_another_address = data[:use_another_address_for_shipping] == "1"
-     
+
       # If we are given a specific shipping address
       if use_another_address && data[:shipping_address_attributes]
         self.build_shipping_address(data[:shipping_address_attributes])
-      
+
       # Else, define shipping address if we must use same address
       else
         self.build_shipping_address(billing_params)
