@@ -5,4 +5,9 @@ class Glysellin::OrderAdminMailer < ActionMailer::Base
     @order = order
     mail to: Glysellin.admin_email
   end
+
+  def send_check_order_created_email order
+    @order = order
+    mail to: Glysellin.admin_email
+  end
 end

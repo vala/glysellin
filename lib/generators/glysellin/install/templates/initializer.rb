@@ -38,6 +38,12 @@ module Glysellin
     #
     # config.allow_anonymous_orders = true
 
+    # Sends an automatic e-mail to the shop admin when a new order with
+    # check payment method is placed
+    # Defaults to true
+    #
+    # config.send_email_on_check_order_placed = true
+
     # Set steps order to be used while using automatic order process
     #
     # config.step_routes = {

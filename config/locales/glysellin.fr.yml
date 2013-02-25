@@ -9,6 +9,7 @@ fr:
         item_not_for_sale: "Désolé mais le produit %{item} n'est plus disponible"
         item_out_of_stock: "Désolé mais le produit %{item} n'est plus en stock"
         not_enough_stock_for_item: "Désolé mais il ne reste que %{stock} %{item} en stock"
+        invalid_discount_code: "Le code promotionnel saisi n'est pas valide"
       variant:
         multiple_properties_with_same_type: "Il y a plusieurs types de propriété identiques pour cette même déclinaison de produit"
     labels:
@@ -89,6 +90,8 @@ fr:
     order_admin_mailer:
       send_order_paid_email:
         subject: "Une nouvelle commande a été validée sur le site"
+      send_check_order_created_email:
+        subject: "Une commande par chèque a été passée sur le site"
     order_customer_mailer:
       send_order_created_email:
         subject: "Votre commande a bien été validée"

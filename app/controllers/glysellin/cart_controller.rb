@@ -7,7 +7,7 @@ module Glysellin
     def show
       @cart.update_quantities
       # Display errors in flash
-      flash[:error] = @cart.errors.join('<br>') if @cart.errors.length > 0
+      flash_errors
       update_cookie
     end
 
@@ -32,10 +32,11 @@ module Glysellin
 
     def update
       @cart.update(params)
+      flash_errors
       update_cookie
 
       case
-      when params[:submit_order]
+      when @cart.errors.length == 0 && params[:submit_order]
         redirect_to from_cart_create_orders_path
       else
         redirect_to cart_path
@@ -57,6 +58,10 @@ module Glysellin
       render partial: 'cart', locals: {
         cart: @cart
       }
+    end
+
+    def flash_errors
+      flash[:error] = @cart.errors.join('<br>') if @cart.errors.length > 0
     end
 
     def set_cart

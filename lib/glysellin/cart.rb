@@ -30,6 +30,14 @@ module Glysellin
 
     def errors() @errors ||= [] end
 
+    def discount_code=(val)
+      if DiscountCode.find_by_code(val)
+        @discount_code = val
+      else
+        @discount_code = false
+      end
+    end
+
     #############################################
     #
     #         Cart content management
@@ -117,6 +125,11 @@ module Glysellin
           products << item
         end
         products
+      end
+
+      if discount_code == false
+        set_error(:invalid_discount_code)
+        discount_code = nil
       end
 
       process_total!
@@ -213,6 +226,8 @@ module Glysellin
       if (code = params[:discount_code].presence)
         self.discount_code = code
       end
+
+      update_quantities
     end
 
     protected

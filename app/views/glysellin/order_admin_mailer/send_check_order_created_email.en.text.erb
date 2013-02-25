@@ -1,12 +1,12 @@
-Votre commande a bien été prise en compte et est en attente de paiement
-
-Récapitulatif de votre commande :
+Une commande avec paiement par chèque a été passée sur le site.
 
 --------------------------------------------------------
-Votre numéro de commande : <%= @order.ref %>:
+Récapitulatif de la commande Numéro : <%= @order.ref %>:
 --------------------------------------------------------
 
-Votre adresse de facturation :
+Email du client: <%= @order.customer.email %>
+
+Adresse de facturation :
 ------------------------------
 
 <% billing_address = @order.billing_address %>
@@ -21,7 +21,7 @@ Tél: <%= billing_address.tel %>
 <%= billing_address.country %>
 
 
-Votre adresse de livraison :
+Adresse de livraison :
 ------------------------------
 
 <% shipping_address = @order.shipping_address %>
@@ -38,7 +38,7 @@ Tél: <%= shipping_address.tel %>
 
 --------------------------------------------------------
 
-Vos produits :
+Produits commandés :
 
 <%- @order.items.each do |item| -%>
 Nom : <%= item.name %>
@@ -61,13 +61,11 @@ Total TTC : <%= number_to_currency(@order.total_price) %>
 Paiement :
 
 Mode de paiement : <%= @order.payment_method.name %>
-Statut : En attente de paiement
+Statut : Paiement en attente
 Date : <%= @order.payment.last_payment_action_on %>
 
 --------------------------------------------------------
 
-
-Toute l'équipe de <%= Glysellin.shop_name %> vous remercie pour votre commande !
 
 
 --------------------------------------------------------------------------------

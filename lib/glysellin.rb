@@ -89,6 +89,9 @@ module Glysellin
   mattr_accessor :default_product_weight
   @@default_product_weight = 0
 
+  mattr_accessor :send_email_on_check_order_placed
+  @@send_email_on_check_order_placed = true
+
   mattr_accessor :step_routes
   @@step_routes = {
     created: ORDER_STEP_ADDRESS,

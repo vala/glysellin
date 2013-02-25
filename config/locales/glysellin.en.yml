@@ -8,6 +8,7 @@ en:
         item_not_for_sale: "Sorry, %{item} is no longer for sale"
         item_out_of_stock: "Sorry, %{item} is out of stock"
         not_enough_stock_for_item: "Sorry, only #{stock} #{item} are still available"
+        invalid_discount_code: "The discount code you used is not valid"
     labels:
       misc:
         back_to_homepage: "Back to home page"
@@ -77,9 +78,10 @@ en:
     order_admin_mailer:
       send_order_paid_email:
         subject: "A new order has validated"
+      send_check_order_created_email:
+        subject: "An order with Check payment method has been placed"
     order_customer_mailer:
       send_order_created_email:
         subject: "Your order has been placed"
-    order_customer_mailer:
       send_order_paid_email:
         subject: "Your payment has been accepted"

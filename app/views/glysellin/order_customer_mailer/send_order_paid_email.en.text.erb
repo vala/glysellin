@@ -1,0 +1,74 @@
+Votre commande a bien été prise en compte et est en attente de paiement
+
+Récapitulatif de votre commande :
+
+--------------------------------------------------------
+Votre numéro de commande : <%= @order.ref %>:
+--------------------------------------------------------
+
+Votre adresse de facturation :
+------------------------------
+
+<% billing_address = @order.billing_address %>
+
+Nom complet : <%= billing_address.last_name %> <%= billing_address.first_name %>
+<%- if billing_address.tel -%>
+Tél: <%= billing_address.tel %>
+<%- end -%>
+
+<%= billing_address.address %>
+<%= billing_address.zip %> <%= billing_address.city %>
+<%= billing_address.country %>
+
+
+Votre adresse de livraison :
+------------------------------
+
+<% shipping_address = @order.shipping_address %>
+
+Nom complet : <%= shipping_address.last_name %> <%= shipping_address.first_name %>
+<%- if shipping_address.tel -%>
+Tél: <%= shipping_address.tel %>
+<%- end -%>
+
+<%= shipping_address.address %>
+<%= shipping_address.zip %> <%= shipping_address.city %>
+<%= shipping_address.country %>
+
+
+--------------------------------------------------------
+
+Vos produits :
+
+<%- @order.items.each do |item| -%>
+Nom : <%= item.name %>
+Quantité : <%= item.quantity %>
+Prix TTC : <%= number_to_currency(item.price) %>
+------------------------
+<%- end -%>
+
+<%- if @order.subtotal != @order.total_price || Glysellin.show_subtotal_if_identical -%>
+Sous Total TTC : <%= number_to_currency(@order.subtotal) %>
+<% end %>
+<%- if @order.shipping_price > 0 || Glysellin.show_shipping_if_zero -%>
+Frais de ports TTC : <%= number_to_currency(@order.shipping_price) %>
+<%- end -%>
+Total TTC : <%= number_to_currency(@order.total_price) %>
+
+
+--------------------------------------------------------
+
+Paiement :
+
+Mode de paiement : <%= @order.payment_method.name %>
+Statut : En attente de paiement
+Date : <%= @order.payment.last_payment_action_on %>
+
+--------------------------------------------------------
+
+
+Toute l'équipe de <%= Glysellin.shop_name %> vous remercie pour votre commande !
+
+
+--------------------------------------------------------------------------------
+Ceci est un message généré automatiquement, merci de ne pas essayer d'y répondre
