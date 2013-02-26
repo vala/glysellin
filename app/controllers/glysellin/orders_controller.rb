@@ -51,7 +51,7 @@ module Glysellin
 
     def validate
     end
-
+    
     def addresses
       @order.init_addresses!
     end
