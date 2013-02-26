@@ -1,0 +1,8 @@
+Une commande avec paiement par chèque a été passée sur le site.
+
+<%= render partial: 'order_header', locals: { order: @order } %>
+
+
+<%= render partial: 'glysellin/shared/order', locals: { order: @order } %>
+
+<%= render partial: 'glysellin/shared/mailer/footer' %>
