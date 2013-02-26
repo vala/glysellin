@@ -8,12 +8,15 @@ module Glysellin
           attr_accessor :path_to_data
 
           def country_weight_table_file path
-            @path_to_data = File.expand_path(
-              File.join(
-                *%w(.. .. .. .. .. db seeds shipping_carrier rates).push(path)
-              ),
-              __FILE__
-            )
+            loadable_paths = [File.join(ENV['PWD'], 'lib')] + $LOAD_PATH
+            # Try to find table file in load path
+            loadable_paths.each do |loadable_path|
+              file = File.join(loadable_path, '..', 'db', 'seeds', 'shipping_carrier', 'rates', path)
+              if File.exists?(file)
+                @path_to_data = file
+                return
+              end
+            end
           end
         end
 
