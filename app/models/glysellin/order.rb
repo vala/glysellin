@@ -366,7 +366,7 @@ module Glysellin
     #
     def fill_coupon_code_from_hash data
       return if data[:discount_code].blank?
-      existing_code = DiscountCode.find_by_code(data[:discount_code])
+      existing_code = DiscountCode.from_code(data[:discount_code])
 
       if existing_code && existing_code.applicable?
         build_adjustment_from(existing_code)

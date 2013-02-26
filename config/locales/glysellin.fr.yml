@@ -46,7 +46,7 @@ fr:
       payment_methods:
         pay_with_paypal: "Payer avec Paypal"
         check:
-          send_your_check_text: "Votre commande a bien été prise en compte. Merci d'indiquer le numéro de commande suivant : %{order_ref} avec votre chèque, de mettre l'ordre à %{check_order} et de l'envoyer à l'adresse suivante : %{check_destination}"
+          send_your_check_text: "Votre commande a bien été prise en compte. Merci d'indiquer le numéro de commande suivant : <strong>%{order_ref}</strong> avec votre chèque, de mettre l'ordre à <strong>%{check_order}</strong> et de l'envoyer à l'adresse suivante : <strong>%{check_destination}</strong>"
       payment_responses:
         successfully_paid: "Paiement effectué"
         successfull_payment_text: "Votre paiement a bien été effectué, votre commande sera traité dans les meilleurs délais, un e-mail de confirmation vous a été envoyé."

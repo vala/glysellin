@@ -86,8 +86,16 @@ module Glysellin
     # end
 
     # config.gateways['check'].config do |c|
+    #
+    #   # Check paying notes description (on order recap page)
+    #   #
+    #   # First way : Configure check order and check destination
     #   c.checks_order = "Order me nasty !"
     #   c.checks_destination = "Check services / your addres here ..."
+    #   # Second way : Use your own description wraped in a lambda which will
+    #   # be passed the order
+    #   c.check_payment_description = lambda { |order| I18n.t(:check_payment_instructions, order_ref: order.ref) }
+    #
     # end
   end
 

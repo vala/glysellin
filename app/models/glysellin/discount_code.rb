@@ -9,8 +9,8 @@ module Glysellin
 
     validates_presence_of :name, :code, :discount_type, :value
 
-    before_save do
-      self.code.downcase!
+    def code=(val)
+      super(val.downcase)
     end
 
     def applicable?
@@ -25,6 +25,12 @@ module Glysellin
         value: -calculator.calculate,
         adjustment: self
       }
+    end
+
+    class << self
+      def from_code code
+        find_by_code(code.downcase)
+      end
     end
   end
 end

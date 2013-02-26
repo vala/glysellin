@@ -31,7 +31,7 @@ module Glysellin
     def errors() @errors ||= [] end
 
     def discount_code=(val)
-      if DiscountCode.find_by_code(val)
+      if DiscountCode.from_code(val)
         @discount_code = val
       else
         @discount_code = false
