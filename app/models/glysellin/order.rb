@@ -281,7 +281,7 @@ module Glysellin
       self.build_billing_address(billing_params)
 
       # Check if we have to use the billing address for shipping
-      use_another_address = data[:use_another_address_for_shipping] == "1"
+      use_another_address = data[:use_another_address_for_shipping] == "1" || data[:customer_attributes][:use_another_address_for_shipping] == "1"
 
       # If we are given a specific shipping address
       if use_another_address && data[:shipping_address_attributes]
@@ -298,7 +298,6 @@ module Glysellin
         (customer || (email = data[:customer_attributes][:email]))
 
       user = customer || Glysellin.user_class_name.constantize.find_by_email(email)
-      p user
       if user
         self.customer = user
 
