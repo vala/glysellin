@@ -36,7 +36,7 @@ module Glysellin
 
       after_transition on: :choose_shipping_method, do: :set_shipping_price
       after_transition on: :paid, do: :set_payment
-      after_transition on: :shipped, do: :notify_shipped
+      after_transition paid: :shipped, do: :notify_shipped
     end
 
     # Relations
@@ -73,6 +73,7 @@ module Glysellin
     after_save :check_ref
     before_save :set_paid_if_paid_by_check
     before_save :update_state_if_needed
+    before_save :notify_shipped
 
     scope :from_customer, lambda { |customer_id| where(customer_id: customer_id) }
 
@@ -128,7 +129,9 @@ module Glysellin
 
     # Callback invoked after event :shipped
     def notify_shipped
-      OrderCustomerMailer.send_order_shipped_email.deliver
+      if state_changed? && shipped?
+        OrderCustomerMailer.send_order_shipped_email(self).deliver
+      end
     end
 
     def use_another_address_for_shipping; nil; end
