@@ -10,4 +10,9 @@ class Glysellin::OrderCustomerMailer < ActionMailer::Base
     @order = order
     mail to: @order.email
   end
+
+  def send_order_shipped_email order
+    @order = order
+    mail to: @order.email
+  end
 end

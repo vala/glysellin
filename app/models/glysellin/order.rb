@@ -36,6 +36,7 @@ module Glysellin
 
       after_transition on: :choose_shipping_method, do: :set_shipping_price
       after_transition on: :paid, do: :set_payment
+      after_transition on: :shipped, do: :notify_shipped
     end
 
     # Relations
@@ -125,6 +126,10 @@ module Glysellin
       update_attribute(:paid_on, payment.last_payment_action_on)
     end
 
+    # Callback invoked after event :shipped
+    def notify_shipped
+      OrderCustomerMailer.send_order_shipped_email.deliver
+    end
 
     def use_another_address_for_shipping; nil; end
 
