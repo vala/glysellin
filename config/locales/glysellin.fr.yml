@@ -87,13 +87,11 @@ fr:
         payment_method_chosen: "Méthode de paiement choisie"
         paid: "Payée"
         shipped: "Expédiée"
-    order_admin_mailer:
-      send_order_paid_email:
-        subject: "Une nouvelle commande a été validée sur le site"
-      send_check_order_created_email:
-        subject: "Une commande par chèque a été passée sur le site"
-    order_customer_mailer:
-      send_order_created_email:
-        subject: "Votre commande a bien été validée"
-      send_order_paid_email:
-        subject: "Le paiement de votre commande a été accepté"
+    mailer:
+      admin:
+        send_order_paid_email: "Une nouvelle commande a été validée sur le site"
+        send_check_order_created_email: "Une commande par chèque a été passée sur le site"
+      customer:
+        send_order_created_email: "Votre commande a bien été validée"
+        send_order_paid_email: "Le paiement de votre commande a été accepté"
+        send_order_shipped_email: "Votre commande a été expédiée"
