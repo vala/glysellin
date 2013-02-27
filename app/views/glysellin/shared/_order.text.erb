@@ -40,12 +40,11 @@ Prix TTC : <%= number_to_currency(item.price) %>
 Sous Total TTC : <%= number_to_currency(order.subtotal) %>
 <% end %>
 <%- if order.adjustments.length > 0 -%>
-  <% order.adjustments.each do |adjustment| %>
-    <%= adjustment.name %> : <%= number_to_currency(adjustment.value) %>
-  <% end %>
-<% end %>
+<% order.adjustments.each do |adjustment| -%>
+<%= adjustment.name %> : <%= number_to_currency(adjustment.value) %>
+<%- end -%>
+<%- end -%>
 Total TTC : <%= number_to_currency(order.total_price) %>
-
 
 
 Paiement :
@@ -55,4 +54,3 @@ Mode de paiement : <%= order.payment_method.name %>
 Statut : En attente de paiement
 Date : <%= order.payment.last_payment_action_on %>
 
---------------------------------------------------------

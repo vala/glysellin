@@ -1,0 +1,8 @@
+Votre commande a été expédiée
+
+<%= render partial: 'order_header', locals: { order: @order } %>
+
+
+<%= render partial: 'glysellin/shared/order', locals: { order: @order } %>
+
+<%= render partial: 'glysellin/shared/mailer/footer' %>
