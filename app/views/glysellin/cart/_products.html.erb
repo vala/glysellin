@@ -1,6 +1,7 @@
 <% editable = false unless defined?(editable) && editable == true %>
+<% remote = false unless defined?(remote) && remote == true %>
 
-<%= form_tag update_cart_path, method: "put" do %>
+<%= form_tag update_cart_path, method: "put", class: "products-recap-form#{ ' editable' if editable }" do %>
   <table id="order_recap_table" class="table">
     <tr>
       <th><%= t('glysellin.labels.order.sku') %></th>
@@ -26,15 +27,15 @@
         </td>
         <td>
           <% if editable %>
-            <%= number_field :quantity, item.id, value: quantity %>
+            <%= number_field :quantity, item.id, value: quantity, class: 'quantity-input', data: { id: item.id } %>
           <% else %>
             <%= quantity %>
           <% end %>
         </td>
-        <td>
+        <td class="product-eot-price">
           <%= number_to_currency(quantity * item.eot_price) %>
         </td>
-        <td>
+        <td class="product-price">
           <%= number_to_currency(quantity * item.price) %>
         </td>
         <% if editable %>
@@ -87,14 +88,14 @@
         </td>
       </tr>
     <% end %>
-    <tr>
+    <tr class="products-total-row">
       <td colspan="4">
         <%= t('glysellin.labels.order.total') %>
       </td>
-      <td>
+      <td class="total-eot-price">
         <%= number_to_currency(cart.total_eot_price) %>
       </td>
-      <td>
+      <td class="total-price">
         <%= number_to_currency(cart.total_price) %>
       </td>
     </tr>
@@ -105,10 +106,12 @@
       <%= label_tag :discount_code, t('glysellin.labels.order.discount_code') %>
       <%= text_field_tag :discount_code, cart.discount_code %>
     </div>
-    <!-- Update cart contents -->
-    <button type="submit" name="update_order">
-      <%= t('glysellin.labels.cart.update') %>
-    </button>
+    <% unless remote %>
+      <!-- Update cart contents -->
+      <button type="submit" name="update_order">
+        <%= t('glysellin.labels.cart.update') %>
+      </button>
+    <% end %>
     <!-- Submit order from cart -->
     <button type="submit" name="submit_order">
       <%= t('glysellin.labels.cart.create_order_form') %>

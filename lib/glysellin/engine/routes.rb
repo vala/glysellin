@@ -42,6 +42,8 @@ module ActionDispatch::Routing
 
         resource :cart, controller: controllers[:cart], only: [:show] do
           post "add-product", action: "add", as: "add_to"
+          put "update-quantity", action: 'update_quantity', as: "update_quantity"
+          put "update-discount-code", action: 'update_discount_code', as: "update_discount_code"
           put "update", action: "update", as: "update"
           get "remove-product/:id", action: "remove", as: "remove_from"
         end

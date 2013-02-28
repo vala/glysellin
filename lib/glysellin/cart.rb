@@ -1,6 +1,8 @@
 # Cart class inspired from Piggybak's gem before we write our own one
 # Piggyback : http://github.com/piggybak/piggybak
 #
+require 'ostruct'
+
 module Glysellin
   class Cart
     include ProductsList
@@ -8,9 +10,8 @@ module Glysellin
     attr_writer :products
     attr_accessor :total
     attr_accessor :errors
-    alias :subtotal :total
 
-    METADATA = %w(discount_code)
+    METADATA = %w(discount_code adjustment)
     METADATA.each { |header| attr_accessor header }
 
     def initialize(cookie='')
@@ -31,12 +32,32 @@ module Glysellin
     def errors() @errors ||= [] end
 
     def discount_code=(val)
-      if DiscountCode.from_code(val)
-        @discount_code = val
-      else
-        @discount_code = false
-      end
+      refresh_discount_code!(val)
     end
+
+    def refresh_discount_code!(val = nil)
+      val ||= @discount_code
+      if val && (code = DiscountCode.from_code(val))
+        @discount_code = val
+        set_adjustment_from_code(code)
+      else
+        @discount_code = nil
+        @adjustment = nil
+      end
+      @discount_code
+    end
+
+    def set_adjustment_from_code code
+      adjustment = code.to_adjustment(self)
+      @adjustment = { "name" => adjustment[:name], "value" => adjustment[:value] }
+    end
+
+    def adjustments
+      [OpenStruct.new(@adjustment)]
+    end
+
+    def adjustment_name() @adjustment["name"] rescue "" end
+    def adjustment_value() @adjustment["value"] rescue 0 end
 
     #############################################
     #
@@ -149,13 +170,22 @@ module Glysellin
 
       parse_metadata!(headers || '')
       parse_products!(products || '')
+
+      refresh_discount_code!
+      process_total!
     end
 
     def parse_metadata! headers
       headers.split(';').each do |item|
         key, value = item.split(':')
         if METADATA.include?(key)
-          send("#{ key }=", value)
+          if value.match(/\^/)
+            val = value.split(/\^\^/).map { |str| str.split(/\^/) }
+            val = Hash[val]
+          else
+            val = value
+          end
+          send("#{ key }=", val)
         end
       end
     end
@@ -179,7 +209,14 @@ module Glysellin
       headers = METADATA.reduce([]) do |headers, key|
         value = send(key)
         if value.presence
-          headers << "#{ key }:#{ value }"
+          if value.is_a? Hash
+            serialized_value = value.map do |key, value|
+              "#{ key }^#{ value }"
+            end.join("^^")
+            headers << "#{ key }:#{ serialized_value }"
+          else
+            headers << "#{ key }:#{ value }"
+          end
         end
         headers
       end

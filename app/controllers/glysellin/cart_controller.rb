@@ -3,7 +3,10 @@
 #
 module Glysellin
   class CartController < ApplicationController
+    include ActionView::Helpers::NumberHelper
+
     before_filter :set_cart
+
     def show
       @cart.update_quantities
       # Display errors in flash
@@ -16,6 +19,26 @@ module Glysellin
       update_cookie
       @product_added_to_cart = true
       render_cart_partial
+    end
+
+    def update_quantity
+      id = params[:product_id]
+      @cart.set_quantity(id, params[:quantity], override: true)
+      update_cookie
+
+      item = @cart.product(id)
+      product, quantity = item[:product], item[:quantity]
+      render json: {
+        quantity: quantity,
+        eot_price: number_to_currency(quantity * product.eot_price),
+        price: number_to_currency(quantity * product.price)
+      }.merge(totals_hash)
+    end
+
+    def update_discount_code
+      @cart.discount_code = params[:discount_code]
+      update_cookie
+      render json: totals_hash
     end
 
     def remove
@@ -52,6 +75,7 @@ module Glysellin
       else
         cookies["glysellin.cart"] = { :value => @cart.serialize, :path => '/' }
       end
+      set_cart
     end
 
     def render_cart_partial
@@ -66,6 +90,17 @@ module Glysellin
 
     def set_cart
       @cart = Cart.new(cookies["glysellin.cart"])
+    end
+
+    def totals_hash
+      {
+        adjustment_name: @cart.adjustment_name,
+        adjustment_value: number_to_currency(@cart.adjustment_value),
+        total_eot_price: number_to_currency(@cart.total_eot_price),
+        total_price: number_to_currency(@cart.total_price),
+        eot_subtotal: number_to_currency(@cart.eot_subtotal),
+        subtotal: number_to_currency(@cart.subtotal)
+      }
     end
   end
 end

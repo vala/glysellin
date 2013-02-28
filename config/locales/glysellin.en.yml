@@ -67,6 +67,7 @@ en:
         create_order: "Order"
         remove_from_cart: "Delete"
         update: "Update cart"
+        update_discount: "Update discount code"
     orders:
       states:
         created: "Created"

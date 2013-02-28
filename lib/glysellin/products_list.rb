@@ -20,14 +20,14 @@ module Glysellin
     #
     # @return [BigDecimal] the calculated subtotal
     def subtotal
-      @_subtotal ||= quantified_items.reduce(0) do |total, quantified_item|
+      quantified_items.reduce(0) do |total, quantified_item|
         item, quantity = quantified_item
         total + (item.price * quantity)
       end
     end
 
     def eot_subtotal
-      @_eot_subtotal ||= quantified_items.reduce(0) do |total, quantified_item|
+      quantified_items.reduce(0) do |total, quantified_item|
         item, quantity = quantified_item
         total + (item.eot_price * quantity)
       end
@@ -47,8 +47,8 @@ module Glysellin
     end
 
     def adjustments_total
-      @_adjustments_total ||= adjustments.reduce(0) do |total, adj|
-        total + adj.value
+      adjustments.reduce(0) do |total, adj|
+        total + adj.value.to_f
       end
     end
 
@@ -62,11 +62,11 @@ module Glysellin
     #
     # @return [BigDecimal] the calculated total price
     def total_price
-      @_total_price ||= (subtotal + adjustments_total).round(2)
+      (subtotal + adjustments_total).round(2)
     end
 
     def total_eot_price
-      @_total_eot_price ||= (eot_subtotal + eot_adjustments_total)
+      (eot_subtotal + eot_adjustments_total)
     end
   end
 end
