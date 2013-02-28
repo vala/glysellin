@@ -191,7 +191,7 @@ module Glysellin
     #
     # @return [String] the wanted e-mail string
     def email
-      customer.email
+      customer && customer.email
     end
 
     def total_weight
