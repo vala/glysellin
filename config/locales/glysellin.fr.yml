@@ -55,9 +55,9 @@ fr:
         try_to_pay_again: "Si vous voulez tenter à nouveau de payer, vous pouvez utiliser le bouton suivant"
       payments:
         statuses:
-          pending: "En attente"
-          paid: "Payé"
-          canceled: "Annulé"
+          pending: "Paiement en attente"
+          paid: "Paiement validé"
+          canceled: "Paiement annulé"
         methods:
           paypal_integral: "Paypal"
           mercanet: "Carte bancaire - Mercanet"
@@ -81,12 +81,12 @@ fr:
         update_discount: "Mettre à jour le code Promo"
     orders:
       states:
-        created: "Créée"
+        created: "Produits choisis"
         filling_address: "Adresses non remplies"
         address: "Adresses remplies"
         shipping_method_chosen: "Méthode de transport choisie"
-        payment_method_chosen: "Méthode de paiement choisie"
-        paid: "Payée"
+        payment_method_chosen: "En attente de paiement"
+        paid: "Traitement en cours"
         shipped: "Expédiée"
     mailer:
       admin:
