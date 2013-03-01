@@ -59,7 +59,7 @@ module Glysellin
       update_cookie
 
       case
-      when @cart.errors.length == 0 && params[:submit_order]
+      when @cart.errors.length == 0 && (Glysellin.async_cart || params[:submit_order])
         redirect_to from_cart_create_orders_path
       else
         redirect_to cart_path

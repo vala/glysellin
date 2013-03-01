@@ -1,6 +1,5 @@
 class CartRecap
   constructor: (@container) ->
-    console.log "GO WITH : ", @container
     @defaultPostOptions = {
       _method: @container.find('input[name="_method"]').val(),
       utf8: @container.find('input[name="utf8"]').val(),
@@ -39,12 +38,23 @@ class CartRecap
       @handleEnterKey(e)
 
     @container.find('.update-discount-code-btn').on 'click', (e) =>
-      @discountCodeUpdated(); false
+      @discountCodeUpdated()
+
+    @discountCode.on 'change', (e) =>
+      @discountCodeUpdated()
 
     @adjustmentRow.find('.remove-discount-btn').on 'click', (e) =>
       @resetDiscountCode(); false
 
+    @container.on "submit", (e, force = false) ->
+      false unless force
+
+    @container.find("#submit-order").on "click", (e) =>
+      if e.clientX != 0 && e.clientY != 0
+        @container.trigger("submit", [true])
+
   handleEnterKey: (e) ->
+    $(e.currentTarget).trigger('change') if e.which == 13
     false
 
   quantityChanged: (el) ->

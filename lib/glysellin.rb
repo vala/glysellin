@@ -92,6 +92,9 @@ module Glysellin
   mattr_accessor :send_email_on_check_order_placed
   @@send_email_on_check_order_placed = true
 
+  mattr_accessor :async_cart
+  @@async_cart = true
+
   mattr_accessor :step_routes
   @@step_routes = {
     created: ORDER_STEP_ADDRESS,
