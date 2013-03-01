@@ -75,6 +75,8 @@ class CartRecap
     # Total row handling
     @setTotals(resp)
 
+    @container.trigger('quantity-updated.glysellin')
+
   discountCodeUpdated: ->
     @update(
       'update-discount-code'
@@ -90,7 +92,8 @@ class CartRecap
     )
 
   remoteAdjustmentUpdated: (resp) ->
-    if resp.adjustment_name
+    discount = resp.adjustment_name
+    if discount
       @subtotalsRow.fadeIn(200)
       @adjustmentRow.fadeIn(200)
     else
@@ -99,6 +102,8 @@ class CartRecap
 
     # Total row handling
     @setTotals(resp)
+
+    @container.trigger('discount-updated.glysellin', [discount])
 
   update: (action, options, callback) ->
     $.post(
