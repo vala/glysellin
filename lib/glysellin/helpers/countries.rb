@@ -254,7 +254,7 @@ module Glysellin
       end
 
       def country_from_code code
-        COUNTRIES_LIST[code.to_s.capitalize]
+        COUNTRIES_LIST[code.to_s.upcase]
       end
     end
   end
