@@ -8,13 +8,12 @@ module Glysellin
     # Relations
     #
     # And address can be used as shipping or billing address
-    has_many :billed_orders, :class_name => 'Glysellin::Order', :foreign_key => 'billing_address_id', :inverse_of => :billing_address
-    has_many :shipped_orders, :class_name => 'Glysellin::Order', :foreign_key => 'shipping_address_id', :inverse_of => :shipping_address
+    belongs_to :addressable, polymorphic: true
 
     attr_accessible :activated, :first_name, :last_name, :address, :zip, :city,
-        :country, :tel, :fax, :billed_orders, :shipped_orders, :company,
-        :company_name, :vat_number, :address_details, :shipped_orders,
-        :additional_fields
+      :country, :tel, :fax, :billed_orders, :shipped_orders, :company,
+      :company_name, :vat_number, :address_details, :shipped_orders,
+      :additional_fields, :addressable_type, :addressable_id
 
     # Validations
     #

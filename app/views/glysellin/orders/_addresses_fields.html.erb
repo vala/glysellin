@@ -1,0 +1,28 @@
+<div class="addresses-fields-container" >
+  <div class="billing-address-container" >
+    <%= form.simple_fields_for :billing_address do |fsa| %>
+      <%= fsa.input :last_name, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :first_name, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :address, :as => :string, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :zip, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :city, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :country, collection: countries_option_list, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :tel, input_html: { class: 'input-block-level'} %>
+    <% end %>
+  </div>
+  <%= form.input :use_another_address_for_shipping, as: 'boolean', 
+    wrapper_html: { id: "billing-address-controls" }, 
+    input_html: { data: { 'toggle' => 'address' } } %>
+
+  <div class="shipping-address-container" >
+    <%= form.simple_fields_for :shipping_address do |fsa| %>
+      <%= fsa.input :last_name, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :first_name, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :address, :as => :string, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :zip, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :city, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :country, collection: separated_countries_option_list, input_html: { class: 'input-block-level'} %>
+      <%= fsa.input :tel, input_html: { class: 'input-block-level'} %>
+    <% end %>
+  </div>
+</div>
