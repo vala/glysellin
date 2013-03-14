@@ -2,8 +2,8 @@ module Glysellin
   module Orderer
     extend ActiveSupport::Concern
     included do
-      has_one :billing_address, class_name: 'Glysellin::Address', as: :addressable
-      has_one :shipping_address, class_name: 'Glysellin::Address', as: :addressable
+      has_one :billing_address, class_name: 'Glysellin::Address', as: :billed_addressable
+      has_one :shipping_address, class_name: 'Glysellin::Address', as: :shipped_addressable
       
       attr_writer :use_another_address_for_shipping
       attr_accessible :billing_address_attributes, :shipping_address_attributes, :use_another_address_for_shipping

@@ -284,7 +284,7 @@ module Glysellin
       self.build_billing_address(billing_params)
 
       # Check if we have to use the billing address for shipping
-
+ 
       use_another_address = data[:use_another_address_for_shipping] == "1"
       # If we are given a specific shipping address
       if use_another_address && data[:shipping_address_attributes]

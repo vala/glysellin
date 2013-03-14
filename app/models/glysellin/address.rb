@@ -8,7 +8,8 @@ module Glysellin
     # Relations
     #
     # And address can be used as shipping or billing address
-    belongs_to :addressable, polymorphic: true
+    belongs_to :shipped_addressable, polymorphic: true
+    belongs_to :billed_addressable, polymorphic: true
 
     attr_accessible :activated, :first_name, :last_name, :address, :zip, :city,
       :country, :tel, :fax, :billed_orders, :shipped_orders, :company,
