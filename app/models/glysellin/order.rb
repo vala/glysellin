@@ -264,6 +264,7 @@ module Glysellin
         # Try to fill as much as we can
         order.fill_addresses_from_hash(data)
         order.fill_user_from_hash(data)
+        order.fill_shipping_method_from_hash(data)
         order.fill_payment_method_from_hash(data)
         order.fill_products_from_hash(data)
         order.fill_product_choices_from_hash(data)
@@ -319,6 +320,12 @@ module Glysellin
           user.password_confirmation = password
         end
       end
+    end
+
+    def fill_shipping_method_from_hash data
+      return unless data[:shipping_method_id]
+      
+      self.shipping_method_id = data[:shipping_method_id]
     end
 
     def fill_payment_method_from_hash data
