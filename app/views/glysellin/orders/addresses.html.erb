@@ -21,28 +21,7 @@
 
   <%= @order.errors.messages.inspect if @order.errors.any? %>
 
-
-  <%= f.simple_fields_for :billing_address do |fsa| %>
-    <%= fsa.input :last_name %>
-    <%= fsa.input :first_name %>
-    <%= fsa.input :address, :as => :string %>
-    <%= fsa.input :zip %>
-    <%= fsa.input :city %>
-    <%= fsa.input :country, collection: countries_option_list %>
-    <%= fsa.input :tel %>
-  <% end %>
-
-  <%= f.input :use_another_address_for_shipping, as: 'boolean' %>
-
-  <%= f.simple_fields_for :shipping_address do |fsa| %>
-    <%= fsa.input :last_name %>
-    <%= fsa.input :first_name %>
-    <%= fsa.input :address, :as => :string %>
-    <%= fsa.input :zip %>
-    <%= fsa.input :city %>
-    <%= fsa.input :country, collection: countries_option_list %>
-    <%= fsa.input :tel %>
-  <% end %>
+  <%= addresses_fields_for f %>
 
   <%= f.button :submit, t('glysellin.labels.forms.confirm_addresses') %>
 <% end %>
