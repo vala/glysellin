@@ -11,7 +11,7 @@ module Glysellin
       accepts_nested_attributes_for :billing_address, :shipping_address
 
       def use_another_address_for_shipping
-        !(shipping_address.new_object? && !@use_another_address_for_shipping)
+        !(shipping_address.new_record? && !@use_another_address_for_shipping)
       end
     end
   end
