@@ -57,7 +57,7 @@ end
 To display the cart you must render it's partial in your layout :
 
 ```erb
-<%= render partial: "glysellin/cart/cart", locals: { cart: @cart } %>
+<%= render_cart(@cart) %>
 ```
 
 ### Filling the cart

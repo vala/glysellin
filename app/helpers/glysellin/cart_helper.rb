@@ -13,5 +13,9 @@ module Glysellin
     def added_to_cart_warning
       render partial: 'glysellin/cart/added_to_cart_warning'
     end
+
+    def render_cart cart
+      render partial: "glysellin/cart/cart", locals: { cart: cart }
+    end
   end
 end

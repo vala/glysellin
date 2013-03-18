@@ -1,0 +1,7 @@
+<% if @product.variants.length > 1 %>
+  <% @product.variants.each do |variant| %>
+    <%= variant.name(false) %>
+  <% end %>
+<% end %>
+
+<%= add_to_cart_form(@product) %>

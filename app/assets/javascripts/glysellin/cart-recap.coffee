@@ -1,4 +1,4 @@
-class CartRecap
+class AsyncCart
   constructor: (@container) ->
     @defaultPostOptions = {
       _method: @container.find('input[name="_method"]').val(),
@@ -46,10 +46,10 @@ class CartRecap
     @adjustmentRow.find('.remove-discount-btn').on 'click', (e) =>
       @resetDiscountCode(); false
 
-    @container.on "submit", (e, force = false) ->
-      false unless force
+    @container.on "submit", (e, force = false) -> console.log("tuff"); force
 
-    @container.find("#submit-order").on "click", (e) =>
+    @container.find("[name=submit_order]").on "click", (e) =>
+      console.log(e)
       if e.clientX != 0 && e.clientY != 0
         @container.trigger("submit", [true])
 
@@ -121,6 +121,9 @@ class CartRecap
     @totals.eot.text(totals.total_eot_price)
     @totals.total.text(totals.total_price)
 
-
-$ ->
-  new CartRecap($('.products-recap-form.editable'))
+$.fn.glysellinAsyncCart = (options = {})->
+  @each ->
+    $cart = $(this)
+    data = $cart.data('glysellin.async-cart')
+    unless data
+      $cart.data('glysellin.async-cart', new AsyncCart($cart, options))
