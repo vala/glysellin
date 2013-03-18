@@ -30,4 +30,5 @@ class GlysellinAddress
   
 $.fn.glysellinAddress = () ->
   @each ->
-    new GlysellinAddress($(this))
+    address = new GlysellinAddress($(this))
+    address.switchAddress() 
