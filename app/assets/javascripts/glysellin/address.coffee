@@ -6,6 +6,7 @@ class GlysellinAddress
     @shipping_address_container = @container.find('.shipping-address-container')
     @billing_address_container = @container.find('.billing-address-container')
     @toggle_shipping_address = @container.find('[data-toggle="address"]')
+    @shipping_address_fields = @shipping_address_container.html()
     @bindAll()
 
   bindAll: () ->
@@ -14,7 +15,7 @@ class GlysellinAddress
 
   switchAddress: () ->
     if @toggle_shipping_address.is(':checked')
-      @shipping_address_container.show()
+      @shipping_address_container.html(@shipping_address_fields)
       
       for attr in ['first_name', 'last_name', 'address', 'zip', 'city', 'tel']
         if @shipping_address_container.find("[name*='[#{ attr }]']").val() == ""
@@ -26,8 +27,9 @@ class GlysellinAddress
         @shipping_address_container.find("[name*='country']").val(val)
         @shipping_address_container.find("[name*='country']").change()
     else
-      @shipping_address_container.hide()
-  
+      @shipping_address_container.html('')
+
+
 $.fn.glysellinAddress = () ->
   @each ->
     address = new GlysellinAddress($(this))
