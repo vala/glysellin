@@ -69,6 +69,7 @@ en:
         update: "Update cart"
         update_discount: "Update discount code"
         create_order_form: "Submit order"
+        follow: "Go to order"
     orders:
       states:
         created: "Created"

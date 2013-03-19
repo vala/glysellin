@@ -19,7 +19,9 @@ class GlysellinCart
     @container.html($cart.html())
 
     if $warning.length > 0
-      $warning.appendTo('body')
+      $warning.prependTo('body')
+      if ($default_modal = $warning.filter("[data-warning]"))
+        @handleDefaultModal($default_modal)
 
     @updated()
 
@@ -28,6 +30,23 @@ class GlysellinCart
     @container.trigger('updated.glysellin')
     # Trigger update callback if passed
     @options.onUpdated(this) if $.isFunction(@options.onUpdated)
+
+  # Default model handling
+  handleDefaultModal: ($modal) ->
+    $body = $('body')
+
+    closeFromBody = (e) ->
+      if $(e.target).closest("[data-warning]").length == 0
+        close()
+
+    close = ->
+      console.log("CLOSE")
+      $modal.fadeOut(200, -> $modal.remove());
+      $body.off "click", closeFromBody
+      false
+
+    $modal.on "click", "[data-dismiss=warning]", close
+    $body.on "click", closeFromBody
 
 $.fn.glysellinCart = (options) ->
   @each ->

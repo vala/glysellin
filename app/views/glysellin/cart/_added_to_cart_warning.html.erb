@@ -1,0 +1,21 @@
+<%#
+  To implement custom behavior, just replace this view, keeping the .added-to-cart-warning container
+  Default behavior is triggered when [data-warning] attribute is present on the container
+%>
+<div class="added-to-cart-warning" style="position:fixed;width:500px;height:400px;top:50%;left:50%;margin-left:-250px;margin-top:-200px;border:1px solid #CCC;border-radius:2px;padding:10px;box-shadow:0 0 15px #DDD;z-index:100;background:white;" data-warning>
+  <h3><%= t('glysellin.labels.cart.added_to_cart') %></h3>
+  <hr>
+
+  <% product = @cart.product(params[:cart][:product_id])[:product] %>
+  <%= params[:cart][:quantity] %> &times; <%= product.name %> - <%= number_to_currency product.price %>
+  <br>
+
+  <hr>
+  <%= link_to "#", data: { dismiss: "warning" } do %>
+    <%= t('glysellin.labels.cart.continue_shopping') %>
+  <% end %>
+  |
+  <%= link_to cart_path do %>
+    <%= t('glysellin.labels.cart.follow') %>
+  <% end %>
+</div>
