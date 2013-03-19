@@ -12,6 +12,7 @@ module Glysellin
       # Display errors in flash
       flash_errors
       update_cookie
+      cookies
     end
 
     def add
@@ -70,11 +71,13 @@ module Glysellin
 
     # Helper method to set cookie value
     def update_cookie options = {}
+      p cookies["glysellin.cart"].inspect
       if options[:set]
         response.set_cookie("glysellin.cart", { :value => @cart.serialize, :path => '/' })
       else
         cookies["glysellin.cart"] = { :value => @cart.serialize, :path => '/' }
       end
+      p cookies["glysellin.cart"].inspect
       set_cart
     end
 

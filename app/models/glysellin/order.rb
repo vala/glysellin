@@ -3,6 +3,7 @@ require 'state_machine'
 module Glysellin
   class Order < ActiveRecord::Base
     include ProductsList
+    include Orderer
 
     self.table_name = 'glysellin_orders'
 
@@ -46,9 +47,7 @@ module Glysellin
     # The actual buyer
     belongs_to :customer, class_name: "::#{ Glysellin.user_class_name }",
       foreign_key: 'customer_id', :autosave => true
-    # Addresses
-    belongs_to :billing_address, foreign_key: 'billing_address_id', class_name: 'Glysellin::Address', inverse_of: :billed_orders
-    belongs_to :shipping_address, foreign_key: 'shipping_address_id', class_name: 'Glysellin::Address', inverse_of: :shipped_orders
+    
     # Payment tries
     has_many :payments, inverse_of: :order
 
@@ -57,14 +56,11 @@ module Glysellin
     has_many :order_adjustments, inverse_of: :order
 
     # We want to be able to see fields_for addresses
-    accepts_nested_attributes_for :billing_address
-    accepts_nested_attributes_for :shipping_address
     accepts_nested_attributes_for :items
     accepts_nested_attributes_for :customer
     accepts_nested_attributes_for :payments
 
-    attr_accessible :billing_address_attributes, :shipping_address_attributes,
-      :billing_address, :shipping_address, :payments, :items, :items_ids,
+    attr_accessible :payments, :items, :items_ids,
       :customer, :customer_id, :ref, :user, :items, :payments,
       :customer_attributes, :payments_attributes, :items_attributes, :paid_on,
       :state
@@ -268,6 +264,7 @@ module Glysellin
         # Try to fill as much as we can
         order.fill_addresses_from_hash(data)
         order.fill_user_from_hash(data)
+        order.fill_shipping_method_from_hash(data)
         order.fill_payment_method_from_hash(data)
         order.fill_products_from_hash(data)
         order.fill_product_choices_from_hash(data)
@@ -288,12 +285,11 @@ module Glysellin
       self.build_billing_address(billing_params)
 
       # Check if we have to use the billing address for shipping
-      use_another_address = data[:use_another_address_for_shipping] == "1" || data[:customer_attributes][:use_another_address_for_shipping] == "1"
-
+ 
+      use_another_address = data[:use_another_address_for_shipping] == "1"
       # If we are given a specific shipping address
       if use_another_address && data[:shipping_address_attributes]
         self.build_shipping_address(data[:shipping_address_attributes])
-
       # Else, define shipping address if we must use same address
       else
         self.build_shipping_address(billing_params)
@@ -324,6 +320,12 @@ module Glysellin
           user.password_confirmation = password
         end
       end
+    end
+
+    def fill_shipping_method_from_hash data
+      return unless data[:shipping_method_id]
+      
+      self.shipping_method_id = data[:shipping_method_id]
     end
 
     def fill_payment_method_from_hash data

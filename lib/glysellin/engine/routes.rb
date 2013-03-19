@@ -23,6 +23,7 @@ module ActionDispatch::Routing
             put 'process_order', :as => 'process'
             get 'addresses'
             post 'validate_addresses'
+            get 'shipping_method'
             get 'payment_method'
             get 'payment'
             post 'gw-resp/:goid', :action => 'gateway_response', :as => 'gateway_response'

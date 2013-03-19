@@ -32,10 +32,12 @@ module Glysellin
 
       if @order.save
         next_step = @order.next_step
+
         if @order.next_step == ORDER_STEP_PAYMENT
           if Glysellin.send_email_on_check_order_placed && @order.paid_by_check?
             OrderAdminMailer.send_check_order_created_email(@order).deliver
           end
+          p @order
           OrderCustomerMailer.send_order_created_email(@order).deliver
         end
         redirect_to :action => @order.next_step.to_s, :id => @order.ref
@@ -44,7 +46,6 @@ module Glysellin
       end
     end
 
-    def
 
     def cart
     end
@@ -57,6 +58,10 @@ module Glysellin
     end
 
     def validate_addresses
+    end
+
+    def shipping_method
+      @shipping_methods = Glysellin::ShippingMethod.all
     end
 
     def payment_method
