@@ -4,7 +4,6 @@
 <%= form_tag update_cart_path, method: "put", class: "products-recap-form#{ ' editable' if editable }" do %>
   <table id="order_recap_table" class="table table-bordered table-striped">
     <tr>
-      <th><%= t('glysellin.labels.order.sku') %></th>
       <th><%= t('glysellin.labels.order.name') %></th>
       <th><%= t('glysellin.labels.order.unit_price') %></th>
       <th><%= t('glysellin.labels.order.quantity') %></th>
@@ -16,9 +15,6 @@
     </tr>
     <% cart.each_items do |item, quantity| %>
       <tr>
-        <td>
-          <%= item.sku %>
-        </td>
         <td>
           <%= item.name %>
         </td>
@@ -47,37 +43,49 @@
         <% end %>
       </tr>
     <% end %>
-    <% if cart.subtotal != cart.total_price || Glysellin.show_subtotal_if_identical %>
-      <tr>
-        <td colspan="3">
-          <%= t('glysellin.labels.order.subtotal') %>
-        </td>
-        <td>
+    <tr class="products-subtotal-row" style="<%= "display:none;" unless cart.subtotal != cart.total_price || Glysellin.show_subtotal_if_identical %>">
+      <td colspan="2">
+        <%= t('glysellin.labels.order.subtotal') %>
+      </td>
+      <td>
 
-        </td>
-        <td>
-          <%= number_to_currency(cart.eot_subtotal) %>
-        </td>
-        <td>
-          <%= number_to_currency(cart.subtotal) %>
-        </td>
-      </tr>
-    <% end %>
+      </td>
+      <td class="eot-subtotal">
+        <%= number_to_currency(cart.eot_subtotal) %>
+      </td>
+      <td class="subtotal">
+        <%= number_to_currency(cart.subtotal) %>
+      </td>
+      <% if editable %>
+        <td></td>
+      <% end %>
+    </tr>
     <% if cart.adjustments_total != 0 %>
       <% cart.adjustments.each do |adjustment| %>
-        <tr>
-          <td colspan="5">
+        <tr class="adjustment-row">
+          <td colspan="4" class="adjustment-name">
             <%= adjustment.name %>
           </td>
-          <td>
+          <td class="adjustment-value">
             <%= number_to_currency(adjustment.value) %>
           </td>
+          <% if editable %>
+            <td></td>
+          <% end %>
         </tr>
       <% end %>
+    <% elsif editable && Glysellin.async_cart %>
+      <tr class="adjustment-row" style="display:none;">
+        <td colspan="4" class="adjustment-name">
+        </td>
+        <td class="adjustment-value">
+        </td>
+        <td></td>
+      </tr>
     <% end %>
     <% if cart.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
       <tr>
-        <td colspan="4">
+        <td colspan="3e">
           <%= t('glysellin.labels.order.shipping') %>
         </td>
         <td>
@@ -86,10 +94,13 @@
         <td>
           <%= number_to_currency(cart.shipping_price) %>
         </td>
+        <% if editable %>
+        <td></td>
+      <% end %>
       </tr>
     <% end %>
     <tr class="products-total-row">
-      <td colspan="4">
+      <td colspan="3">
         <%= t('glysellin.labels.order.total') %>
       </td>
       <td class="total-eot-price">

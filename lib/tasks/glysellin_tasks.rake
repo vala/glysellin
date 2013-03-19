@@ -18,6 +18,10 @@ namespace :glysellin do
     ].each do |attributes|
       Glysellin::ShippingMethod.create! attributes
     end
+
+    Glysellin::DiscountType.create!(
+      name: 'Order percentage', identifier: 'order-percentage'
+    )
   end
 
   task :copy_views => :environment do
@@ -26,6 +30,6 @@ namespace :glysellin do
     dest_dir = Rails.root.join(*folder)
     print "Copying glysellin views folder to #{ dest_dir } ... "
     FileUtils.cp_r source_dir, dest_dir
-    puts "done !"
+    puts 'done !'
   end
 end

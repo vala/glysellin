@@ -8,4 +8,6 @@
       <%= link_to t('glysellin.labels.cart.create_order'), cart_path %>
     <% end %>
   </div>
+
+  <%= added_to_cart_warning if @product_added_to_cart %>
 </div>
