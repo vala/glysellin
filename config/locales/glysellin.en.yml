@@ -30,7 +30,7 @@ en:
         order_reference: "Order reference"
         sku: "SKU"
         name: "Product name"
-        eot_price: "Duty Free Price"
+        eot_price: "Excluding VAT price"
         price: "Price"
         subtotal: "Sub-total"
         shipping: "Shipping"
@@ -68,6 +68,7 @@ en:
         remove_from_cart: "Delete"
         update: "Update cart"
         update_discount: "Update discount code"
+        create_order_form: "Submit order"
     orders:
       states:
         created: "Created"

@@ -1,8 +1,8 @@
 <% editable = false unless defined?(editable) && editable == true %>
-<% remote = false unless defined?(remote) && remote == true %>
+<% remote = Glysellin.async_cart %>
 
 <%= form_tag update_cart_path, method: "put", class: "products-recap-form#{ ' editable' if editable }" do %>
-  <table id="order_recap_table" class="table">
+  <table id="order_recap_table" class="table table-bordered table-striped">
     <tr>
       <th><%= t('glysellin.labels.order.sku') %></th>
       <th><%= t('glysellin.labels.order.name') %></th>
@@ -98,6 +98,9 @@
       <td class="total-price">
         <%= number_to_currency(cart.total_price) %>
       </td>
+      <% if editable %>
+        <td></td>
+      <% end %>
     </tr>
   </table>
 
@@ -105,6 +108,11 @@
     <div class="discount-code">
       <%= label_tag :discount_code, t('glysellin.labels.order.discount_code') %>
       <%= text_field_tag :discount_code, cart.discount_code %>
+      <% if remote %>
+        <button class="update-discount-code-btn" type="button">
+          <%= t('glysellin.labels.cart.update_discount') %>
+        </button>
+      <% end %>
     </div>
     <% unless remote %>
       <!-- Update cart contents -->

@@ -1,9 +1,11 @@
-<div class="cart-container warn">
-  <% if cart.empty? %>
-    <%= t('glysellin.labels.cart.no_products_in_cart') %>
-  <% else %>
-    <%= t('glysellin.labels.cart.products_count', count: cart.products_total) %>
-
-    <%= link_to t('glysellin.labels.cart.create_order'), cart_path %>
-  <% end %>
+<div class="cart-wrapper">
+  <div class="cart-container warn">
+    <% if cart.empty? %>
+      <%= t('glysellin.labels.cart.no_products_in_cart') %>
+    <% else %>
+      <%= t('glysellin.labels.cart.products_count', count: cart.products_total) %>
+      -
+      <%= link_to t('glysellin.labels.cart.create_order'), cart_path %>
+    <% end %>
+  </div>
 </div>

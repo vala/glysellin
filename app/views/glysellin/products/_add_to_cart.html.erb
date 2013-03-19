@@ -3,7 +3,11 @@
     <%= number_field :cart, :quantity, value: 1 %>
   </div>
   <div class="submit-container">
-    <%= select_tag 'cart[product_id]', options_for_select(product.variants.collect {|v| [ v.name, v.id ] }) %>
+    <% if product.variants.length > 1 %>
+      <%= select_tag 'cart[product_id]', options_for_select(product.variants.collect {|v| [ v.name, v.id ] }) %>
+    <% else %>
+      <%= hidden_field_tag 'cart[product_id]', product.variants.first.id %>
+    <% end %>
 
     <button class="submit" type="submit">
       <%= t('glysellin.labels.cart.add_to_cart') %>
