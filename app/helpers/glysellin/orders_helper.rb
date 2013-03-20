@@ -11,7 +11,7 @@ module Glysellin
       if record
         %w(billing_address shipping_address).each do |attribute|
           attributes = record.send("#{attribute}").attributes.select { |key, value| Glysellin::Address.accessible_attributes.include?(key) }
-          form.object.build_billing_address(attributes) unless form.object.send(attribute).present? && form.object.send(attribute).id.present?
+          form.object.send("build_#{attribute}", attributes) unless form.object.send(attribute).present? && form.object.send(attribute).id.present?
         end
         form.object.use_another_address_for_shipping = record.use_another_address_for_shipping unless form.object.use_another_address_for_shipping.present?
       end
