@@ -20,7 +20,7 @@
 
   <%= @order.errors.messages.inspect if @order.errors.any? %>
 
-  <%= addresses_fields_for f %>
+  <%= addresses_fields_for f, @order.customer %>
 
   <%= f.button :submit, t('glysellin.labels.forms.confirm_addresses') %>
 <% end %>
