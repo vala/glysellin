@@ -1,4 +1,4 @@
-<%= form_tag add_to_cart_path, class: 'add-to-cart-form', remote: options[:remote], data: { "add-to-cart-form" => true } do %>
+<%= form_tag cart_products_path, class: 'add-to-cart-form', remote: options[:remote], data: { "add-to-cart-form" => true } do %>
   <div class="product-quantity">
     <%= number_field :cart, :quantity, value: 1 %>
   </div>

@@ -1,3 +1,5 @@
+require "active_model/model"
+
 require "glysellin/engine"
 require "glysellin/helpers"
 require "glysellin/gateway"

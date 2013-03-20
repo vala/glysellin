@@ -12,10 +12,9 @@ module Glysellin
     belongs_to :billed_addressable, polymorphic: true
 
     attr_accessible :activated, :first_name, :last_name, :address, :zip, :city,
-      :country, :tel, :fax, :billed_orders, :shipped_orders, :company,
-      :company_name, :vat_number, :address_details, :shipped_orders,
-      :additional_fields, :shipped_addressable_type, :shipped_addressable_id, 
-      :billed_addressable_type, :billed_addressable_id
+      :country, :tel, :fax, :company, :company_name, :vat_number,
+      :address_details, :additional_fields, :shipped_addressable_type,
+      :shipped_addressable_id, :billed_addressable_type, :billed_addressable_id
 
     # Validations
     #

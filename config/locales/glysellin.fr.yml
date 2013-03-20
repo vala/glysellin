@@ -21,6 +21,8 @@ fr:
         confirm_addresses: "Confirmer votre adresse"
         choose_payment_method: "Merci de sélectionner un moyen de paiement"
         confirm_payment_method: "Confirmer mon moyen de paiement"
+        choose_shipping_method: "Merci de sélectionner un mode de livraison"
+        confirm_shipping_method: "Confirmer mon mode de livraison"
       customer:
         sign_in: "Se connecter"
         sign_up: "Créer un compte"
@@ -88,6 +90,13 @@ fr:
         payment_method_chosen: "En attente de paiement"
         paid: "Traitement en cours"
         shipped: "Expédiée"
+    cart:
+      states:
+        filled: "Panier"
+        addresses: "Vos informations"
+        choose_shipping_method: "Choix du mode de livraison"
+        choose_payment_method: "Choix du mode de paiement"
+        ready: "Paiement"
     mailer:
       admin:
         send_order_paid_email: "Une nouvelle commande a été validée sur le site"

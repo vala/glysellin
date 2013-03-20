@@ -18,6 +18,8 @@ en:
         confirm_addresses: "Confirm your address"
         choose_payment_method: "Choose your payment method"
         confirm_payment_method: "Confirm payment method"
+        choose_shipping_method: "Choose your shipping method"
+        confirm_shipping_method: "Confirm shipping method"
       customer:
         sign_in: "Sign in"
         sign_up: "Sign up"
@@ -78,6 +80,13 @@ en:
         payment: "Payment method chosen"
         paid: "Paid"
         shipped: "Shipped"
+    cart:
+      states:
+        filled: "Cart"
+        addresses: "Your informations"
+        choose_shipping_method: "Shipping method"
+        choose_payment_method: "Payment method"
+        ready: "Payment"
     order_admin_mailer:
       send_order_paid_email:
         subject: "A new order has validated"

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Glysellin</title>
-  <%= stylesheet_link_tag "glysellin/application", "application", :media => "all" %>
+  <head>
+    <title>Glysellin</title>
+    <%= stylesheet_link_tag "glysellin/application", "application", :media => "all" %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+
+  <%= yield %>
+
   <%= javascript_include_tag "glysellin/application" %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
-
-<%= yield %>
-
-</body>
+  </body>
 </html>

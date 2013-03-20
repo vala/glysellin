@@ -1,0 +1,14 @@
+<h2><%= t('glysellin.labels.forms.choose_payment_method') %></h2>
+
+<%= simple_form_for cart, url: cart_payment_method_path, method: "put" do |f| %>
+  <%= f.input :payment_method_id do %>
+    <% Glysellin::PaymentMethod.ordered.each do |payment_method| %>
+      <label>
+        <%= f.radio_button :payment_method_id, payment_method.id %>
+        <%= payment_method.name %>
+      </label>
+    <% end %>
+  <% end %>
+
+  <%= f.button :submit, t('glysellin.labels.forms.confirm_payment_method') %>
+<% end %>

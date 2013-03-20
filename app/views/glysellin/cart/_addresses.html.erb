@@ -1,8 +1,9 @@
-<%= simple_form_for @order, url: process_order_path(id: @order.ref) do |f| %>
+<%= simple_form_for cart, url: cart_addresses_path, method: "put" do |f| %>
   <h2><%= t('glysellin.labels.forms.customer_details') %></h2>
 
   <%= f.simple_fields_for :customer do |fc| %>
-    <% new_record = fc.object.new_record? %>
+    <%# new_record = fc.object.new_record? %>
+    <% new_record = true %>
 
     <%= fc.input :email, :input_html => { :disabled => !new_record } %>
 
@@ -17,8 +18,6 @@
   <% end %>
 
   <h2><%= t('glysellin.labels.forms.fill_in_your_address') %></h2>
-
-  <%= @order.errors.messages.inspect if @order.errors.any? %>
 
   <%= addresses_fields_for f %>
 

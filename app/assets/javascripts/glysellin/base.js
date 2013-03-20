@@ -1,5 +1,5 @@
 //= require ./cart
-//= require ./cart-recap
+//= require ./async-cart
 //= require ./address
 //= require ./product
 //= require ./main

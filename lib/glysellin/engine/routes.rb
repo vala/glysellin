@@ -41,12 +41,24 @@ module ActionDispatch::Routing
           resources :products, only: [:index]
         end
 
-        resource :cart, controller: controllers[:cart], only: [:show] do
-          post "add-product", action: "add", as: "add_to"
-          put "update-quantity", action: 'update_quantity', as: "update_quantity"
-          put "update-discount-code", action: 'update_discount_code', as: "update_discount_code"
-          put "update", action: "update", as: "update"
-          get "remove-product/:id", action: "remove", as: "remove_from"
+        resource :cart, controller: controllers[:cart], only: [:show, :update] do
+          resources :products, controller: "glysellin/cart/products", only: [:create, :update, :destroy] do
+            collection do
+              put "contents/validate", action: "validate", as: "validate"
+            end
+          end
+
+          resource :discount_code, controller: "glysellin/cart/discount_code", only: [:update]
+
+          resource :addresses, controller: "glysellin/cart/addresses", only: [:update]
+
+          resource :shipping_method, controller: "glysellin/cart/shipping_method", only: [:update]
+
+          resource :payment_method, controller: "glysellin/cart/payment_method", only: [:update]
+
+          resource :state, controller: "glysellin/cart/state", only: [:show] do
+            get "state/:state", action: "show", as: "set"
+          end
         end
 
         get '/' => 'glysellin/products#index', as: 'shop'
