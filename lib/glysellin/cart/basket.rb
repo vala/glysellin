@@ -85,7 +85,7 @@ module Glysellin
           ActiveSupport::JSON.decode(str).with_indifferent_access :
           { adjustments: [], products: [], errors: [] }
 
-        data.merge(options)
+        data.reverse_merge(options)
       end
 
       #############################################
@@ -101,13 +101,6 @@ module Glysellin
 
       def empty?
         products.length == 0
-      end
-
-      def empty!
-        self.products = []
-        self.adjustments = []
-        self.errors = ActiveModel::Errors.new(self)
-        process_total!
       end
 
       def products_total
@@ -252,18 +245,29 @@ module Glysellin
       #
       #############################################
 
+      def attribute_names
+        [
+          :products, :adjustments, :customer, :billing_address,
+          :use_another_address_for_shipping, :shipping_address,
+          :shipping_method_id, :payment_method_id, :state
+        ]
+      end
+
+      def attributes(options = {})
+        attribute_names.reduce({}) do |hash, attr|
+          value = send(attr)
+          hash[attr] = options[:json] ? value.as_json : value
+          hash
+        end
+      end
+
+
       def serialize
-        {
-          products: products.as_json,
-          adjustments: adjustments.as_json,
-          customer: customer.as_json,
-          billing_address: billing_address.as_json,
-          use_another_address_for_shipping: use_another_address_for_shipping,
-          shipping_address: shipping_address.as_json,
-          shipping_method_id: shipping_method_id,
-          payment_method_id: payment_method_id,
-          state: state
-        }.to_json
+        attributes(json: true).to_json
+      end
+
+      def to_order
+        Glysellin::Order.new()
       end
 
       #############################################
@@ -284,6 +288,10 @@ module Glysellin
 
       def available_states
         %w(filled addresses choose_shipping_method choose_payment_method ready)
+      end
+
+      def has_shipping_address?
+        false
       end
 
       protected

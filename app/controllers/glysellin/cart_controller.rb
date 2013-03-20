@@ -9,14 +9,12 @@ module Glysellin
       @cart.update_quantities
     end
 
-    protected
-
-    # Helper method to set cookie value
-    def update_cart_in_session options = {}
-      session["glysellin.cart"] = @cart.serialize
-      flash_errors
-      set_cart
+    def destroy
+      @cart = Cart.new
+      redirect_to cart_path
     end
+
+    protected
 
     def render_cart_partial
       render partial: 'cart', locals: {
@@ -29,8 +27,15 @@ module Glysellin
     end
 
     def set_cart
-      @cart = Cart.new(session["glysellin.cart"], customer: current_user)
+      @cart = Cart.new(session["glysellin.cart"])
       @states = @cart.available_states
+    end
+
+    # Helper method to set cookie value
+    def update_cart_in_session options = {}
+      session["glysellin.cart"] = @cart.serialize
+      flash_errors
+      set_cart
     end
 
     def totals_hash

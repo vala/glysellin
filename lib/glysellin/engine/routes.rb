@@ -41,7 +41,7 @@ module ActionDispatch::Routing
           resources :products, only: [:index]
         end
 
-        resource :cart, controller: controllers[:cart], only: [:show, :update] do
+        resource :cart, controller: controllers[:cart], only: [:show, :destroy] do
           resources :products, controller: "glysellin/cart/products", only: [:create, :update, :destroy] do
             collection do
               put "contents/validate", action: "validate", as: "validate"

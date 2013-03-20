@@ -81,6 +81,7 @@ fr:
         added_to_cart: "Produit ajouté au panier"
         continue_shopping: "Continuer mes achats"
         update_discount: "Mettre à jour le code Promo"
+        cancel: "Annuler la commande"
     orders:
       states:
         created: "Produits choisis"

@@ -9,23 +9,7 @@ module Glysellin
 
     attr_reader :discount_code
 
-    state_machine initial: :created do
-
-      event :fill_address do
-        transition created: :filling_address
-      end
-
-      event :address_filled do
-        transition filling_address: :address
-      end
-
-      event :choose_shipping_method do
-        transition address: :shipping_method_chosen
-      end
-
-      event :choose_payment_method do
-        transition [:address, :shipping_method_chosen] => :payment_method_chosen
-      end
+    state_machine initial: :ready do
 
       event :paid do
         transition any => :paid
@@ -47,7 +31,7 @@ module Glysellin
     # The actual buyer
     belongs_to :customer, class_name: "::#{ Glysellin.user_class_name }",
       foreign_key: 'customer_id', :autosave => true
-    
+
     # Payment tries
     has_many :payments, inverse_of: :order
 
@@ -285,7 +269,7 @@ module Glysellin
       self.build_billing_address(billing_params)
 
       # Check if we have to use the billing address for shipping
- 
+
       use_another_address = data[:use_another_address_for_shipping] == "1"
       # If we are given a specific shipping address
       if use_another_address && data[:shipping_address_attributes]
@@ -324,7 +308,7 @@ module Glysellin
 
     def fill_shipping_method_from_hash data
       return unless data[:shipping_method_id]
-      
+
       self.shipping_method_id = data[:shipping_method_id]
     end
 
