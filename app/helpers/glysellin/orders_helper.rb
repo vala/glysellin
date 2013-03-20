@@ -7,6 +7,7 @@ module Glysellin
     # @param record Optional model object that implements Glysellin::Orderer
     #
     def addresses_fields_for form, record = nil
+      # Copy addresses from record to form object
       if record
         %w(billing_address shipping_address).each do |attribute|
           attributes = record.send("#{attribute}").attributes.select { |key, value| Glysellin::Address.accessible_attributes.include?(key) }
