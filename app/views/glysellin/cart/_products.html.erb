@@ -85,22 +85,6 @@
         <td></td>
       </tr>
     <% end %>
-    <% if cart.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
-      <tr>
-        <td colspan="3e">
-          <%= t('glysellin.labels.order.shipping') %>
-        </td>
-        <td>
-          <%= number_to_currency(cart.shipping_price(true)) %>
-        </td>
-        <td>
-          <%= number_to_currency(cart.shipping_price) %>
-        </td>
-        <% if editable %>
-        <td></td>
-      <% end %>
-      </tr>
-    <% end %>
     <tr class="products-total-row">
       <td colspan="3">
         <%= t('glysellin.labels.order.total') %>

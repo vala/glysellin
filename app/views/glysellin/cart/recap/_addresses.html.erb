@@ -1,0 +1,12 @@
+<div class="cart-addresses">
+  <h4><%= t("glysellin.labels.cart.informations") %></h4>
+  <div class="billing-address">
+    <h5><%= t("glysellin.labels.order.billing_address") %></h5>
+    <%= render partial: "glysellin/shared/address", locals: { address: cart.billing_address } %>
+  </div>
+  <div class="shipping-address">
+    <h5><%= t("glysellin.labels.order.shipping_address") %></h5>
+    <% address = (cart.use_another_address_for_shipping ? cart.shipping_address : cart.billing_address) %>
+    <%= render partial: "glysellin/shared/address", locals: { address: address } %>
+  </div>
+</div>

@@ -29,6 +29,10 @@ module Glysellin
         wrapped_model.valid?
       end
 
+      def errors
+        wrapped_model.errors
+      end
+
       module ClassMethods
         def wraps object_name, options = {}
           key = object_name.to_s

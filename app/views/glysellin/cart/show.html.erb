@@ -1,38 +1,9 @@
 <%= render partial: "navigation", locals: { cart: @cart } %>
 
-<% if @cart.init? || @cart.filled? %>
-  <h2><%= t('glysellin.labels.cart.your_cart') %></h2>
-
-  <% if @cart.empty? %>
-    <%= t('glysellin.labels.cart.no_products_in_cart') %>
-    <%= link_to t('glysellin.labels.cart.back_to_shop'), shop_path %>
-  <% else %>
-    <!-- Cart products list -->
-    <%= render partial: 'products', locals: { :cart => @cart, :editable => true } %>
-  <% end %>
-
-<% elsif @cart.addresses? %>
-
-  <div class="addresses-container">
-    <%= render partial: 'addresses', locals: { cart: @cart } %>
-  </div>
-
-<% elsif @cart.choose_shipping_method? %>
-
-  <div class="shipping-method-container">
-    <%= render partial: 'shipping_method', locals: { cart: @cart } %>
-  </div>
-
-<% elsif @cart.choose_payment_method? %>
-
-  <div class="payment-method-container">
-    <%= render partial: 'payment_method', locals: { cart: @cart } %>
-  </div>
-
-<% elsif @cart.ready? %>
-
-  C'est super !
-
+<% if @cart.state_index > 0 %>
+  <%= render partial: "recap", locals: { cart: @cart } %>
 <% end %>
+
+<%= render partial: "glysellin/cart/states/#{ @cart.state }", locals: { cart: @cart } %>
 
 <%= link_to t("glysellin.labels.cart.cancel"), cart_path, method: "delete" %>

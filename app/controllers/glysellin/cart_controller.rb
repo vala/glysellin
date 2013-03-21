@@ -11,6 +11,7 @@ module Glysellin
 
     def destroy
       @cart = Cart.new
+      session.delete("glysellin.cart")
       redirect_to cart_path
     end
 
@@ -22,10 +23,6 @@ module Glysellin
       }
     end
 
-    def flash_errors
-      flash[:error] = @cart.errors.join('<br>') if @cart.errors.any?
-    end
-
     def set_cart
       @cart = Cart.new(session["glysellin.cart"])
       @states = @cart.available_states
@@ -33,9 +30,12 @@ module Glysellin
 
     # Helper method to set cookie value
     def update_cart_in_session options = {}
+      if @cart.errors.any?
+        flash[:error] =
+          t("glysellin.errors.cart.state_transitions.#{ @cart.state }")
+      end
+
       session["glysellin.cart"] = @cart.serialize
-      flash_errors
-      set_cart
     end
 
     def totals_hash

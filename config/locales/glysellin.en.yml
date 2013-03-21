@@ -9,6 +9,10 @@ en:
         item_out_of_stock: "Sorry, %{item} is out of stock"
         not_enough_stock_for_item: "Sorry, only #{stock} #{item} are still available"
         invalid_discount_code: "The discount code you used is not valid"
+        state_transitions:
+          addresses: "Errors were found in the form you submitted, please review its fields before it can be saved"
+          choose_shipping_method: "Please choose a shipping method"
+          choose_payment_method: "Please choose a payment method"
     labels:
       misc:
         back_to_homepage: "Back to home page"
@@ -73,6 +77,11 @@ en:
         create_order_form: "Submit order"
         follow: "Go to order"
         cancel: "Cancel order"
+        # Recap titles
+        products: "Vos produits"
+        informations: "Vos informations"
+        shipping_method: "Mode de livraison"
+        payment_method: "Mode de paiement"
     orders:
       states:
         created: "Created"

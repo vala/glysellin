@@ -10,16 +10,16 @@ module Glysellin
       include ActiveModel::Dirty
       include ActiveModel::Observing
 
-      attr_accessor :total, :products, :adjustments, :errors,
-        :use_another_address_for_shipping, :state
+      attr_accessor :total, :products, :adjustments, :state
+      attr_reader :use_another_address_for_shipping
 
       # Relations
       #
       nested_resource :customer
       nested_resource :billing_address, class_name: "Address"
       nested_resource :shipping_address, class_name: "Address"
-      select :payment_method
-      select :shipping_method
+      select :payment_method, class_name: "Glysellin::PaymentMethod"
+      select :shipping_method, class_name: "Glysellin::ShippingMethod"
 
       # Checkout state management
       #
@@ -61,14 +61,21 @@ module Glysellin
         end
 
         state :addresses, :choose_shipping_method, :choose_payment_method, :ready do
-          # validates_associated :customer, :billing_address, :shipping_address
+          validate do
+            validate_nested_resource(:customer)
+            validate_nested_resource(:billing_address)
+
+            if use_another_address_for_shipping
+              validate_nested_resource(:shipping_address)
+            end
+          end
         end
 
         state :choose_shipping_method, :choose_payment_method, :ready do
           validates_presence_of :shipping_method_id
         end
 
-        state :ready do
+        state :choose_payment_method, :ready do
           validates_presence_of :payment_method_id
         end
       end
@@ -76,14 +83,12 @@ module Glysellin
       def initialize str = nil, options = {}
         data = parse_session(str, options)
         super(data)
-        @errors = ActiveModel::Errors.new(self)
-        process_total!
       end
 
       def parse_session str, options
         data = str.presence ?
           ActiveSupport::JSON.decode(str).with_indifferent_access :
-          { adjustments: [], products: [], errors: [] }
+          { adjustments: [], products: [] }
 
         data.reverse_merge(options)
       end
@@ -129,6 +134,10 @@ module Glysellin
         end
       end
 
+      def adjustments
+        @adjustments ||= []
+      end
+
       #############################################
       #
       #          Quantities management
@@ -165,8 +174,6 @@ module Glysellin
       # General check to see if cart is valid
       #
       def update_quantities
-        self.errors = ActiveModel::Errors.new(self)
-
         @products = products.reduce([]) do |products, product|
           # If product is not published
           if !product.variant.published
@@ -194,8 +201,6 @@ module Glysellin
         if discount_code == false
           set_error(:invalid_discount_code)
         end
-
-        process_total!
       end
 
 
@@ -209,10 +214,10 @@ module Glysellin
         set_quantity(params[:product_id], params[:quantity])
       end
 
-      def update(attributes)
+      def update(attributes = {})
         attributes.each do |attr, value|
           public_send(:"#{ attr }=", value)
-        end
+        end if attributes
       end
 
       #############################################
@@ -223,10 +228,10 @@ module Glysellin
 
       def discount_code=(val)
         # Destroy old discount code
-        @adjustments.delete(discount)
+        adjustments.delete(discount)
 
         discount = Glysellin::Cart::Adjustment::DiscountCode.from_code(val, self)
-        @adjustments << discount if discount
+        adjustments << discount if discount
 
         discount
       end
@@ -236,7 +241,34 @@ module Glysellin
       end
 
       def discount
-        @adjustments.find { |a| a.type == "discount-code" }
+        adjustments.find { |a| a.type == "discount-code" }
+      end
+
+      #############################################
+      #
+      #                Address
+      #
+      #############################################
+
+      def use_another_address_for_shipping=(val)
+        value = val.is_a?(String) ? (val.to_i > 0) : val
+        @use_another_address_for_shipping = value
+      end
+
+
+      def shipping_method_id=(val)
+        @shipping_method_id = val
+
+        if @shipping_method_id
+          adjustments.reject { |a| a.type == "shipping-method" }
+          adjustment = Glysellin::Cart::Adjustment::ShippingMethod.new(self,
+            shipping_method_id: shipping_method_id
+          )
+
+          adjustments << adjustment
+        end
+
+        @shipping_method_id
       end
 
       #############################################
@@ -247,9 +279,9 @@ module Glysellin
 
       def attribute_names
         [
-          :products, :adjustments, :customer, :billing_address,
+          :products, :customer, :billing_address,
           :use_another_address_for_shipping, :shipping_address,
-          :shipping_method_id, :payment_method_id, :state
+          :shipping_method_id, :payment_method_id, :adjustments, :state
         ]
       end
 
@@ -277,7 +309,18 @@ module Glysellin
       #############################################
 
       def set_error(key, options = {})
-        errors << I18n.t("glysellin.errors.cart.#{ key }", options)
+        errors.add(key, I18n.t("glysellin.errors.cart.#{ key }", options))
+      end
+
+      def validate_nested_resource key
+        model = send(key)
+        if !model.valid? && model.errors.any?
+          model.errors.messages.each do |field, messages|
+            messages.each do |error|
+              errors.add(:"#{ key }.#{ field }", error)
+            end
+          end
+        end
       end
 
       #############################################
@@ -290,14 +333,12 @@ module Glysellin
         %w(filled addresses choose_shipping_method choose_payment_method ready)
       end
 
-      def has_shipping_address?
-        false
+      def state_index
+        available_states.index(state) || -1
       end
 
-      protected
-
-      def process_total!
-        self.total = self.products.sum { |product| product.quantity * product.variant.price }
+      def has_shipping_address?
+        false
       end
     end
   end

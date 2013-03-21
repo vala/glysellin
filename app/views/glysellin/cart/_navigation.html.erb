@@ -1,7 +1,7 @@
 <ul class="cart-navigation">
   <% @states.each_with_index do |state, index| %>
     <li data-state="<%= state %>">
-      <% if index < @states.index(@cart.state) %>
+      <% if index < @cart.state_index %>
         <%= link_to t("glysellin.cart.states.#{ state }"), set_cart_state_path(state) %>
       <% else %>
         <%= t("glysellin.cart.states.#{ state }") %>
