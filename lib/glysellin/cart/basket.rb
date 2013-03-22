@@ -236,9 +236,32 @@ module Glysellin
       end
 
       def update(attributes = {})
-        attributes.each do |attr, value|
+        filtered_attributes(attributes).each do |attr, value|
           public_send(:"#{ attr }=", value)
         end if attributes
+      end
+
+      # Filters forbidden attributes
+      #
+      def filtered_attributes attributes
+        forbidden = [:id, :created_at, :updated_at]
+
+        # Filter aux function to browse hash tree and reject key by key
+        # forbidden attributes
+        #
+        filter = lambda { |hash, field|
+          key, value = field
+
+          if value.is_a? Hash
+            hash[key] = value.reduce({}, &filter)
+          else
+            hash[key] = value unless forbidden.include?(key)
+          end
+
+          hash
+        }
+
+        attributes.with_indifferent_access.reduce({}, &filter)
       end
 
       #############################################

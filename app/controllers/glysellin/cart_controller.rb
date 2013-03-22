@@ -24,7 +24,7 @@ module Glysellin
     end
 
     def set_cart
-      @cart = Cart.new(session["glysellin.cart"])
+      @cart ||= Cart.new(session["glysellin.cart"])
       @states = @cart.available_states
     end
 

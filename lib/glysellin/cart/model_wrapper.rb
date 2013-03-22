@@ -5,11 +5,21 @@ module Glysellin
       include ActiveModel::Model
 
       def initialize attrs = {}
-        if attrs.class.to_s == wrapped_model.class.model_name
-          self.wrapped_model = attrs
+        assign_fields(attrs) if attrs.length > 0
+      end
+
+      def assign_fields attributes
+        if attributes.class.to_s == model.model_name
+          self.wrapped_model = attributes
+        elsif (id = attributes[:id].presence)
+          @id = id
+          self.wrapped_model = model.find(id)
         else
-          attrs.each do |key, value|
-            self.public_send(:"#{ key }=", value)
+          attributes.each do |field, value|
+            key = field.to_s
+            if attribute_names.include?(key)
+              self.public_send(:"#{ key }=", value)
+            end
           end
         end
       end
@@ -38,19 +48,25 @@ module Glysellin
           key = object_name.to_s
           # Try infer model_name if not given
           model_name = options[:class_name] || key.camelize
+          attrs = (options[:attributes] || []).map(&:to_s)
 
           class_eval <<-EVAL, __FILE__, __LINE__ + 1
             attr_writer :#{ key }
 
             # Fetch wanted attributes to be serialized
             def attribute_names
-              #{ model_name }._accessible_attributes[:default].select do |attr|
-                attr.presence
-              end
+              #{ attrs.inspect }.presence ||
+                model._accessible_attributes[:default].select do |attr|
+                  attr.presence
+                end
             end
 
             def #{ key }
-              @#{ key } ||= #{ model_name }.new
+              @#{ key } ||= model.new
+            end
+
+            def model
+              #{ model_name }
             end
 
             def attributes
@@ -62,7 +78,7 @@ module Glysellin
 
             # Key agnostic accessor
             def wrapped_model() #{ key } end
-            def wrapped_model=(val) #{ key } = val end
+            def wrapped_model=(val) self.#{ key } = val end
           EVAL
         end
       end

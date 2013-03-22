@@ -28,7 +28,8 @@ module Glysellin
 
       def validate
         @cart.update(params[:glysellin_cart_basket])
-        @cart.validated! if @cart.filled? && @cart.valid?
+        @cart.validated! if @cart.valid?
+        @cart.customer = current_user
         redirect_to cart_path
       end
     end

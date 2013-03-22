@@ -10,9 +10,7 @@ module Glysellin
 
           class_eval <<-EVAL, __FILE__, __LINE__ + 1
             def #{ key }_attributes=(attributes)
-              attributes.each do |attr, value|
-                self.#{ key }.public_send("\#{ attr }=", value)
-              end
+              self.#{ key }.assign_fields(attributes)
             end
 
             def #{ key }
@@ -21,7 +19,11 @@ module Glysellin
 
             def #{ key }=(attributes)
               if attributes.is_a? Hash
-                self.#{ key }_attributes = attributes
+                if (id = attributes.with_indifferent_access[:id].presence)
+                  @#{ key } = #{ model_name }.new(id: id)
+                else
+                  self.#{ key }_attributes = attributes
+                end
               elsif attributes.is_a? #{ model_name }
                 @#{ key } = #{ model_name }.new(attributes)
               else

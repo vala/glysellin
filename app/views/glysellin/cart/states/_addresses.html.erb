@@ -3,7 +3,7 @@
 
   <%= f.simple_fields_for :customer do |fc| %>
     <%# new_record = fc.object.new_record? %>
-    <% new_record = fc.object.id %>
+    <% new_record = !fc.object.id %>
 
     <%= fc.input :email, :input_html => { :disabled => !new_record } %>
 
