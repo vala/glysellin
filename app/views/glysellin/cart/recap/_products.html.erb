@@ -33,14 +33,16 @@
 
       <!-- Adjustments -->
       <% @cart.adjustments.each do |adjustment| %>
-        <tr>
-          <td colspan="2">
-            <%= adjustment.name %>
-          </td>
-          <td>
-            <%= number_to_currency(adjustment.value) %>
-          </td>
-        </tr>
+        <% if adjustment.valid %>
+          <tr>
+            <td colspan="2">
+              <%= adjustment.name %>
+            </td>
+            <td>
+              <%= number_to_currency(adjustment.value) %>
+            </td>
+          </tr>
+        <% end %>
       <% end %>
 
       <!-- Total row -->

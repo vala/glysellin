@@ -29,7 +29,9 @@ namespace :glysellin do
     source_dir = File.expand_path(File.join('..', '..', '..', *folder), __FILE__)
     dest_dir = Rails.root.join(*folder)
     print "Copying glysellin views folder to #{ dest_dir } ... "
+
     FileUtils.cp_r source_dir, dest_dir
+
     puts 'done !'
   end
 end

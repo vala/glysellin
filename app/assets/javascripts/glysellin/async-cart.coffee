@@ -17,7 +17,7 @@ class AsyncCart
       total: @subtotalsRow.find('.subtotal')
     }
 
-    @adjustmentRow = @container.find('.adjustment-row')
+    @adjustmentRow = @container.find('.adjustment-row[data-type=discount-code]')
     @adjustment = {
       name: @adjustmentRow.find('.adjustment-name'),
       value: @adjustmentRow.find('.adjustment-value')
@@ -57,9 +57,16 @@ class AsyncCart
 
   quantityChanged: (el) ->
     $el = $(el)
+    quantity = parseInt($el.val(), 10)
+
+    # Ensure we have an int > 0 or use 1
+    unless $.isNumeric(quantity) && quantity > 0
+      quantity = 1
+      $el.val(quantity)
+
     @update(
       "products/#{ $el.data('id') }",
-      { _method: "put", quantity: $el.val()}
+      { _method: "put", quantity: quantity}
       (resp) => @remoteQuantityUpdated(resp, $el)
     )
 
@@ -72,6 +79,7 @@ class AsyncCart
 
     # Total row handling
     @setTotals(resp)
+    @setDiscountValues(resp)
 
     @container.trigger('quantity-updated.glysellin')
 
@@ -92,13 +100,14 @@ class AsyncCart
   remoteAdjustmentUpdated: (resp) ->
     discount = resp.discount_name
     if discount
+      @setDiscountValues(resp)
       @subtotalsRow.fadeIn(200)
       @adjustmentRow.fadeIn(200)
     else
-      @subtotalsRow.fadeOut(200)
-      @adjustmentRow.fadeOut(200)
+      @subtotalsRow.fadeOut(200) unless $('.adjustment-row').length > 1
+      @adjustmentRow.fadeOut(200, => @setDiscountValues(resp))
 
-    # Total row handling
+    # Total row handling when
     @setTotals(resp)
 
     @container.trigger('discount-updated.glysellin', [discount])
@@ -111,9 +120,11 @@ class AsyncCart
       'json'
     )
 
-  setTotals: (totals) ->
+  setDiscountValues: (totals) ->
     @adjustment.name.text(totals.discount_name)
     @adjustment.value.text(totals.discount_value)
+
+  setTotals: (totals) ->
     @subtotals.eot.text(totals.eot_subtotal)
     @subtotals.total.text(totals.subtotal)
     @totals.eot.text(totals.total_eot_price)

@@ -8,4 +8,4 @@ Tél: <%= address.tel %>
 <br>
 <%= address.zip %> <%= address.city %>
 <br>
-<%= address.country %>
+<%= Glysellin::Helpers::Countries::COUNTRIES_LIST[address.country] %>

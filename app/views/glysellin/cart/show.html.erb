@@ -1,5 +1,9 @@
 <%= render partial: "navigation", locals: { cart: @cart } %>
 
+<!-- <pre class="code">
+  <%= JSON.pretty_generate(JSON(session["glysellin.cart"])) %>
+</pre> -->
+
 <% if @cart.state_index > 0 %>
   <%= render partial: "recap", locals: { cart: @cart } %>
 <% end %>

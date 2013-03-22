@@ -73,6 +73,22 @@ module Glysellin
 
         state :choose_shipping_method, :choose_payment_method, :ready do
           validates_presence_of :shipping_method_id
+          validate do
+            if !shipping || !shipping.valid
+              code = use_another_address_for_shipping ?
+                shipping_address.country : billing_address.country
+              country = Glysellin::Helpers::Countries::COUNTRIES_LIST[code]
+
+              errors.add(
+                :shipping_method_id,
+                I18n.t(
+                  "glysellin.errors.cart.shipping_method_unavailable_for_country",
+                  method: shipping_method.name,
+                  country: country
+                )
+              )
+            end
+          end
         end
 
         state :choose_payment_method, :ready do
@@ -150,6 +166,8 @@ module Glysellin
         options.reverse_merge!(override: false)
         quantity = quantity.to_i
 
+        return unless quantity > 0
+
         # If product was in cart
         if (product = self.product(product_id))
           if options[:override]
@@ -163,6 +181,9 @@ module Glysellin
             quantity: quantity
           )
         end
+
+        # Refresh discount code adjustment
+        self.discount_code = discount_code
       end
 
       # Remove product from cart, given its id
@@ -259,8 +280,8 @@ module Glysellin
       def shipping_method_id=(val)
         @shipping_method_id = val
 
-        if @shipping_method_id
-          adjustments.reject { |a| a.type == "shipping-method" }
+        if shipping_method_id
+          adjustments.reject! { |a| a.type == "shipping-method" }
           adjustment = Glysellin::Cart::Adjustment::ShippingMethod.new(self,
             shipping_method_id: shipping_method_id
           )
@@ -269,6 +290,10 @@ module Glysellin
         end
 
         @shipping_method_id
+      end
+
+      def shipping
+        adjustments.find { |a| a.type == "shipping-method" }
       end
 
       #############################################

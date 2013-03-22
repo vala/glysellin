@@ -10,6 +10,7 @@ fr:
         item_out_of_stock: "Désolé mais le produit %{item} n'est plus en stock"
         not_enough_stock_for_item: "Désolé mais il ne reste que %{stock} %{item} en stock"
         invalid_discount_code: "Le code promotionnel saisi n'est pas valide"
+        shipping_method_unavailable_for_country: "Désolé mais nous ne pouvons pas envoyer votre commande vers %{country} avec %{method}, merci de choisir un autre mode de livraison"
         state_transitions:
           addresses: "Il y a des erreurs dans les informations soumises, merci de vérifier tous les champs"
           choose_shipping_method: "Merci de choisir un mode de livraison"
@@ -86,11 +87,10 @@ fr:
         continue_shopping: "Continuer mes achats"
         update_discount: "Mettre à jour le code Promo"
         cancel: "Annuler la commande"
-        # Recap titles
-        products: "Your products"
-        informations: "Your informations"
-        shipping_method: "Shipping method"
-        payment_method: "Payment method"
+        products: "Vos produits"
+        informations: "Vos informations"
+        shipping_method: "Mode de livraison"
+        payment_method: "Mode de paiement"
     orders:
       states:
         created: "Produits choisis"

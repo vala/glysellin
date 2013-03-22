@@ -64,20 +64,23 @@
     </tr>
     <% if cart.adjustments_total != 0 %>
       <% cart.adjustments.each do |adjustment| %>
-        <tr class="adjustment-row">
-          <td colspan="4" class="adjustment-name">
-            <%= adjustment.name %>
-          </td>
-          <td class="adjustment-value">
-            <%= number_to_currency(adjustment.value) %>
-          </td>
-          <% if editable %>
-            <td></td>
-          <% end %>
-        </tr>
+        <% if adjustment.valid %>
+          <tr class="adjustment-row" data-type="<%= adjustment.type %>">
+            <td colspan="4" class="adjustment-name">
+              <%= adjustment.name %>
+            </td>
+            <td class="adjustment-value">
+              <%= number_to_currency(adjustment.value) %>
+            </td>
+            <% if editable %>
+              <td></td>
+            <% end %>
+          </tr>
+        <% end %>
       <% end %>
-    <% elsif editable && Glysellin.async_cart %>
-      <tr class="adjustment-row" style="display:none;">
+    <% end %>
+    <% if editable && Glysellin.async_cart && !cart.discount %>
+      <tr class="adjustment-row" data-type="discount-code" style="display:none;">
         <td colspan="4" class="adjustment-name">
         </td>
         <td class="adjustment-value">
