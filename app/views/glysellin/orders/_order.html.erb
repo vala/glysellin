@@ -1,0 +1,18 @@
+<h2><%= t('glysellin.labels.order.order_summary_title') %></h2>
+<%= "#{t('glysellin.labels.order.order_reference')} : #{ order.ref }" %>
+
+<h3><%= t('glysellin.labels.order.your_informations') %></h3>
+
+<%= render partial: 'glysellin/cart/recap/addresses', locals: { cart: order } %>
+
+<h3><%= t('glysellin.labels.order.your_cart') %></h3>
+<%= render partial: 'glysellin/cart/products', locals: { cart: order } %>
+
+<h3><%= t('glysellin.labels.order.payment') %></h3>
+<% if order.paid? %>
+  <%= t("glysellin.labels.order.paid_on_by", date: l(order.paid_on, format: :short), method: order.payment_method.name) %>
+<% else %>
+  <%= (render order.payment_method.request_button(order)).html_safe %>
+<% end %>
+
+<br>

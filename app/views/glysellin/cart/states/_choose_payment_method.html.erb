@@ -3,7 +3,7 @@
 <%= simple_form_for cart, url: cart_payment_method_path, method: "put" do |f| %>
   <%= f.input :payment_method_id do %>
     <% Glysellin::PaymentMethod.ordered.each do |payment_method| %>
-      <label>
+      <label class="radio">
         <%= f.radio_button :payment_method_id, payment_method.id %>
         <%= payment_method.name %>
       </label>

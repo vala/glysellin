@@ -10,7 +10,7 @@ module Glysellin
       include ActiveModel::Dirty
       include ActiveModel::Observing
 
-      attr_accessor :total, :products, :adjustments, :state
+      attr_accessor :total, :products, :adjustments, :state, :order_id
       attr_reader :use_another_address_for_shipping
 
       # Relations
@@ -62,38 +62,22 @@ module Glysellin
 
         state :addresses, :choose_shipping_method, :choose_payment_method, :ready do
           validate do
-            validate_nested_resource(:customer)
-            validate_nested_resource(:billing_address)
-
-            if use_another_address_for_shipping
-              validate_nested_resource(:shipping_address)
-            end
+            validate_customer_informations
           end
         end
 
         state :choose_shipping_method, :choose_payment_method, :ready do
           validates_presence_of :shipping_method_id
           validate do
-            if !shipping || !shipping.valid
-              code = use_another_address_for_shipping ?
-                shipping_address.country : billing_address.country
-              country = Glysellin::Helpers::Countries::COUNTRIES_LIST[code]
-
-              errors.add(
-                :shipping_method_id,
-                I18n.t(
-                  "glysellin.errors.cart.shipping_method_unavailable_for_country",
-                  method: shipping_method.name,
-                  country: country
-                )
-              )
-            end
+            validate_shippable
           end
         end
 
         state :choose_payment_method, :ready do
           validates_presence_of :payment_method_id
         end
+
+        after_transition any => :ready, do: :generate_order
       end
 
       def initialize str = nil, options = {}
@@ -294,12 +278,18 @@ module Glysellin
       #
       #############################################
 
+      # Allows setting use_another_address_for_shipping attribute, ensuring
+      # it is stored as a Boolean value and not a number string
+      #
       def use_another_address_for_shipping=(val)
         value = val.is_a?(String) ? (val.to_i > 0) : val
         @use_another_address_for_shipping = value
       end
 
-
+      # Set the shipping method id on the cart by creating the corresponding
+      # adjustment at the same time to ensure cart price and recap takes
+      # shipping costs into account
+      #
       def shipping_method_id=(val)
         @shipping_method_id = val
 
@@ -315,8 +305,102 @@ module Glysellin
         @shipping_method_id
       end
 
+      # Shortcut method to get shipping adjustments from adjustments list
+      #
       def shipping
         adjustments.find { |a| a.type == "shipping-method" }
+      end
+
+      # Validates customer informations are correctly filled
+      #
+      def validate_customer_informations
+        validate_nested_resource(:customer)
+        validate_nested_resource(:billing_address)
+
+        if use_another_address_for_shipping
+          validate_nested_resource(:shipping_address)
+        end
+      end
+
+      # Validates the selected country is eligible for the current cart contents
+      # to be shipped to
+      #
+      def validate_shippable
+        if !shipping || !shipping.valid
+          code = use_another_address_for_shipping ?
+            shipping_address.country : billing_address.country
+          country = Glysellin::Helpers::Countries::COUNTRIES_LIST[code]
+
+          errors.add(
+            :shipping_method_id,
+            I18n.t(
+              "glysellin.errors.cart.shipping_method_unavailable_for_country",
+              method: shipping_method.name,
+              country: country
+            )
+          )
+        end
+      end
+
+      #############################################
+      #
+      #             Order management
+      #
+      #############################################
+
+      # Generates an order from the current cart state and stores its id in
+      # the cart to be fetched back later
+      #
+      def generate_order
+        clean_order!
+
+        attrs = attributes(:json).reject do |key, _|
+          [:adjustments, :state, :order_id, :shipping_method_id].include?(key)
+        end
+
+        %w(billing shipping).each do |addr|
+          attrs[:"#{ addr }_address_attributes"] =
+            attrs.delete(:"#{ addr }_address")
+        end
+
+        unless use_another_address_for_shipping
+          attrs[:shipping_address_attributes] =
+            attrs[:billing_address_attributes]
+        end
+
+        # Append shipping method id after addresses so the latters are present
+        # when shipping adjustment is processed on order
+        attrs[:shipping_method_id] = shipping_method_id
+
+        attrs[:discount_code] = discount_code
+
+        self.order = Glysellin::Order.create!(attrs)
+      end
+
+      # Retrieve order from database if it exists, or use cached version
+      #
+      def order
+        @order ||= Glysellin::Order.where(id: order_id).first
+      end
+
+      # Assign order and order_id, if nil is explicitly passed, ensure we
+      # set order id to nil too
+      #
+      def order=(order)
+        self.order_id = order && order.id
+        @order = order
+      end
+
+      # Cleans cart stored order if it exists
+      #
+      def clean_order!
+        if order
+          # Destroy current cart order if not paid already, cause
+          # we're creating a new one
+          order.destroy if order.state_name == :ready
+          # unset order
+          self.order = nil
+        end
       end
 
       #############################################
@@ -327,27 +411,26 @@ module Glysellin
 
       def attribute_names
         [
-          :products, :customer, :billing_address,
-          :use_another_address_for_shipping, :shipping_address,
-          :shipping_method_id, :payment_method_id, :adjustments, :state
+          :order_id, :products, :customer, :billing_address, :shipping_address,
+          :use_another_address_for_shipping, :shipping_method_id,
+          :payment_method_id, :adjustments, :state
         ]
       end
 
-      def attributes(options = {})
+      def attributes(type = :ruby)
         attribute_names.reduce({}) do |hash, attr|
           value = send(attr)
-          hash[attr] = options[:json] ? value.as_json : value
+          hash[attr] = (type == :json) ? value.as_json : value
           hash
         end
       end
 
-
       def serialize
-        attributes(json: true).to_json
+        attributes(:json).to_json
       end
 
       def to_order
-        Glysellin::Order.new()
+        Glysellin::Order.new
       end
 
       #############################################
@@ -386,7 +469,7 @@ module Glysellin
       end
 
       def has_shipping_address?
-        false
+        use_another_address_for_shipping
       end
     end
   end

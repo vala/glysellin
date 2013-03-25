@@ -43,11 +43,13 @@ en:
         shipping: "Shipping"
         total: "Total"
         pay: "Pay"
+        payment: "Payment"
         no_payment_method_choosen: "No payment method choosen"
         order_title: Order
         quantity: "Quantity"
         unit_price: "Unit price"
         discount_code: "Discount code"
+        paid_on_by: "Paid on %{date} - with %{method}"
       payment_methods:
         pay_with_paypal: Payer avec paypal
         check:

@@ -46,10 +46,12 @@ fr:
         shipping: "Frais de port"
         total: "Total"
         pay: "Payer"
+        payment: "Paiement"
         order_title: "Commande"
         quantity: "Quantité"
         unit_price: "Prix unitaire"
         discount_code: "Code promo"
+        paid_on_by: "Payé le %{date} via %{method}"
       payment_methods:
         pay_with_paypal: "Payer avec Paypal"
         check:

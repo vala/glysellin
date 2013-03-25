@@ -1,4 +1,0 @@
-<%= simple_form_for @order, url: process_order_path(id: @order.ref) do |f| %>
-  <%= f.association :shipping_method %>
-  <%= f.submit %>
-<% end %>
