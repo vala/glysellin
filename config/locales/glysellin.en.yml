@@ -53,7 +53,7 @@ en:
       payment_methods:
         pay_with_paypal: Payer avec paypal
         check:
-          send_your_check_text: "Your order has been taken into account. Please put the following order reference : <strong>%{order_ref}</strong> with your check, the label at <strong>%{check_order}</strong> and send it to the following address : <strong>%{check_destination}</strong>"
+          send_your_check_text: "To pay the order, please send your check at <strong>%{check_destination}</strong>.<br>The check label must be <strong>%{check_order}</strong>.<br>Don't forget to specify the following order reference with your check : <strong>%{order_ref}</strong>."
       payment_responses:
         successfully_paid: "Payment successful"
         successfull_payment_text: "Your payment has been successfully processed, we'll take your order into account as fast as we can. An e-mail has been sent to you with all the relevant informations about your order."
