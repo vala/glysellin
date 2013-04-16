@@ -66,6 +66,9 @@ fr:
         your_cart: "Votre panier"
         create_order: "Passer la commande"
         update: "Mettre à jour le panier"
+        added_to_cart: "Produit ajouté au panier"
+        continue_shopping: "Continuer sur la boutique"
+        follow: "Passer ma commande"
 
     orders:
       states:
