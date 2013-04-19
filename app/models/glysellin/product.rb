@@ -34,7 +34,7 @@ module Glysellin
 
     has_many :properties, :class_name => 'Glysellin::ProductProperty'
 
-    accepts_nested_attributes_for :images
+    accepts_nested_attributes_for :images, allow_destroy: true
     accepts_nested_attributes_for :properties
     # accepts_nested_attributes_for :bundled_products, allow_destroy: true, reject_if: :all_blank
 
@@ -74,10 +74,10 @@ module Glysellin
         self.vat_rate = Glysellin.default_vat_rate
       end
       # If we have to fill one of the prices when changed
-      if (self.eot_price_changed? && !self.price_changed?) ||
+      if (self.eot_price.presence && self.eot_price_changed? && !self.price_changed?) ||
           (self.new_record? && self.eot_price && !self.price)
         self.price = self.eot_price * self.vat_ratio
-      elsif self.price_changed? || (self.new_record? && self.price)
+      elsif self.price.presence && (self.price_changed? || self.new_record? || self.eot_price.blank?)
         self.eot_price = self.price / self.vat_ratio
       end
     end

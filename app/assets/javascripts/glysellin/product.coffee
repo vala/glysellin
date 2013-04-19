@@ -9,7 +9,7 @@ class GlysellinProduct
   itemAdded: (markup) ->
     @cart_container.html($(markup).html())
       # Allow app to update cart handlers when content updated
-      .trigger('updated.glysellin')
+      .trigger('updated.glysellin', markup)
 
 # Expose through jQuery plugin
 $.fn.glysellinProduct = ($cart_container) ->
