@@ -12,7 +12,7 @@
   </div>
   <%= form.input :use_another_address_for_shipping, as: 'boolean', 
     wrapper_html: { id: "billing-address-controls" }, 
-    input_html: { data: { 'toggle' => 'address' }, checked: (form.object.shipping_address.id.present? ? 'checked' : '') } %>
+    input_html: { data: { 'toggle' => 'address' }, checked: (form.object.shipping_address.present? && form.object.shipping_address.id.present? ? 'checked' : '') } %>
 
   <div class="shipping-address-container" >
     <%= form.simple_fields_for :shipping_address do |fsa| %>
