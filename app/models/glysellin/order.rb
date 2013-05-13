@@ -105,7 +105,7 @@ module Glysellin
     end
 
 
-    def use_billing_address_for_shipping; nil; end
+    def use_another_address_for_shipping; nil; end
 
     def init_addresses!
       self.build_customer unless customer
@@ -227,14 +227,15 @@ module Glysellin
       self.build_billing_address(billing_params)
 
       # Check if we have to use the billing address for shipping
-      same_address = data[:use_billing_address_for_shipping].presence
+      use_another_address = data[:use_another_address_for_shipping].presence && data[:use_another_address_for_shipping] == "1"
 
-      # Define shipping address if we must use same address
-      if same_address
-        self.build_shipping_address(billing_params)
-      # Else, if we are given a specific shipping address
-      elsif data[:shipping_address_attributes]
+      # If we are given a specific shipping address
+      if use_another_address && data[:shipping_address_attributes]
         self.build_shipping_address(data[:shipping_address_attributes])
+    
+      # Define shipping address if we must use same address
+      else
+        self.build_shipping_address(billing_params)
       end
     end
 
