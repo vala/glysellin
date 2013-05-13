@@ -17,7 +17,7 @@ module Glysellin
       @@test = false
 
       attr_accessor :errors, :order
-      
+
       def initialize order
         @order = order
         @errors = []
@@ -44,6 +44,7 @@ module Glysellin
               @order.paid!
             else
               @errors.push("Failed to verify Paypal's notification, please investigate")
+              false
             end
           rescue => e
             raise
