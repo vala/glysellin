@@ -72,10 +72,10 @@ fr:
 
     orders:
       states:
-        created: "Créée"
+        created: "Panier validé"
         filling_address: "Adresses non remplies"
         address: "Adresses remplies"
-        payment: "Méthode de paiement choisie"
+        payment: "Paiement en attente"
         paid: "Payée"
         shipped: "Expédiée"
 
