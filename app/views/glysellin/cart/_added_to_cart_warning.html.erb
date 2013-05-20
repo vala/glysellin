@@ -6,7 +6,7 @@
   <h3><%= t('glysellin.labels.cart.added_to_cart') %></h3>
   <hr>
 
-  <% product = @cart.product(params[:cart][:product_id])[:product] %>
+  <% product = @cart.product(params[:cart][:product_id]).variant %>
   <%= params[:cart][:quantity] %> &times; <%= product.name %> - <%= number_to_currency product.price %>
   <br>
 

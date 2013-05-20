@@ -47,10 +47,6 @@ module Glysellin
     # Set steps order to be used while using automatic order process
     #
     # config.step_routes = {
-    #   created: ORDER_STEP_ADDRESS,
-    #   filling_address: ORDER_STEP_ADDRESS,
-    #   address: ORDER_STEP_SHIPPING_METHOD,
-    #   shipping_method_chosen: ORDER_STEP_PAYMENT_METHOD,
     #   payment_method_chosen: ORDER_STEP_PAYMENT
     # }
 

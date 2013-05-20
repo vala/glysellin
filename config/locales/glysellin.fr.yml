@@ -10,6 +10,11 @@ fr:
         item_out_of_stock: "Désolé mais le produit %{item} n'est plus en stock"
         not_enough_stock_for_item: "Désolé mais il ne reste que %{stock} %{item} en stock"
         invalid_discount_code: "Le code promotionnel saisi n'est pas valide"
+        shipping_method_unavailable_for_country: "Désolé mais nous ne pouvons pas envoyer votre commande vers %{country} avec %{method}, merci de choisir un autre mode de livraison"
+        state_transitions:
+          addresses: "Il y a des erreurs dans les informations soumises, merci de vérifier tous les champs"
+          choose_shipping_method: "Merci de choisir un mode de livraison"
+          choose_payment_method: "Merci de choisir un mode de paiement"
       variant:
         multiple_properties_with_same_type: "Il y a plusieurs types de propriété identiques pour cette même déclinaison de produit"
     labels:
@@ -21,6 +26,8 @@ fr:
         confirm_addresses: "Confirmer votre adresse"
         choose_payment_method: "Merci de sélectionner un moyen de paiement"
         confirm_payment_method: "Confirmer mon moyen de paiement"
+        choose_shipping_method: "Merci de sélectionner un mode de livraison"
+        confirm_shipping_method: "Confirmer mon mode de livraison"
       customer:
         sign_in: "Se connecter"
         sign_up: "Créer un compte"
@@ -39,14 +46,17 @@ fr:
         shipping: "Frais de port"
         total: "Total"
         pay: "Payer"
+        payment: "Paiement"
         order_title: "Commande"
         quantity: "Quantité"
         unit_price: "Prix unitaire"
         discount_code: "Code promo"
+        paid_on_by: "Payé le %{date} via %{method}"
       payment_methods:
         pay_with_paypal: "Payer avec Paypal"
         check:
           send_your_check_text: "Votre commande a bien été prise en compte. Merci d'indiquer le numéro de commande suivant : <strong>%{order_ref}</strong> avec votre chèque, de mettre l'ordre à <strong>%{check_order}</strong> et de l'envoyer à l'adresse suivante : <strong>%{check_destination}</strong>"
+          send_your_check_text: "Afin de régler votre commande, merci d'envoyer un chèque à l'addresse suivante <strong>%{check_destination}</strong> et de mettre l'ordre à <strong>%{check_order}</strong>.<br>N'oubliez pas de préciser la référence de commande suivante avec votre chèque : <strong>%{order_ref}</strong>."
       payment_responses:
         successfully_paid: "Paiement effectué"
         successfull_payment_text: "Votre paiement a bien été effectué, votre commande sera traité dans les meilleurs délais, un e-mail de confirmation vous a été envoyé."
@@ -79,6 +89,11 @@ fr:
         added_to_cart: "Produit ajouté au panier"
         continue_shopping: "Continuer mes achats"
         update_discount: "Mettre à jour le code Promo"
+        cancel: "Annuler la commande"
+        products: "Vos produits"
+        informations: "Vos informations"
+        shipping_method: "Mode de livraison"
+        payment_method: "Mode de paiement"
     orders:
       states:
         created: "Produits choisis"
@@ -88,6 +103,13 @@ fr:
         payment_method_chosen: "En attente de paiement"
         paid: "Traitement en cours"
         shipped: "Expédiée"
+    cart:
+      states:
+        filled: "Panier"
+        addresses: "Vos informations"
+        choose_shipping_method: "Choix du mode de livraison"
+        choose_payment_method: "Choix du mode de paiement"
+        ready: "Paiement"
     mailer:
       admin:
         send_order_paid_email: "Une nouvelle commande a été validée sur le site"

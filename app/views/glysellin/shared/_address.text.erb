@@ -1,0 +1,7 @@
+Nom complet : <%= address.last_name %> <%= address.first_name %>
+<%- if address.tel.presence -%>
+Tél: <%= address.tel %>
+<%- end -%>
+<%= address.address %>
+<%= address.zip %> <%= address.city %>
+<%= address.country %>

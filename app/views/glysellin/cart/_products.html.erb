@@ -1,7 +1,7 @@
 <% editable = false unless defined?(editable) && editable == true %>
 <% remote = Glysellin.async_cart %>
 
-<%= form_tag update_cart_path, method: "put", class: "products-recap-form#{ ' editable' if editable }" do %>
+<%= simple_form_for cart, url: validate_cart_products_path, method: "put", html: { class: "products-recap-form#{ ' editable' if editable }" } do |form| %>
   <table id="order_recap_table" class="table table-bordered table-striped">
     <tr>
       <th><%= t('glysellin.labels.order.name') %></th>
@@ -23,7 +23,9 @@
         </td>
         <td>
           <% if editable %>
-            <%= number_field :quantity, item.id, value: quantity, class: 'quantity-input', data: { id: item.id } %>
+            <%= form.fields_for :products do |fp| %>
+              <%= fp.number_field :quantity, index: item.id, value: quantity, class: 'quantity-input', data: { id: item.id } %>
+            <% end %>
           <% else %>
             <%= quantity %>
           <% end %>
@@ -36,7 +38,7 @@
         </td>
         <% if editable %>
           <td>
-            <%= link_to remove_from_cart_path(item.id) do %>
+            <%= link_to cart_product_path(item.id), method: "delete" do %>
               <%= t('glysellin.labels.cart.remove_from_cart') %>
             <% end %>
           </td>
@@ -62,41 +64,28 @@
     </tr>
     <% if cart.adjustments_total != 0 %>
       <% cart.adjustments.each do |adjustment| %>
-        <tr class="adjustment-row">
-          <td colspan="4" class="adjustment-name">
-            <%= adjustment.name %>
-          </td>
-          <td class="adjustment-value">
-            <%= number_to_currency(adjustment.value) %>
-          </td>
-          <% if editable %>
-            <td></td>
-          <% end %>
-        </tr>
+        <% if adjustment.valid %>
+          <tr class="adjustment-row" data-type="<%= adjustment.type %>">
+            <td colspan="4" class="adjustment-name">
+              <%= adjustment.name %>
+            </td>
+            <td class="adjustment-value">
+              <%= number_to_currency(adjustment.value) %>
+            </td>
+            <% if editable %>
+              <td></td>
+            <% end %>
+          </tr>
+        <% end %>
       <% end %>
-    <% elsif editable && Glysellin.async_cart %>
-      <tr class="adjustment-row" style="display:none;">
+    <% end %>
+    <% if editable && Glysellin.async_cart && !cart.discount %>
+      <tr class="adjustment-row" data-type="discount-code" style="display:none;">
         <td colspan="4" class="adjustment-name">
         </td>
         <td class="adjustment-value">
         </td>
         <td></td>
-      </tr>
-    <% end %>
-    <% if cart.shipping_price > 0 || Glysellin.show_shipping_if_zero %>
-      <tr>
-        <td colspan="3e">
-          <%= t('glysellin.labels.order.shipping') %>
-        </td>
-        <td>
-          <%= number_to_currency(cart.shipping_price(true)) %>
-        </td>
-        <td>
-          <%= number_to_currency(cart.shipping_price) %>
-        </td>
-        <% if editable %>
-        <td></td>
-      <% end %>
       </tr>
     <% end %>
     <tr class="products-total-row">
@@ -117,12 +106,11 @@
 
   <% if editable %>
     <div class="discount-code">
-      <%= label_tag :discount_code, t('glysellin.labels.order.discount_code') %>
-      <%= text_field_tag :discount_code, cart.discount_code %>
-      <% if remote %>
-        <button class="update-discount-code-btn" type="button">
-          <%= t('glysellin.labels.cart.update_discount') %>
-        </button>
+      <%= form.input :discount_code do %>
+        <%= form.text_field :discount_code %>
+        <% if remote %>
+          <%= form.button :button, t('glysellin.labels.cart.update_discount'), class: "update-discount-code-btn", type: "button", name: "update_discount" %>
+        <% end %>
       <% end %>
     </div>
     <% unless remote %>
@@ -132,8 +120,6 @@
       </button>
     <% end %>
     <!-- Submit order from cart -->
-    <button type="submit" name="submit_order">
-      <%= t('glysellin.labels.cart.create_order_form') %>
-    </button>
+    <%= form.button :button, t('glysellin.labels.cart.create_order_form'), name: "submit_order", type: "submit" %>
   <% end %>
 <% end %>

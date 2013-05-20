@@ -22,7 +22,8 @@ module Glysellin
 
         def price_for_weight_and_country
           weight = @order.total_weight
-          country = @order.shipping_address.country
+          country = @order.use_another_address_for_shipping ?
+            @order.shipping_address.country : @order.billing_address.country
 
           zone = prices_data.find do |zone|
             zone[:countries].include?(country)

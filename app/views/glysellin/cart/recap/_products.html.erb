@@ -1,0 +1,63 @@
+<div class="cart-products">
+  <h4><%= t("glysellin.labels.cart.products") %></h4>
+  <table class="table table-bordered table-striped">
+
+    <!-- Headers -->
+    <thead>
+      <tr>
+        <th><%= t('glysellin.labels.order.name') %></th>
+        <th><%= t('glysellin.labels.order.quantity') %></th>
+        <th><%= t('glysellin.labels.order.price') %></th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- Products -->
+      <% @cart.each_items do |product, quantity| %>
+        <tr>
+          <td><%= product.name %></td>
+          <td>x <%= quantity %></td>
+          <td><%= number_to_currency(product.price * quantity) %></td>
+        </tr>
+      <% end %>
+
+      <!-- Subtotal -->
+      <tr>
+        <td colspan="2">
+          <%= t("glysellin.labels.order.subtotal") %>
+        </td>
+        <td>
+          <%= number_to_currency(@cart.subtotal) %>
+        </td>
+      </tr>
+
+      <!-- Adjustments -->
+      <% @cart.adjustments.each do |adjustment| %>
+        <% if adjustment.valid %>
+          <tr>
+            <td colspan="2">
+              <%= adjustment.name %>
+            </td>
+            <td>
+              <%= number_to_currency(adjustment.value) %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+
+      <!-- Total row -->
+      <tr>
+        <td colspan="2">
+          <strong>
+            <%= t("glysellin.labels.order.total") %>
+          </strong>
+        </td>
+        <td>
+          <strong>
+            <%= number_to_currency(@cart.total_price) %>
+          </strong>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

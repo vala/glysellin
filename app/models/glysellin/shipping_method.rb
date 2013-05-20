@@ -7,6 +7,8 @@ module Glysellin
     has_many :orders, inverse_of: :shipping_method
     has_many :order_adjustments, as: :adjustment
 
+    scope :ordered, order("name ASC")
+
     def to_adjustment order
       calculator = Glysellin.shipping_carriers[identifier].new(order)
 

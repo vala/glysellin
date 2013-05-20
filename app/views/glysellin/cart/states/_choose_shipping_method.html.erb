@@ -1,0 +1,14 @@
+<h2><%= t('glysellin.labels.forms.choose_shipping_method') %></h2>
+
+<%= simple_form_for cart, url: cart_shipping_method_path, method: "put" do |f| %>
+  <%= f.input :shipping_method_id do %>
+    <% Glysellin::ShippingMethod.ordered.each do |shipping_method| %>
+      <label class="radio">
+        <%= f.radio_button :shipping_method_id, shipping_method.id %>
+        <%= shipping_method.name %>
+      </label>
+    <% end %>
+  <% end %>
+
+  <%= f.button :button, t('glysellin.labels.forms.confirm_shipping_method'), type: "submit" %>
+<% end %>

@@ -1,85 +1,21 @@
-# CartController class borrowed from Piggybak's gem before we write our own one
-# Piggyback : http://github.com/piggybak/piggybak
-#
 module Glysellin
   class CartController < ApplicationController
     include ActionView::Helpers::NumberHelper
 
     before_filter :set_cart
+    after_filter :update_cart_in_session
 
     def show
       @cart.update_quantities
-      # Display errors in flash
-      flash_errors
-      update_cookie
-      cookies
     end
 
-    def add
-      @cart.add(params[:cart])
-      update_cookie
-      @product_added_to_cart = true
-      render_cart_partial
-    end
-
-    def update_quantity
-      id = params[:product_id]
-      @cart.set_quantity(id, params[:quantity], override: true)
-      update_cookie
-
-      item = @cart.product(id)
-      product, quantity = item[:product], item[:quantity]
-      render json: {
-        quantity: quantity,
-        eot_price: number_to_currency(quantity * product.eot_price),
-        price: number_to_currency(quantity * product.price)
-      }.merge(totals_hash)
-    end
-
-    def update_discount_code
-      @cart.discount_code = params[:discount_code]
-      update_cookie
-      render json: totals_hash
-    end
-
-    def remove
-      @cart.remove(params[:id])
-      update_cookie set: true
+    def destroy
+      @cart = Cart.new
+      session.delete("glysellin.cart")
       redirect_to cart_path
-    end
-
-    def clear
-      @cart.empty!
-      update_cookie
-      redirect_to cart_path
-    end
-
-    def update
-      @cart.update(params)
-      flash_errors
-      update_cookie
-
-      case
-      when @cart.errors.length == 0 && (Glysellin.async_cart || params[:submit_order])
-        redirect_to from_cart_create_orders_path
-      else
-        redirect_to cart_path
-      end
     end
 
     protected
-
-    # Helper method to set cookie value
-    def update_cookie options = {}
-      p cookies["glysellin.cart"].inspect
-      if options[:set]
-        response.set_cookie("glysellin.cart", { :value => @cart.serialize, :path => '/' })
-      else
-        cookies["glysellin.cart"] = { :value => @cart.serialize, :path => '/' }
-      end
-      p cookies["glysellin.cart"].inspect
-      set_cart
-    end
 
     def render_cart_partial
       render partial: 'cart', locals: {
@@ -87,18 +23,30 @@ module Glysellin
       }
     end
 
-    def flash_errors
-      flash[:error] = @cart.errors.join('<br>') if @cart.errors.length > 0
+    def set_cart
+      @cart ||= Cart.new(session["glysellin.cart"])
+      @states = @cart.available_states
     end
 
-    def set_cart
-      @cart = Cart.new(cookies["glysellin.cart"])
+    # Helper method to set cookie value
+    def update_cart_in_session options = {}
+      if @cart.errors.any?
+        flash[:error] =
+          t("glysellin.errors.cart.state_transitions.#{ @cart.state }")
+      end
+
+      session["glysellin.cart"] = @cart.serialize
     end
 
     def totals_hash
+      adjustment = @cart.discount
+
+      discount_name = adjustment.name rescue nil
+      discount_value = number_to_currency(adjustment.value) rescue nil
+
       {
-        adjustment_name: @cart.adjustment_name,
-        adjustment_value: number_to_currency(@cart.adjustment_value),
+        discount_name: discount_name,
+        discount_value: discount_value,
         total_eot_price: number_to_currency(@cart.total_eot_price),
         total_price: number_to_currency(@cart.total_price),
         eot_subtotal: number_to_currency(@cart.eot_subtotal),

@@ -1,9 +1,13 @@
-<h2><%= t('glysellin.labels.cart.your_cart') %></h2>
+<%= render partial: "navigation", locals: { cart: @cart } %>
 
-<% if @cart.empty? %>
-  <%= t('glysellin.labels.cart.no_products_in_cart') %>
-  <%= link_to t('glysellin.labels.cart.back_to_shop'), shop_path %>
-<% else %>
-  <!-- Cart products list -->
-  <%= render :partial => 'products', :locals => { :cart => @cart, :editable => true } %>
+<% ready = @cart.state_name == :ready %>
+
+<% if @cart.state_index > 0 && !ready %>
+  <%= render partial: "recap", locals: { cart: @cart } %>
+<% end %>
+
+<%= render partial: "glysellin/cart/states/#{ @cart.state }", locals: { cart: @cart } %>
+
+<% unless ready %>
+  <%= link_to t("glysellin.labels.cart.cancel"), cart_path, method: "delete" %>
 <% end %>

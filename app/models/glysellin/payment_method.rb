@@ -5,6 +5,9 @@ module Glysellin
     has_many :payments, :foreign_key => 'type_id'
 
     attr_accessible :name, :slug
+
+    scope :ordered, order("name ASC")
+
     # Get the gateway object corresponding to the current payment from
     #   the options hash passed as parameters
     #

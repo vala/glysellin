@@ -33,13 +33,12 @@ module Glysellin
       end
     end
 
-    # Not implemented yet
-    def shipping_price
-      0
-    end
-
-    def eot_shipping_price
-      0
+    def total_weight
+      each_items.reduce(0) do |total, quantified_item|
+        item, quantity = quantified_item
+        weight = item.weight.presence || Glysellin.default_product_weight
+        total + (quantity * weight)
+      end
     end
 
     def adjustments
@@ -66,7 +65,7 @@ module Glysellin
     end
 
     def total_eot_price
-      (eot_subtotal + eot_adjustments_total)
+      (eot_subtotal + eot_adjustments_total).round(2)
     end
   end
 end

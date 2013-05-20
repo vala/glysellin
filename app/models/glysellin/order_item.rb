@@ -1,7 +1,7 @@
 module Glysellin
   class OrderItem < ActiveRecord::Base
     self.table_name = 'glysellin_order_items'
-    belongs_to :order, inverse_of: :items
+    belongs_to :order, inverse_of: :products
 
     attr_accessible :sku, :name, :eot_price, :vat_rate, :bundle, :price,
       :quantity, :weight
@@ -10,30 +10,20 @@ module Glysellin
     PRODUCT_ATTRIBUTES_FOR_ITEM = %w(sku name eot_price vat_rate price weight)
 
     class << self
-      # Public: Create an item from product or bundle id
+      # Create an item from product or bundle id
       #
       # @param [String] id The id string of the item
       # @param [Boolean] bundle If it's a bundle or just one product
       #
       # @return [OrderItem] The created order item
-      def create_from_product product_or_id, quantity
-        if product_or_id.is_a? Integer
-          product = Glysellin::Product.find_by_id(product_or_id)
-        else
-          product = product_or_id
+      def build_from_product id, quantity
+        product = Glysellin::Variant.find_by_id(id)
+
+        attrs = PRODUCT_ATTRIBUTES_FOR_ITEM.map do |key|
+          [key, product.public_send(key)]
         end
 
-        # Auxiliary function for creating a product
-        create_product = lambda do |product|
-          attrs = Hash[PRODUCT_ATTRIBUTES_FOR_ITEM.map { |key| [key, product.send(key)] }]
-          OrderItem.new attrs.merge('quantity' => quantity)
-        end
-
-        if product.bundle?
-          product.bundled_products.map { |prd| create_product.call(prd) }
-        else
-          [create_product.call(product)]
-        end
+        OrderItem.new(Hash[attrs].merge('quantity' => quantity))
       end
     end
 

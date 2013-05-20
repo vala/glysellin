@@ -9,6 +9,11 @@ en:
         item_out_of_stock: "Sorry, %{item} is out of stock"
         not_enough_stock_for_item: "Sorry, only #{stock} #{item} are still available"
         invalid_discount_code: "The discount code you used is not valid"
+        shipping_method_unavailable_for_country: "Sorry but we can't ship to %{country} with %{method}, please choose another shipping method"
+        state_transitions:
+          addresses: "Errors were found in the form you submitted, please review its fields before it can be saved"
+          choose_shipping_method: "Please choose a shipping method"
+          choose_payment_method: "Please choose a payment method"
     labels:
       misc:
         back_to_homepage: "Back to home page"
@@ -18,6 +23,8 @@ en:
         confirm_addresses: "Confirm your address"
         choose_payment_method: "Choose your payment method"
         confirm_payment_method: "Confirm payment method"
+        choose_shipping_method: "Choose your shipping method"
+        confirm_shipping_method: "Confirm shipping method"
       customer:
         sign_in: "Sign in"
         sign_up: "Sign up"
@@ -36,15 +43,17 @@ en:
         shipping: "Shipping"
         total: "Total"
         pay: "Pay"
+        payment: "Payment"
         no_payment_method_choosen: "No payment method choosen"
         order_title: Order
         quantity: "Quantity"
         unit_price: "Unit price"
         discount_code: "Discount code"
+        paid_on_by: "Paid on %{date} - with %{method}"
       payment_methods:
         pay_with_paypal: Payer avec paypal
         check:
-          send_your_check_text: "Your order has been taken into account. Please put the following order reference : <strong>%{order_ref}</strong> with your check, the label at <strong>%{check_order}</strong> and send it to the following address : <strong>%{check_destination}</strong>"
+          send_your_check_text: "To pay the order, please send your check at <strong>%{check_destination}</strong>.<br>The check label must be <strong>%{check_order}</strong>.<br>Don't forget to specify the following order reference with your check : <strong>%{order_ref}</strong>."
       payment_responses:
         successfully_paid: "Payment successful"
         successfull_payment_text: "Your payment has been successfully processed, we'll take your order into account as fast as we can. An e-mail has been sent to you with all the relevant informations about your order."
@@ -70,6 +79,11 @@ en:
         update_discount: "Update discount code"
         create_order_form: "Submit order"
         follow: "Go to order"
+        cancel: "Cancel order"
+        products: "Your products"
+        informations: "Your informations"
+        shipping_method: "Shipping method"
+        payment_method: "Payment method"
     orders:
       states:
         created: "Created"
@@ -78,6 +92,13 @@ en:
         payment: "Payment method chosen"
         paid: "Paid"
         shipped: "Shipped"
+    cart:
+      states:
+        filled: "Cart"
+        addresses: "Your informations"
+        choose_shipping_method: "Shipping method"
+        choose_payment_method: "Payment method"
+        ready: "Payment"
     order_admin_mailer:
       send_order_paid_email:
         subject: "A new order has validated"

@@ -1,7 +1,6 @@
 module Glysellin
   class OrdersController < MainController
     protect_from_forgery :except => :gateway_response
-    before_filter :init_order!
 
     def index
       @orders = Order.from_customer(current_user)
@@ -17,63 +16,6 @@ module Glysellin
       end
     end
 
-    def create_from_cart
-      order = Order.create_from_cart(current_cart, current_user)
-
-      if order.save
-        redirect_to :action => order.next_step, :id => order.ref
-      else
-        redirect_to :back
-      end
-    end
-
-    def process_order
-      @order = Order.from_sub_forms(params[:glysellin_order], params[:id])
-
-      if @order.save
-        next_step = @order.next_step
-
-        if @order.next_step == ORDER_STEP_PAYMENT
-          if Glysellin.send_email_on_check_order_placed && @order.paid_by_check?
-            OrderAdminMailer.send_check_order_created_email(@order).deliver
-          end
-          p @order
-          OrderCustomerMailer.send_order_created_email(@order).deliver
-        end
-        redirect_to :action => @order.next_step.to_s, :id => @order.ref
-      else
-        render @order.next_step.to_s
-      end
-    end
-
-
-    def cart
-    end
-
-    def validate
-    end
-    
-    def addresses
-      @order.init_addresses!
-    end
-
-    def validate_addresses
-    end
-
-    def shipping_method
-      @shipping_methods = Glysellin::ShippingMethod.all
-    end
-
-    def payment_method
-      @order.init_payment!
-    end
-
-    def payment
-      cookies["glysellin.cart"] = { :value => '', :path => '/' }
-    end
-
-    def offline_payment
-    end
 
     def gateway_response
       g = PaymentMethod.gateway(params[:goid] ? {:order_id => params[:goid]} : {:raw_post => request.raw_post, :gateway => params[:gateway]})
@@ -97,12 +39,6 @@ module Glysellin
       else
         @order = Order.find_by_ref(params[:id])
       end
-    end
-
-    protected
-
-    def init_order!
-      @order = Order.find_by_ref(params[:id]) if params[:id]
     end
   end
 end

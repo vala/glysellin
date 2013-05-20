@@ -1,3 +1,5 @@
+require "active_model/model"
+
 require "glysellin/engine"
 require "glysellin/helpers"
 require "glysellin/gateway"
@@ -19,14 +21,6 @@ module Glysellin
   #
   ################################################################
 
-  # Status const to be used to define order step to cart shopping
-  ORDER_STEP_CART = 'cart'
-  # Status const to be used to define order step to address
-  ORDER_STEP_ADDRESS = 'addresses'
-  # Status const to be used to define order step to choose shipping method
-  ORDER_STEP_SHIPPING_METHOD = 'shipping_method'
-  # Status const to be used to define order step to defining payment method
-  ORDER_STEP_PAYMENT_METHOD = 'payment_method'
   # Status const to be used to define order step to payment
   ORDER_STEP_PAYMENT = 'payment'
 
@@ -97,10 +91,6 @@ module Glysellin
 
   mattr_accessor :step_routes
   @@step_routes = {
-    created: ORDER_STEP_ADDRESS,
-    filling_address: ORDER_STEP_ADDRESS,
-    address: ORDER_STEP_SHIPPING_METHOD,
-    shipping_method_chosen: ORDER_STEP_PAYMENT_METHOD,
     payment_method_chosen: ORDER_STEP_PAYMENT
   }
 
