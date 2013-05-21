@@ -36,4 +36,7 @@ module Glysellin
       self.send(:include, Views)
     end
   end
+
+  # Load helpers
+  ActionController::Base.send(:include, Helpers)
 end

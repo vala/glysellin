@@ -1,7 +1,7 @@
 <% editable = false unless defined?(editable) && editable == true %>
 <% remote = Glysellin.async_cart %>
 
-<%= simple_form_for cart, url: validate_cart_products_path, method: "put", html: { class: "products-recap-form#{ ' editable' if editable }" } do |form| %>
+<%= simple_form_for cart, url: validate_cart_products_path, method: "put", html: { class: "products-recap-form#{ ' editable' if editable }", data: { cart: { url: cart_path } } } do |form| %>
   <table id="order_recap_table" class="table table-bordered table-striped">
     <tr>
       <th><%= t('glysellin.labels.order.name') %></th>

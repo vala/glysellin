@@ -6,7 +6,7 @@ module Glysellin
     after_filter :update_cart_in_session
 
     def show
-      @cart.update_quantities
+      @cart.update_quantities!
     end
 
     def destroy

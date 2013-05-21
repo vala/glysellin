@@ -26,6 +26,10 @@ module Glysellin
       define_attribute_methods [:state]
 
       state_machine initial: :init do
+        event :reset do
+          transition all => :init
+        end
+
         event :products_added do
           transition all => :filled
         end
@@ -178,7 +182,7 @@ module Glysellin
 
       # General check to see if cart is valid
       #
-      def update_quantities
+      def update_quantities!
         @products = products.reduce([]) do |products, product|
           # If product is not published
           if !product.variant.published
@@ -206,6 +210,8 @@ module Glysellin
         if discount_code == false
           set_error(:invalid_discount_code)
         end
+
+        reset! if @products.length == 0
       end
 
 

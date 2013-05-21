@@ -25,6 +25,8 @@ class AsyncCart
 
     @discountCode = @container.find('#glysellin_cart_basket_discount_code')
 
+    @cart_path = @container.data("cart-url")
+
     @bindAll()
 
   bindAll: ->
@@ -114,7 +116,7 @@ class AsyncCart
 
   update: (action, options, callback) ->
     $.post(
-      "/shop/cart/#{ action }",
+      "#{ @cart_path }/#{ action }",
       $.extend({}, @defaultPostOptions, options),
       callback,
       'json'
@@ -134,5 +136,4 @@ $.fn.glysellinAsyncCart = (options = {})->
   @each ->
     $cart = $(this)
     data = $cart.data('glysellin.async-cart')
-    unless data
-      $cart.data('glysellin.async-cart', new AsyncCart($cart, options))
+    $cart.data('glysellin.async-cart', new AsyncCart $cart, options) unless data

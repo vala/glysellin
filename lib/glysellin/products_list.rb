@@ -19,6 +19,7 @@ module Glysellin
     # @param [Boolean] df Defines if we want to get duty free price or not
     #
     # @return [BigDecimal] the calculated subtotal
+    #
     def subtotal
       quantified_items.reduce(0) do |total, quantified_item|
         item, quantity = quantified_item

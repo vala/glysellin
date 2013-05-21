@@ -29,6 +29,7 @@ module Glysellin
     #   so the Order propererties can't be affected by product updates
     has_many :products, class_name: 'Glysellin::OrderItem',
       foreign_key: 'order_id', dependent: :destroy
+
     # The actual buyer
     belongs_to :customer, class_name: "::#{ Glysellin.user_class_name }",
       foreign_key: 'customer_id', :autosave => true

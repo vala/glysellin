@@ -1,12 +1,12 @@
 class OrderObserver < ActiveRecord::Observer
-  observe Glysellin::Order 
+  observe Glysellin::Order
 
-  def after_set_payment order, transition
-    # This will be run once the payment method has been chosen
+  def after_paid order, transition
+    # This will be run once the order has been paid
   end
 
-  def after_set_paid order, transition
-    # This will be run once the order has been paid
+  def after_shipped order, transition
+    # This will be run once the order has been shipped
   end
 
 end

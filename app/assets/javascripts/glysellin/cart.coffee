@@ -40,7 +40,6 @@ class GlysellinCart
         close()
 
     close = ->
-      console.log("CLOSE")
       $modal.fadeOut(200, -> $modal.remove());
       $body.off "click", closeFromBody
       false

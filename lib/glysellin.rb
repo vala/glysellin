@@ -124,7 +124,4 @@ module Glysellin
   def self.config
     yield self
   end
-
-  # Load helpers
-  ActionController::Base.send(:include, Helpers)
 end

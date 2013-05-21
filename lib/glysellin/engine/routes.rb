@@ -26,7 +26,7 @@ module ActionDispatch::Routing
             get 'shipping_method'
             get 'payment_method'
             get 'payment'
-            post 'gw-resp/:goid', :action => 'gateway_response', :as => 'gateway_response'
+            post 'gateway-response', :action => 'gateway_response', :as => 'gateway_response'
             match 'payment_response'
           end
         end
