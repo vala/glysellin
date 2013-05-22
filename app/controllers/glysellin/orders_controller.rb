@@ -18,18 +18,23 @@ module Glysellin
 
 
     def gateway_response
-      g = PaymentMethod.gateway(params[:id] ? {:order_id => params[:id]} : {:raw_post => request.raw_post, :gateway => params[:gateway]})
-
-      if g.process_payment! request.raw_post
-        OrderCustomerMailer.send_order_paid_email(g.order).deliver
-        OrderAdminMailer.send_order_paid_email(g.order).deliver
+      # Get gateway object
+      gateway = if params[:id]
+        PaymentMethod.gateway_from_order_ref(params[:id])
+      else
+        PaymentMethod.gateway_from_raw_post(request.raw_post, params[:gateway])
       end
-
-      if g.errors.length > 1
-        g.errors.each {|msg| logger.error "[ Glysellin ] Gateway Error : #{msg}"}
+      # Process payment
+      if gateway.process_payment! request.raw_post
+        OrderCustomerMailer.send_order_paid_email(gateway.order).deliver
+        OrderAdminMailer.send_order_paid_email(gateway.order).deliver
       end
+      # Log errors if existing
+      gateway.errors.each do |msg|
+        logger.error "[ Glysellin ] Gateway Error : #{ msg }"
+      end if gateway.errors.length > 1
 
-      render g.response
+      render gateway.response
     end
 
     def payment_response

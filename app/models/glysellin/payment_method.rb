@@ -8,22 +8,20 @@ module Glysellin
 
     scope :ordered, order("name ASC")
 
-    # Get the gateway object corresponding to the current payment from
-    #   the options hash passed as parameters
-    #
-    # @param [Hash] options A hash containing
-    #
-    # @return [Gateway::Base] The gateway used for the payment method
-    #
-    # @example Get from gateway and post data from a controller
-    #   PaymentMethod.gateway({
-    #     gateway: 'paypal-integral',
-    #     raw_post: request.raw_post
-    #   })
-    #
-    def self.gateway options = {}
-      order = Order.find(options[:order_id] ? options[:order_id] : Glysellin.gateways[options[:gateway]].parse_order_id(options[:raw_post]))
-      Glysellin.gateways[order.payment_method.slug].new(order)
+    class << self
+      def gateway_from_order_ref ref
+        order = Order.find_by_ref(ref)
+        gateway_for(order)
+      end
+
+      def gateway_from_raw_post gateway, raw_post
+        order = Glysellin.gateways[gateway].parse_order_id(raw_post)
+        gateway_for(order)
+      end
+
+      def gateway_for order
+        Glysellin.gateways[order.payment_method.slug].new(order)
+      end
     end
 
     # Get the payment request button HTML for the specified order
