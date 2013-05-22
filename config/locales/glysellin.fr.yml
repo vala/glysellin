@@ -86,6 +86,7 @@ fr:
         your_cart: "Votre panier"
         create_order: "Passer la commande"
         create_order_form: "Passer ma commande"
+        back_to_shop: "Retour à la boutique"
         update: "Mettre à jour le panier"
         added_to_cart: "Produit ajouté au panier"
         continue_shopping: "Continuer mes achats"

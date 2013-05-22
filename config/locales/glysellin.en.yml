@@ -74,6 +74,8 @@ en:
         products_count: "%{count} products in your cart"
         your_cart: "Your cart"
         create_order: "Order"
+        create_order_form: "Order"
+        back_to_shop: "Back to shop"
         remove_from_cart: "Delete"
         update: "Update cart"
         update_discount: "Update discount code"
