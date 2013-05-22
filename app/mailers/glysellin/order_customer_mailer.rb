@@ -5,7 +5,7 @@ class Glysellin::OrderCustomerMailer < ActionMailer::Base
     @order = order
     mail(
       to: @order.email,
-      subject: Glysellin.mailer_subjects[:customer][:send_order_created_email]
+      subject: Glysellin.mailer_subjects.call[:customer][:send_order_created_email]
     )
   end
 
@@ -13,7 +13,7 @@ class Glysellin::OrderCustomerMailer < ActionMailer::Base
     @order = order
     mail(
       to: @order.email,
-      subject: Glysellin.mailer_subjects[:customer][:send_order_paid_email]
+      subject: Glysellin.mailer_subjects.call[:customer][:send_order_paid_email]
     )
   end
 
@@ -21,7 +21,7 @@ class Glysellin::OrderCustomerMailer < ActionMailer::Base
     @order = order
     mail(
       to: @order.email,
-      subject: Glysellin.mailer_subjects[:customer][:send_order_shipped_email]
+      subject: Glysellin.mailer_subjects.call[:customer][:send_order_shipped_email]
     )
   end
 end

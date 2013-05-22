@@ -105,11 +105,11 @@ module Glysellin
   @@allow_anonymous_orders = true
 
   def self.mailer_subjects=(hash = nil)
-    hash.merge(I18n.t('glysellin.mailer'))
+    @@mailer_subjects = -> { I18n.t('glysellin.mailer').merge(hash) }
   end
 
   mattr_accessor :mailer_subjects
-  @@mailer_subjects = I18n.t('glysellin.mailer')
+  @@mailer_subjects = -> { I18n.t('glysellin.mailer') }
 
   # Public: Permits using config block in order to set
   #   Glysellin module attributes
