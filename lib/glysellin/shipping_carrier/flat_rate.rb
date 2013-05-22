@@ -4,7 +4,7 @@ module Glysellin
       register 'flat-rate', self
 
       def price_for_order order
-        total_items = order.items.reduce(0) do |total, item|
+        total_items = order.products.reduce(0) do |total, item|
           total + item.quantity
         end
 
