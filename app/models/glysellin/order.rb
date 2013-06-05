@@ -43,14 +43,15 @@ module Glysellin
 
     # We want to be able to see fields_for addresses
     accepts_nested_attributes_for :products
-    accepts_nested_attributes_for :customer
+    # accepts_nested_attributes_for :customer
     accepts_nested_attributes_for :payments
+    accepts_nested_attributes_for :order_adjustments
 
     attr_accessible :payments, :products, :products_ids,
       :customer, :customer_id, :ref, :user, :payments,
-      :customer_attributes, :payments_attributes, :products_attributes, :paid_on,
+      :payments_attributes, :products_attributes, :paid_on,
       :state, :payment_method_id, :billing_address, :shipping_address,
-      :shipping_method_id, :discount_code
+      :shipping_method_id, :discount_code, :order_adjustments_attributes
 
     validates_presence_of :customer, :billing_address, :shipping_address,
       :products

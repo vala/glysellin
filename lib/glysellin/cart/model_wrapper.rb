@@ -71,7 +71,10 @@ module Glysellin
 
             def attributes
               attribute_names.reduce({}) do |attrs, attr|
-                attrs[attr] = public_send("\#{ attr }")
+                begin
+                  attrs[attr] = public_send("\#{ attr }")
+                rescue NoMethodError
+                end
                 attrs
               end
             end
