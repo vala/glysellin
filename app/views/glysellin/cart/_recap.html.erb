@@ -6,11 +6,11 @@
   </div>
 
   <!-- Products recap table -->
-  <% if @cart.products.length > 0 %>
+  <% if current_cart.products.length > 0 %>
     <%= render partial: "glysellin/cart/recap/products", locals: { cart: cart } %>
   <% end %>
 
-  <% if @cart.state_index > @cart.available_states.index("addresses") %>
+  <% if current_cart.state_index > current_cart.available_states.index("addresses") %>
     <%= render partial: "glysellin/cart/recap/addresses", locals: { cart: cart } %>
   <% end %>
 </div>

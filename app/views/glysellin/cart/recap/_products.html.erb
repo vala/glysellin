@@ -13,7 +13,7 @@
     <tbody>
 
       <!-- Products -->
-      <% @cart.each_items do |product, quantity| %>
+      <% current_cart.each_items do |product, quantity| %>
         <tr>
           <td><%= product.name %></td>
           <td>x <%= quantity %></td>
@@ -27,12 +27,12 @@
           <%= t("glysellin.labels.order.subtotal") %>
         </td>
         <td>
-          <%= number_to_currency(@cart.subtotal) %>
+          <%= number_to_currency(current_cart.subtotal) %>
         </td>
       </tr>
 
       <!-- Adjustments -->
-      <% @cart.adjustments.each do |adjustment| %>
+      <% current_cart.adjustments.each do |adjustment| %>
         <% if adjustment.valid %>
           <tr>
             <td colspan="2">
@@ -54,7 +54,7 @@
         </td>
         <td>
           <strong>
-            <%= number_to_currency(@cart.total_price) %>
+            <%= number_to_currency(current_cart.total_price) %>
           </strong>
         </td>
       </tr>

@@ -1,6 +1,6 @@
 <div class="product-container">
   <span class="name">
-    <%= product.name %>
+    <%= link_to product.name, product_path(product) %>
   </span>
   <% if product.image %>
     <div class="image">

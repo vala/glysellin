@@ -2,13 +2,13 @@ module Glysellin
   module Cart
     class AddressesController < CartController
       def update
-        @cart.update(params[:glysellin_cart_basket])
+        current_cart.update(params[:glysellin_cart_basket])
 
-        if @cart.valid?
-          @cart.addresses_filled!
+        if current_cart.valid?
+          current_cart.addresses_filled!
           redirect_to cart_path
         else
-          @cart.state = "addresses"
+          current_cart.state = "addresses"
           render "glysellin/cart/show"
         end
       end

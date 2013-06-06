@@ -11,10 +11,6 @@ require "glysellin/shipping_carrier"
 require "glysellin/cart"
 
 module Glysellin
-  # Public: Main app root to be defined inside engine initialization process
-  #   so we can refer to it from inside the lib
-  mattr_accessor :app_root
-
   ################################################################
   #
   # Config vars, to be overriden from generated initializer file

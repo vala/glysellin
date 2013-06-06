@@ -19,7 +19,7 @@
 
   <h2><%= t('glysellin.labels.forms.fill_in_your_address') %></h2>
 
-  <%= addresses_fields_for f %>
+  <%= addresses_fields_for f, f.object.customer %>
 
   <%= f.button :submit, t('glysellin.labels.forms.confirm_addresses') %>
 <% end %>

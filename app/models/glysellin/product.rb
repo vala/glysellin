@@ -1,9 +1,12 @@
 require 'digest/sha1'
+require 'friendly_id'
 
 module Glysellin
   class Product < ActiveRecord::Base
-    include ModelInstanceHelperMethods
     include ProductMethods
+    extend FriendlyId
+
+    friendly_id :name, use: :slugged
 
     self.table_name = 'glysellin_products'
 
@@ -62,7 +65,7 @@ module Glysellin
 
     # Callbacks
     #
-    before_validation :set_slug, :set_sku, :set_vat_rate, :ensure_variant
+    before_validation :set_sku, :set_vat_rate, :ensure_variant
 
     scope :published, where('glysellin_products.published = ?', true)
     scope :with_taxonomy, lambda { |*taxonomies|
@@ -75,10 +78,6 @@ module Glysellin
     # Master variant methods delegation
     delegate :price, :unmarked_price, :marked_down?, to: :master_variant
 
-    # We always check we have a slug for our product
-    def set_slug
-      self.slug = name.to_slug
-    end
 
     # And as for the validation, if the SKU is configured to be autoset,
     # we check generate it

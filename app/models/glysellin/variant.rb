@@ -1,7 +1,14 @@
+require 'friendly_id'
+
 module Glysellin
   class Variant < ActiveRecord::Base
     include ProductMethods
+    extend FriendlyId
+
+    friendly_id :name, use: :slugged
+
     self.table_name = 'glysellin_variants'
+
     attr_accessible :eot_price, :in_stock, :name, :position, :price,
       :published, :sku, :slug, :unlimited_stock, :product, :product_id,
       :properties_attributes, :properties, :weight, :unmarked_price

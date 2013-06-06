@@ -57,7 +57,8 @@ module Glysellin
       :products
 
     before_validation :process_adjustments
-    after_save :check_ref
+    after_save :ensure_ref
+    after_create :ensure_customer_addresses
     before_save :set_paid_if_paid_by_check
     before_save :notify_shipped
 
@@ -67,9 +68,22 @@ module Glysellin
       products.map { |product| [product, product.quantity] }
     end
 
-    # Ensure there is always an order reference for billing purposes
-    def check_ref
+    # Ensures there is always an order reference
+    #
+    def ensure_ref
       update_attribute(:ref, self.generate_ref) unless self.ref
+    end
+
+    # Ensures that the customer hash a billing and, if needed shipping, address.
+    #
+    def ensure_customer_addresses
+      unless customer.billing_address
+        customer.create_billing_address(billing_address.clone_attributes)
+
+        unless billing_address.same_as?(shipping_address)
+          customer.create_shipping_address(shipping_address.clone_attributes)
+        end
+      end
     end
 
     # If admin sets payment date by hand and order was paid by check,
@@ -100,8 +114,6 @@ module Glysellin
       end
     end
 
-    def use_another_address_for_shipping; nil; end
-
     def init_payment!
       self.payments.build unless payment
     end
@@ -129,16 +141,6 @@ module Glysellin
           "#{Time.now.strftime('%Y%m%d%H%M')}-#{id}"
         end
       end
-    end
-
-    # Used to parse an Order item serialized into JSON
-    #
-    # @param [String] json JSON string object representing the order attributes
-    #
-    # @return [Boolean] wether or not the object has been
-    #   successfully initialized
-    def initialize_from_json! json
-      self.attributes = ActiveSupport::JSON.decode(json)
     end
 
     # Customer's e-mail directly accessible from the order

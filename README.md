@@ -6,11 +6,13 @@ In order to stay simple, we choosed for now to keep with some strong dependencie
 
 Also, no admin interface is provided so you can integrate it, but we always use [RailsAdmin](https://github.com/sferik/rails_admin).
 
+
 ## Dependencies
 
 * [Devise](https://github.com/plataformatec/devise)
 * [Paperclip](https://github.com/thoughtbot/paperclip)
 * [Simple Form](https://github.com/plataformatec/simple_form)
+
 
 ## Disclaimer
 
@@ -33,32 +35,20 @@ The install generator command :
 rails generate glysellin:install
 ```
 
+
 ## Using the Cart
 
 The shopping cart contents are stored in user's cookies, with the key `glysellin.cart`
 
+
 ### Displaying the cart
-
-Here is a simple code example that loads the cart for every controller action :
-
-```ruby
-# app/controllers/application_controller.rb
-class ApplicationController < ActionController::Base
-  protect_from_forgery
-
-  before_filter :init
-
-  def init
-    @cart = Glysellin::Cart.new(cookies['glysellin.cart'])
-  end
-end
-```
 
 To display the cart you must render it's partial in your layout :
 
 ```erb
-<%= render_cart(@cart) %>
+<%= render_cart(current_cart) %>
 ```
+
 
 ### Filling the cart
 
@@ -68,6 +58,7 @@ You must pass the helper a `Glysellin::Product` instance in order to make it wor
 ```erb
 <%= add_to_cart_form(@product) %>
 ```
+
 
 ## Managing orders
 
@@ -83,6 +74,7 @@ Glysellin.config do |config|
   config.allow_anonymous_orders = true
 end
 ```
+
 
 ## Customizing Order behavior
 

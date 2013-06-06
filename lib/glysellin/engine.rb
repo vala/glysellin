@@ -1,15 +1,14 @@
-if File.exists? 'glysellin/engine/routes'
-  require 'glysellin/engine/routes'
-else
-  require File.expand_path('../engine/routes', __FILE__)
-end
+require 'glysellin/helpers'
+require 'glysellin/engine/routes'
 
 module Glysellin
   class Engine < ::Rails::Engine
-    initializer "glysellin.root_config" do |app|
-      Glysellin.config do |config|
-        config.app_root = app.root
+
+    initializer "Include Helpers" do |app|
+      ActiveSupport.on_load :action_controller do
+        Helpers.include!
       end
     end
+
   end
 end

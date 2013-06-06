@@ -6,7 +6,7 @@ module Glysellin
     end
 
     def show
-      @product = Glysellin::Product.find_by_slug(params[:id])
+      @product = Glysellin::Product.find(params[:id])
     end
   end
 end

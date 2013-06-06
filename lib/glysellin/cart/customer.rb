@@ -3,7 +3,10 @@ module Glysellin
     class Customer
       include ModelWrapper
       wraps :user, class_name: "::User",
-        attributes: [:id, :email, :password, :password_confirmation]
+        attributes: [
+          :id, :email, :password, :password_confirmation, :billing_address,
+          :shipping_address, :use_another_address_for_shipping
+        ]
 
       def initialize attributes = {}
         if attributes.is_a?(User) && attributes.id

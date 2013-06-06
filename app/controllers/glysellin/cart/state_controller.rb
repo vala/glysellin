@@ -3,7 +3,11 @@ module Glysellin
     class StateController < CartController
       def show
         state = params[:state]
-        @cart.state = state.to_sym if @cart.available_states.include?(state)
+
+        if current_cart.available_states.include?(state)
+          current_cart.state = state.to_sym
+        end
+
         redirect_to cart_path
       end
     end

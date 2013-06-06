@@ -20,6 +20,7 @@ fr:
     labels:
       misc:
         back_to_homepage: "Retour à l'accueil"
+        back_to_shop: "Retour à la boutique"
       forms:
         customer_details: "Votre compte"
         fill_in_your_address: "Merci de renseigner votre adresse"

@@ -2,16 +2,16 @@ module Glysellin
   module Cart
     class ProductsController < CartController
       def create
-        @cart.add(params[:cart])
-        @cart.products_added!
+        current_cart.add(params[:cart])
+        current_cart.products_added!
         @product_added_to_cart = true
         render_cart_partial
       end
 
       def update
-        @cart.set_quantity(params[:id], params[:quantity], override: true)
+        current_cart.set_quantity(params[:id], params[:quantity], override: true)
 
-        product = @cart.product(params[:id])
+        product = current_cart.product(params[:id])
         variant, quantity = product.variant, product.quantity
 
         render json: {
@@ -22,14 +22,14 @@ module Glysellin
       end
 
       def destroy
-        @cart.remove(params[:id])
+        current_cart.remove(params[:id])
         redirect_to cart_path
       end
 
       def validate
-        @cart.update(params[:glysellin_cart_basket])
-        @cart.validated! if @cart.valid?
-        @cart.customer = current_user
+        current_cart.update(params[:glysellin_cart_basket])
+        current_cart.validated! if current_cart.valid?
+        current_cart.customer = current_user
         redirect_to cart_path
       end
     end

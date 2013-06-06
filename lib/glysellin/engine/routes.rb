@@ -8,7 +8,6 @@ module ActionDispatch::Routing
         resources :orders, controller: controllers[:orders], :only => [] do
           collection do
             get 'payment_response'
-            # Routes to handle statically parametered Gateways
             post 'gateway/:gateway', :action => 'gateway_response', :as => 'named_gateway_response'
             match 'gateway/response/:type', :action => 'payment_response', :as => 'typed_payment_response'
           end

@@ -2,14 +2,14 @@ module Glysellin
   module Cart
     class ShippingMethodController < CartController
       def update
-        @cart.update(params[:glysellin_cart_basket])
+        current_cart.update(params[:glysellin_cart_basket])
 
-        if @cart.valid?
-          @cart.shipping_method_chosen!
+        if current_cart.valid?
+          current_cart.shipping_method_chosen!
           redirect_to cart_path
         else
-          @cart.state = "choose_shipping_method"
-          @cart.valid?
+          current_cart.state = "choose_shipping_method"
+          current_cart.valid?
           render "glysellin/cart/show"
         end
       end

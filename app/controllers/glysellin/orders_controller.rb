@@ -1,5 +1,5 @@
 module Glysellin
-  class OrdersController < MainController
+  class OrdersController < ApplicationController
     protect_from_forgery :except => :gateway_response
 
     def index
@@ -7,7 +7,12 @@ module Glysellin
     end
 
     def show
-      user_order = Order.where('id = ? AND customer_id = ?', params[:id], @active_customer.id)
+      user_order = if user_signed_in?
+        Order.where('id = ? AND customer_id = ?', params[:id], current_user.id)
+      else
+        []
+      end
+
       if user_order.length > 0
         @order = user_order.first
       else
@@ -15,7 +20,6 @@ module Glysellin
         redirect_to :action => 'index'
       end
     end
-
 
     def gateway_response
       # Get gateway object

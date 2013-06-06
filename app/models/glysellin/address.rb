@@ -20,5 +20,16 @@ module Glysellin
     #
     # Validates presence of the fields defined in the config file or the glysellin initializer
     validates_presence_of *Glysellin.address_presence_validation_keys
+
+    def same_as?(other)
+      clone_attributes == other.clone_attributes
+    end
+
+    def clone_attributes
+      clone.attributes.select do |key, value|
+        self.class.accessible_attributes.include?(key) &&
+          !key.to_s.match(/_addressable_(type|id)$/)
+      end
+    end
   end
 end

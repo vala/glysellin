@@ -18,7 +18,7 @@ module Glysellin
     end
 
     def use_another_address_for_shipping
-      !(shipping_address.new_record? && !super)
+      !(shipping_address.new_record? && !super) rescue false
     end
 
     def has_shipping_address?
