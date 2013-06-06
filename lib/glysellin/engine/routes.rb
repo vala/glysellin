@@ -5,27 +5,15 @@ module ActionDispatch::Routing
       controllers = parse_controllers(options)
 
       scope mount_location do
-        resources :orders, controller: controllers[:orders], :only => [:new, :create, :edit, :update] do
+        resources :orders, controller: controllers[:orders], :only => [] do
           collection do
-            get 'cart'
-            post 'validate_cart'
-            get 'checkout'
-            post 'offline_payment'
-            post 'process_order', :as => 'process'
             get 'payment_response'
             # Routes to handle statically parametered Gateways
             post 'gateway/:gateway', :action => 'gateway_response', :as => 'named_gateway_response'
             match 'gateway/response/:type', :action => 'payment_response', :as => 'typed_payment_response'
-            get 'create-from-cart', :action => 'create_from_cart', :as => 'from_cart_create'
           end
 
           member do
-            put 'process_order', :as => 'process'
-            get 'addresses'
-            post 'validate_addresses'
-            get 'shipping_method'
-            get 'payment_method'
-            get 'payment'
             post 'gateway-response', :action => 'gateway_response', :as => 'gateway_response'
             match 'payment_response'
           end
@@ -47,15 +35,10 @@ module ActionDispatch::Routing
               put "contents/validate", action: "validate", as: "validate"
             end
           end
-
           resource :discount_code, controller: "glysellin/cart/discount_code", only: [:update]
-
           resource :addresses, controller: "glysellin/cart/addresses", only: [:update]
-
           resource :shipping_method, controller: "glysellin/cart/shipping_method", only: [:update]
-
           resource :payment_method, controller: "glysellin/cart/payment_method", only: [:update]
-
           resource :state, controller: "glysellin/cart/state", only: [:show] do
             get "state/:state", action: "show", as: "set"
           end

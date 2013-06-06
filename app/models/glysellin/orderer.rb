@@ -5,10 +5,12 @@ module Glysellin
     included do
       has_one :billing_address, class_name: 'Glysellin::Address',
         as: :billed_addressable, dependent: :destroy, autosave: true
+
       has_one :shipping_address, class_name: 'Glysellin::Address',
         as: :shipped_addressable, dependent: :destroy, autosave: true
 
       attr_writer :use_another_address_for_shipping
+
       attr_accessible :billing_address_attributes, :shipping_address_attributes,
         :use_another_address_for_shipping
 

@@ -13,6 +13,7 @@ module Glysellin
       # @param  [Array]  products  The products array to flatten
       #
       # @return [Array]  The flattened list of products
+      #
       def flatten_products products
         products.reduce([]) do |list, product|
           if product.bundle?
