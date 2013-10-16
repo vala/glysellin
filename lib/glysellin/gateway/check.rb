@@ -9,7 +9,14 @@ module Glysellin
       @@checks_destination = ""
 
       mattr_accessor :check_payment_description
-      @@check_payment_description = lambda { |order| I18n.t('glysellin.labels.payment_methods.check.send_your_check_text', :order_ref => order.ref, :check_order => @@checks_order, :check_destination => @@checks_destination).html_safe }
+      @@check_payment_description = lambda { |order|
+        I18n.t(
+          'glysellin.labels.payment_methods.check.send_your_check_text',
+          :order_ref => order.ref,
+          :check_order => @@checks_order,
+          :check_destination => @@checks_destination
+        ).html_safe
+      }
 
       attr_accessor :errors, :order
 
