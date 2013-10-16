@@ -30,7 +30,7 @@ module ActionDispatch::Routing
           end
         end
 
-        resources :products, controller: controllers[:products] do
+        resources :products, controller: controllers[:products], path: "produits" do
           collection do
             get 'taxonomy/:id', action: "filter", as: "filter"
           end
