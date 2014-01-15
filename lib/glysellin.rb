@@ -11,6 +11,9 @@ require "glysellin/shipping_carrier"
 require "glysellin/cart"
 
 module Glysellin
+  autoload :Taxonomy, "glysellin/taxonomy"
+  autoload :Product, "glysellin/product"
+
   ################################################################
   #
   # Config vars, to be overriden from generated initializer file
