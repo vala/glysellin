@@ -9,6 +9,9 @@ require "glysellin/shipping_carrier"
 require "glysellin/cart"
 
 module Glysellin
+  autoload :Taxonomy, "glysellin/taxonomy"
+  autoload :Product, "glysellin/product"
+
   # Public: Main app root to be defined inside engine initialization process
   #   so we can refer to it from inside the lib
   mattr_accessor :app_root
