@@ -9,7 +9,7 @@ fr:
         item_not_for_sale: "Désolé mais le produit %{item} n'est plus disponible"
         item_out_of_stock: "Désolé mais le produit %{item} n'est plus en stock"
         not_enough_stock_for_item: "Désolé mais il ne reste que %{stock} %{item} en stock"
-        invalid_discount_code: "Le code promotionnel saisi n'est pas valide"
+        invalid_discount_code: "Le code promotionnel saisi n'est pas valide ou votre commande n'est pas assez importante pour en profiter."
       variant:
         multiple_properties_with_same_type: "Il y a plusieurs types de propriété identiques pour cette même déclinaison de produit"
     labels:
