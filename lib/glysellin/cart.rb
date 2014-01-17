@@ -8,11 +8,10 @@ module Glysellin
     include ProductsList
 
     attr_writer :products
-    attr_accessor :total
-    attr_accessor :errors
+    attr_accessor :total, :errors
 
     METADATA = %w(discount_code adjustment)
-    METADATA.each { |header| attr_accessor header }
+    attr_accessor :discount_code, :adjustment
 
     def initialize(cookie='')
       parse!(cookie)
@@ -37,13 +36,15 @@ module Glysellin
 
     def refresh_discount_code!(val = nil)
       val ||= @discount_code
-      if val && (code = DiscountCode.from_code(val))
+
+      if val && (code = DiscountCode.from_code(val)) && code.applicable_for?(subtotal)
         @discount_code = val
         set_adjustment_from_code(code)
       else
         @discount_code = nil
         @adjustment = nil
       end
+
       @discount_code
     end
 
@@ -150,7 +151,7 @@ module Glysellin
 
       if discount_code == false
         set_error(:invalid_discount_code)
-        discount_code = nil
+        self.discount_code = nil
       end
 
       process_total!
@@ -168,8 +169,8 @@ module Glysellin
 
       headers, products = cookie.split('::')
 
-      parse_metadata!(headers || '')
       parse_products!(products || '')
+      parse_metadata!(headers || '')
 
       refresh_discount_code!
       process_total!

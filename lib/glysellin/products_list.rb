@@ -8,7 +8,7 @@ module Glysellin
 
     def each_items &block
       if block_given?
-        quantified_items.each &block
+        quantified_items.each(&block)
       else
         quantified_items.each
       end

@@ -374,7 +374,7 @@ module Glysellin
       return if data[:discount_code].blank?
       existing_code = DiscountCode.from_code(data[:discount_code])
 
-      if existing_code && existing_code.applicable?
+      if existing_code && existing_code.applicable_for?(subtotal)
         build_adjustment_from(existing_code)
       end
     end

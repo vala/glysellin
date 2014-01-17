@@ -36,8 +36,11 @@ module Glysellin
     end
 
     def update_discount_code
+      puts "assign discount code"
       @cart.discount_code = params[:discount_code]
+      puts "update cookie"
       update_cookie
+      puts "render partial"
       render json: totals_hash
     end
 
@@ -89,7 +92,7 @@ module Glysellin
     end
 
     def set_cart
-      @cart = Cart.new(cookies["glysellin.cart"])
+      @cart ||= Cart.new(cookies["glysellin.cart"])
     end
 
     def totals_hash

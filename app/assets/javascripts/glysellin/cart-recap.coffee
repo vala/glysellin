@@ -107,7 +107,7 @@ class CartRecap
 
   update: (action, options, callback) ->
     $.post(
-      "/shop/cart/#{ action }",
+      "/cigarette-electronique-boutique-en-ligne/cart/#{ action }",
       $.extend({}, @defaultPostOptions, options),
       callback,
       'json'

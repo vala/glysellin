@@ -2,7 +2,8 @@ module Glysellin
   class DiscountCode < ActiveRecord::Base
     self.table_name = 'glysellin_discount_codes'
 
-    attr_accessible :code, :discount_type_id, :expires_on, :name, :value
+    attr_accessible :code, :discount_type_id, :expires_on, :name, :value,
+      :order_minimum
 
     belongs_to :discount_type, inverse_of: :discount_codes
     has_many :order_adjustments, as: :adjustment
@@ -13,8 +14,9 @@ module Glysellin
       super(val.downcase)
     end
 
-    def applicable?
-      !expires_on || expires_on > Time.now
+    def applicable_for?(price)
+      (!expires_on || expires_on > Time.now) &&
+        (!order_minimum.presence || order_minimum <= price)
     end
 
     def to_adjustment order
@@ -29,7 +31,7 @@ module Glysellin
 
     class << self
       def from_code code
-        find_by_code(code.downcase)
+        code && find_by_code(code.downcase)
       end
     end
   end
